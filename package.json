@@ -1,0 +1,19 @@
+{
+  "name": "",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./scripts/server.js",
+  "scripts": {
+    "start": "node ./scripts/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PetrPPetrov/deep-nest-rest/invitations.git"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "express": "^4.16.4",
+    "log4js": "^3.0.6",
+    "validator": "^10.10.0"
+  }
+}
