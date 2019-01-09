@@ -3,6 +3,7 @@
 // This file is part of Gkm-World project.
 // This software is intellectual property of GkmSoft.
 
-module.exports.onError = () => {
+module.exports.onRequest = (request, response) => {
     // TODO: add handling of request
+    response.send('You were authorized.');
 };

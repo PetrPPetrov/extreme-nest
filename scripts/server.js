@@ -4,18 +4,20 @@
 // This software is intellectual property of GkmSoft.
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const log4js = require('log4js');
 
-const serverConfig = require('../configuration/serverConfig');
-const authentification = require('./handlers/auethentification');
+const configuration = require('../resources/configuration');
+const router = require('./router');
 
 const server = express();
-server.get('/authentification', (request, response) => {
-    authentification.onAuethentificationRequest(request, response);
-});
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({extended: true}));
 
-server.listen(serverConfig.port, () => {
-    const log = log4js.getLogger();
-    log.info('Server was started successfuly');
-    log.info('Server is listening port ' + serverConfig.port + ' ...');
+server.listen(configuration.serverPort, configuration.serverAddress, () => {
+    router.route(server);
+    const log = log4js.getLogger(__filename);
+    log.level = 'info';
+    log.info('Server was started successfuly. Address: ' +
+        configuration.serverAddress + ':' + configuration.serverPort);
 });

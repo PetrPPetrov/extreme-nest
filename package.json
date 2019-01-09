@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "deep-nest-rest",
   "version": "0.0.1",
   "description": "",
   "main": "./scripts/server.js",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "async": "^2.6.1",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "log4js": "^3.0.6",
     "validator": "^10.10.0"
