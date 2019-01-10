@@ -2,9 +2,9 @@
   "name": "deep-nest-rest",
   "version": "0.0.1",
   "description": "",
-  "main": "./scripts/server.js",
+  "main": "./sources/server.js",
   "scripts": {
-    "start": "node ./scripts/server.js"
+    "start": "node ./sources/server.js"
   },
   "repository": {
     "type": "git",
