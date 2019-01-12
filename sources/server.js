@@ -1,6 +1,6 @@
-// Copyright (c) 2018 by
+// Copyright (c) 2019 by
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
-// This file is part of Gkm-World project.
+// This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
 
 const express = require('express');
