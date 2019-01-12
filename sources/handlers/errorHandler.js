@@ -28,17 +28,25 @@ module.exports.onRequest = (request, response, status) => {
 };
 
 function onBadRequest(request, response) {
-    response.status(httpStatusCodes.BAD_REQUEST).send("An error occured.");
+    response
+        .status(httpStatusCodes.BAD_REQUEST)
+        .send("An error occured.");
 }
 
 function onUnauthorized(request, response) {
-    response.status(httpStatusCodes.UNAUTHORIZED).send("Incorrect authentication.");
+    response
+        .status(httpStatusCodes.UNAUTHORIZED)
+        .send("Incorrect authentication.");
 }
 
 function onNotFound(request, response) {
-    response.status(httpStatusCodes.NOT_FOUND).send("This nesting order does not exist.");
+    response
+        .status(httpStatusCodes.NOT_FOUND)
+        .send("This nesting order does not exist.");
 }
 
 function onNotAcceptable(request, response) {
-    response.status(httpStatusCodes.NOT_ACCEPTABLE).send("This API requests json format.");
+    response
+        .status(httpStatusCodes.NOT_ACCEPTABLE)
+        .send("This API requests json format.");
 }

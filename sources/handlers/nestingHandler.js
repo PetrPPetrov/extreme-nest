@@ -39,21 +39,25 @@ function getRequestBody(request) {
 }
 
 function sendNestingOrderID(response, result){
-    response.status(httpStatusCodes.CREATED).send(JSON.stringify({
-        message : "Nesting order submitted.",
-        nesting_order_id : result
-    }));
+    response
+        .status(httpStatusCodes.CREATED)
+        .send(JSON.stringify({
+            message : "Nesting order submitted.",
+            nesting_order_id : result
+        }));
 }
 
 function sendErrorNestingOptimization(response) {
-    response.status(httpStatusCodes.BAD_REQUEST).send(JSON.stringify({
-        message : "An error occured.",
-        errors : [
-            {
-                path : ["parts", 0, "instances", 0, "orientations"],
-                message : "[] is too short",
-                error_code : -3000
-            }
-        ]
-    }));
+    response
+        .status(httpStatusCodes.BAD_REQUEST)
+        .send(JSON.stringify({
+            message : "An error occured.",
+            errors : [
+                {
+                    path : ["parts", 0, "instances", 0, "orientations"],
+                    message : "[] is too short",
+                    error_code : -3000
+                }
+            ]
+        }));
 }
