@@ -1,0 +1,6 @@
+{
+  "maxContentSize" : 10485760,
+  "maxOptimizationTime" : 300,
+  "maxNumberDifferentParts" : 1500,
+  "maxTotalNumberParts" : 10000
+}
