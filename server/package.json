@@ -1,5 +1,5 @@
 {
-  "name": "deep-nest-rest",
+  "name": "deep-nest-rest-server",
   "version": "0.0.1",
   "description": "",
   "main": "./sources/server.js",
@@ -15,6 +15,7 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "log4js": "^3.0.6",
+    "pngjs": "^3.3.3",
     "validator": "^10.10.0"
   }
 }

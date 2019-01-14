@@ -1,2 +1,4 @@
 .idea/*
-node_modules/*
+
+client/sources/node_modules/*
+server/node_modules/*
