@@ -6,7 +6,18 @@
 const fs = require('fs');
 const util = require('util');
 
-module.exports.readFile = async (fileName) => {
+module.exports.readFileAsync = async (fileName) => {
     const readFile = util.promisify(fs.readFile);
     return await readFile(fileName);
 };
+
+module.exports.isFileExistsSync = (fileName) => {
+    return fs.existsSync(fileName);
+}
+
+module.exports.getFileSizeSync = (fileName) => {
+    const stats = fs.statSync(fileName)
+    const fileSizeInBytes = stats["size"]
+    return fileSizeInBytes
+};
+

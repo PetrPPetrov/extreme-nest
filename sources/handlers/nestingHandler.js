@@ -9,11 +9,11 @@ const nesting = require('../nesting/nesting');
 const errorHandler = require('./errorHandler');
 const httpStatusCodes = require('../httpStatusCodes');
 
-module.exports.onRequest = (request, response) => {
-    const log = log4js.getLogger(__filename);
-    log.level = 'debug';
-    log.debug('Request was came to the nesting handler');
+const log = log4js.getLogger(__filename);
+log.level = 'debug';
 
+module.exports.onRequest = (request, response) => {
+    log.debug('Request was came to the nesting handler');
     let requestBody = getRequestBody(request);
     if (!requestBody) {
         log.debug("Request body is incorrect.");
@@ -34,7 +34,8 @@ function getRequestBody(request) {
     try {
         return request.body;
     } catch(e) {
-        return null;
+        log.debug("Request body is incorrect");
+        return false;
     }
 }
 
