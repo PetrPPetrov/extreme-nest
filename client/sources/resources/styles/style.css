@@ -87,3 +87,7 @@ section div div {
     font-size: 15px;
     width: 60%;
 }
+
+.error-border {
+    border: 1px solid red;
+}

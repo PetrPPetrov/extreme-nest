@@ -1,0 +1,8 @@
+{
+  "availableServers": [
+    {
+      "name": "localhost",
+      "address": "http://localhost:8080"
+    }
+  ]
+}
