@@ -2,7 +2,7 @@
   "availableServers": [
     {
       "name": "localhost",
-      "address": "http://localhost:8080"
+      "address": "http://127.0.0.1:80"
     }
   ]
 }

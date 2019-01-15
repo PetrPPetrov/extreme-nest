@@ -78,6 +78,7 @@ section div div {
 }
 
 .block-button {
+    cursor: pointer;
     outline: none;
     float: left;
     font-family: 'Open Sans', sans-serif;
@@ -100,6 +101,7 @@ section div div {
 }
 
 .disabled-block-button {
+    cursor: default;
     background-color: #122C44;
 }
 
@@ -122,4 +124,28 @@ section div div {
     color: white;
     font-size: 16px;
     font-family: 'Open Sans Condensed', sans-serif;
+}
+
+.title {
+    font-family: 'Staatliches', cursive;
+    margin-top: 30px;
+    float: left;
+    font-size: 45px;
+    color: white;
+}
+
+.subtitle {
+    font-family: 'Open Sans Condensed', sans-serif;
+    transform: translateY(-20px);
+    float: left;
+    color: white;
+    font-size: 18px;
+}
+
+.description {
+    font-family: 'Open Sans', sans-serif;
+    float: left;
+    margin: 5px 0 0 16px;
+    color: white;
+    font-size: 18px;
 }

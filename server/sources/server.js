@@ -13,6 +13,13 @@ const router = require('./router');
 const server = express();
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
+server.use(function (request, response, next) {
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    next();
+});
 
 server.listen(configuration.serverPort, configuration.serverAddress, () => {
     router.route(server);

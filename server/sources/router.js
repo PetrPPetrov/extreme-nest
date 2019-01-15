@@ -15,24 +15,15 @@ module.exports.route = (server) => {
     //     authorizationHandler.onRequest(request, response);
     // });
     server.post('/new', (request, response) => {
-        addedAdditionalHeadersForResponse(response);
         nestingHandler.onRequest(request, response);
     });
 
     server.get('/result/:id', (request, response) => {
-        addedAdditionalHeadersForResponse(response);
         fetchingHandler.onRequest(request, response);
     });
 
     server.get('*', (request, response) => {
-        addedAdditionalHeadersForResponse(response);
         errorHandler.onRequest(request, response, httpStatusCodes.BAD_REQUEST);
     });
 
 };
-
-function addedAdditionalHeadersForResponse(response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Methods", "GET, PUT, PATCH, POST, DELETE");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-}

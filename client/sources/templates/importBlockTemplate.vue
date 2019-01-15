@@ -1,6 +1,6 @@
 <template>
 
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 block import-form">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 block import-form" v-show="$root.$data.isOpenedImportForms">
         <p class="block-title">Creating nesting order</p>
         <textarea class="block-textarea" placeholder="Nesting request only in JSON format..." v-model="nestingRequest"></textarea>
         <select v-model="selectedAvailableServer" class="block-select">
@@ -55,15 +55,31 @@
                 } else {
                     this.message = 'Request are handling...';
                     this.isRunningSendingRequest = true;
-                    const address = this.selectedAvailableServer + '/new';
+                    const self = this;
+                    const address = this.availableServers.find((server) => {
+                        if (server.name === self.selectedAvailableServer) {
+                            return server.address;
+                        }
+                    }) + '/new';
                     sendNestingRequest(address, this.nestingRequest)
                         .then((data) => {
-                            alert(data);
+                            this.isRunningSendingRequest = false;
+                            this.handleNestingResponse(data);
                         }).catch((error) => {
+                            console.log(error);
+                            this.isRunningSendingRequest = false;
                             this.message = 'Error. Connection with selected server was not set.';
                         });
-                    this.isRunningSendingRequest = false;
-                    this.message = "Nesting order was handled successfuly."
+                }
+            },
+
+            handleNestingResponse: function(responseBody) {
+                const componentName = 'nesting_order_id';
+                if (componentName in responseBody){
+                    this.message = "Nesting order was handled successfuly.";
+                    this.$root.$data.isOpenedImportForms = false;
+                } else {
+                    this.message = "Nesting order was not handled. Try again."
                 }
             }
 
@@ -83,12 +99,9 @@
         return new Promise((resolve, reject) => {
             axios({
                 method : 'post',
-                url : "http://127.0.0.1:8080/new",
-                data : address,
+                url : 'http://localhost:80/new',
+                data : nestingRequest,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-                    'Access-Control-Allow-Headers': 'Origin, Content-Type',
                     'Accept': 'application/json; charset=utf-8',
                     'Content-type': 'application/json; charset=utf-8'
                 },

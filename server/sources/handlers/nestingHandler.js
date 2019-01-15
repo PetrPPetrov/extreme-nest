@@ -42,6 +42,7 @@ function getRequestBody(request) {
 function sendNestingOrderID(response, result){
     response
         .status(httpStatusCodes.CREATED)
+        .set({'Content-Type': 'application/json; charset=utf-8'})
         .send(JSON.stringify({
             message : "Nesting order submitted.",
             nesting_order_id : result
@@ -51,6 +52,7 @@ function sendNestingOrderID(response, result){
 function sendErrorNestingOptimization(response) {
     response
         .status(httpStatusCodes.BAD_REQUEST)
+        .set({'Content-Type': 'application/json; charset=utf-8'})
         .send(JSON.stringify({
             message : "An error occured.",
             errors : [
