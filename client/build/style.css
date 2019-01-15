@@ -8,6 +8,22 @@ html {
     padding: 0;
 }
 
+::-webkit-scrollbar {
+    cursor: pointer;
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    background: #882B34;
+    border-radius: 5px;
+}
+
 section {
     height: 100%;
     width: 100%;
@@ -25,7 +41,7 @@ section div div {
 
 .block {
     border: 1px solid #DBD8D9;
-    padding: 15px 25px 15px 25px;
+    padding: 15px 25px 20px 25px;
     margin-top: 12%;
     text-align: center;
     background-color: transparent;
@@ -52,8 +68,13 @@ section div div {
     background-color: white;
     border: 1px solid #DBD8D9;
     width: 100%;
-    height: 440px;
+    height: 405px;
     border-radius: 5px;
+}
+
+.block-textarea::placeholder {
+    padding-top: 180px;
+    text-align: center;
 }
 
 .block-button {
@@ -78,6 +99,10 @@ section div div {
     background-color: #122C44;
 }
 
+.disabled-block-button {
+    background-color: #122C44;
+}
+
 .block-select {
     float: left;
     font-family: 'Open Sans', sans-serif;
@@ -90,4 +115,11 @@ section div div {
 
 .error-border {
     border: 1px solid red;
+}
+
+.log-message {
+    transform: translateY(7px);
+    color: white;
+    font-size: 16px;
+    font-family: 'Open Sans Condensed', sans-serif;
 }
