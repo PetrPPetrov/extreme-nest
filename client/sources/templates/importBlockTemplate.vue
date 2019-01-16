@@ -55,18 +55,13 @@
                 } else {
                     this.message = 'Request are handling...';
                     this.isRunningSendingRequest = true;
-                    const self = this;
-                    const address = this.availableServers.find((server) => {
-                        if (server.name === self.selectedAvailableServer) {
-                            return server.address;
-                        }
-                    }) + '/new';
+                    const address = getServerAddress(this.availableServers, this.selectedAvailableServer);
+                    this.$root.$data.serverAddress = address;
                     sendNestingRequest(address, this.nestingRequest)
                         .then((data) => {
                             this.isRunningSendingRequest = false;
                             this.handleNestingResponse(data);
                         }).catch((error) => {
-                            console.log(error);
                             this.isRunningSendingRequest = false;
                             this.message = 'Error. Connection with selected server was not set.';
                         });
@@ -77,6 +72,7 @@
                 const componentName = 'nesting_order_id';
                 if (componentName in responseBody){
                     this.message = "Nesting order was handled successfuly.";
+                    this.$root.$data.nestingOrderID = responseBody[componentName];
                     this.$root.$data.isOpenedImportForms = false;
                 } else {
                     this.message = "Nesting order was not handled. Try again."
@@ -94,22 +90,28 @@
         }
         return true;
     }
+    
+    function getServerAddress(availableServers, selectedServer) {
+        return availableServers.find((server) => {
+            if (server.name === selectedServer) {
+                return server.address;
+            }
+        }).address;
+    }
 
     function sendNestingRequest(address, nestingRequest) {
         return new Promise((resolve, reject) => {
             axios({
                 method : 'post',
-                url : 'http://localhost:80/new',
+                url : address + '/new',
                 data : nestingRequest,
                 headers: {
                     'Accept': 'application/json; charset=utf-8',
                     'Content-type': 'application/json; charset=utf-8'
                 },
-            }).then(response => {
-                resolve(response.data);
-            }).catch(error => {
-                reject(false);
-            });
+            })
+                .then(response => resolve(response.data))
+                .catch(error => reject(error));
         });
     }
 

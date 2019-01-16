@@ -10,7 +10,9 @@ new Vue({
     el : '#app',
     data: {
        isOpenedImportForms : true,
-       nestingOrder: 0,
+       isClickedOnVisualization : false,
+       serverAddress: '',
+       nestingOrderID: 0,
     },
     components : {
         headerTemplate: headerTemplate,

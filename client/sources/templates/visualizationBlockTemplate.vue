@@ -7,7 +7,8 @@
             you need get full nesting result and click on <b>Visualize</b> button.
             Also yo can download this image, for it click on button <b>Download</b>.
         </p>
-        <div class="block">
+        <canvas id="canvas" v-show="$root.$data.isClickedOnVisualization"></canvas>
+        <div class="block" v-show="!$root.$data.isClickedOnVisualization">
             <img :src="image">
         </div>
     </div>
@@ -30,6 +31,13 @@
 </script>
 
 <style scoped>
+
+    canvas {
+        width: 100%;
+        height: 400px;
+        border-radius: 5px;
+        margin-top: 12px;
+    }
 
     .visualization-form {
         text-align: center;
