@@ -11,11 +11,8 @@
     "url": "https://github.com/PetrPPetrov/deep-nest-rest.git"
   },
   "dependencies": {
-    "async": "^2.6.1",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "log4js": "^3.0.6",
-    "pngjs": "^3.3.3",
-    "validator": "^10.10.0"
+    "log4js": "^3.0.6"
   }
 }

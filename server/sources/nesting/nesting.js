@@ -12,5 +12,5 @@ module.exports.optimizeNesting = (nestingRequest) => {
     }
 
     const parsedRequest = nestingRequestParser.parseNestingRequest(nestingRequest);
-    return true; // TODO: will need to change on nesting order
+    return 123796256855234; // TODO: will need to change on nesting order
 };

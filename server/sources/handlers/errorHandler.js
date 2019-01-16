@@ -7,10 +7,10 @@ const log4js = require('log4js');
 
 const httpStatusCodes = require('../httpStatusCodes');
 
-module.exports.onRequest = (request, response, status) => {
-    const log = log4js.getLogger(__filename);
-    log.level = 'debug';
+const log = log4js.getLogger(__filename);
+log.level = 'debug';
 
+module.exports.onRequest = (request, response, status) => {
     switch (status) {
         case httpStatusCodes.BAD_REQUEST:
             log.debug('Request came to the error handler with status ' + httpStatusCodes.BAD_REQUEST);
@@ -30,23 +30,35 @@ module.exports.onRequest = (request, response, status) => {
 function onBadRequest(request, response) {
     response
         .status(httpStatusCodes.BAD_REQUEST)
-        .send("An error occured.");
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            "messgae" : "An error occured."
+        });
 }
 
 function onUnauthorized(request, response) {
     response
         .status(httpStatusCodes.UNAUTHORIZED)
-        .send("Incorrect authentication.");
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            "message" : "Incorrect authentication."
+        });
 }
 
 function onNotFound(request, response) {
     response
         .status(httpStatusCodes.NOT_FOUND)
-        .send("This nesting order does not exist.");
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            "message" : "This nesting order does not exist."
+        });
 }
 
 function onNotAcceptable(request, response) {
     response
         .status(httpStatusCodes.NOT_ACCEPTABLE)
-        .send("This API requests json format.");
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            "message" : "This API requests json format."
+        });
 }

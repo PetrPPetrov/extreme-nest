@@ -13,7 +13,7 @@ const router = require('./router');
 const server = express();
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
-server.use(function (request, response, next) {
+server.use((request, response, next) => {
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Allow-Credentials", "true");
     response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
@@ -21,10 +21,11 @@ server.use(function (request, response, next) {
     next();
 });
 
+const log = log4js.getLogger(__filename);
+log.level = 'info';
+
 server.listen(configuration.serverPort, configuration.serverAddress, () => {
     router.route(server);
-    const log = log4js.getLogger(__filename);
-    log.level = 'info';
     log.info('Server was started successfuly. Address: ' +
         configuration.serverAddress + ':' + configuration.serverPort);
 });

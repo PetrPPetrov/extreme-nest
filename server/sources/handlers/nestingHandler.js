@@ -6,7 +6,6 @@
 const log4js = require('log4js');
 
 const nesting = require('../nesting/nesting');
-const errorHandler = require('./errorHandler');
 const httpStatusCodes = require('../httpStatusCodes');
 
 const log = log4js.getLogger(__filename);
@@ -17,13 +16,13 @@ module.exports.onRequest = (request, response) => {
     let requestBody = getRequestBody(request);
     if (!requestBody) {
         log.debug("Request body is incorrect.");
-        errorHandler.onRequest(request, response, httpStatusCodes.NOT_ACCEPTABLE);
+        sendRequestParsingError(response);
     }
 
     const nestingResult = nesting.optimizeNesting(requestBody);
     if (nestingResult) {
         log.debug("Successful nesting optimization.");
-        sendNestingOrderID(response, nestingResult);
+        sendNestingOrderResult(response, nestingResult);
     } else {
         log.debug("Incorrect nesting optimization.");
         sendErrorNestingOptimization(response)
@@ -39,7 +38,16 @@ function getRequestBody(request) {
     }
 }
 
-function sendNestingOrderID(response, result){
+function sendRequestParsingError(response){
+    response
+        .status(httpStatusCodes.NOT_ACCEPTABLE)
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            "message" : "This API requests json format."
+        });
+}
+
+function sendNestingOrderResult(response, result){
     response
         .status(httpStatusCodes.CREATED)
         .set({'Content-Type': 'application/json; charset=utf-8'})

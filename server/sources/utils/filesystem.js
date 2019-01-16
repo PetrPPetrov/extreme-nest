@@ -13,11 +13,9 @@ module.exports.readFileAsync = async (fileName) => {
 
 module.exports.isFileExistsSync = (fileName) => {
     return fs.existsSync(fileName);
-}
-
-module.exports.getFileSizeSync = (fileName) => {
-    const stats = fs.statSync(fileName)
-    const fileSizeInBytes = stats["size"]
-    return fileSizeInBytes
 };
 
+module.exports.getFileSizeSync = (fileName) => {
+    const stats = fs.statSync(fileName);
+    return stats["size"];
+};

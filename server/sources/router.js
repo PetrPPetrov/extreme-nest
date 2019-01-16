@@ -4,26 +4,13 @@
 // This software is intellectual property of GkmSoft.
 
 const errorHandler = require('./handlers/errorHandler');
-const authorizationHandler = require('./handlers/authorizationHandler');
 const nestingHandler = require('./handlers/nestingHandler');
 const fetchingHandler = require('./handlers/fetchingHandler');
 const httpStatusCodes = require('./httpStatusCodes');
 
 module.exports.route = (server) => {
-
-    // server.get('/authorization', (request, response) => {
-    //     authorizationHandler.onRequest(request, response);
-    // });
-    server.post('/new', (request, response) => {
-        nestingHandler.onRequest(request, response);
-    });
-
-    server.get('/result/:id', (request, response) => {
-        fetchingHandler.onRequest(request, response);
-    });
-
-    server.get('*', (request, response) => {
-        errorHandler.onRequest(request, response, httpStatusCodes.BAD_REQUEST);
-    });
-
+    server.post('/new', (request, response) => nestingHandler.onRequest(request, response));
+    server.get('/result/:id/image', (request, response) => fetchingHandler.onImageRequest(request, response));
+    server.get('/result/:id/full', (request, response) => fetchingHandler.onFullRequest(request, response));
+    server.get('*', (request, response) => errorHandler.onRequest(request, response, httpStatusCodes.BAD_REQUEST));
 };
