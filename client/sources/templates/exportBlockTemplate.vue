@@ -1,7 +1,7 @@
 <template>
 
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 block export-form" v-show="!$root.$data.isOpenedImportForms">
-        <p class="block-title">Get Full Nesting Result</p>
+        <p class="block-title">Get Full Nesting Result({{ $root.$data.nestingOrderID }})</p>
         <textarea disabled class="block-textarea" placeholder="Full nesting result will be here..." v-model="nestingOrder"></textarea>
         <button class='block-button'
             @click="onClickGetNestingResult">
