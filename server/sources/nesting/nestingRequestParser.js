@@ -9,11 +9,11 @@ const limits = require('../../resources/limits');
 // nesting optimization
 const requiredComponents = [
     {
-       nameComponent : 'parts',
-       requiredAttributes : [
+        nameComponent : 'parts',
+        requiredAttributes : [
             'geometry',
             'instances'
-       ]
+        ]
     },
     {
         nameComponent : 'sheets',

@@ -32,7 +32,7 @@ function onBadRequest(request, response) {
         .status(httpStatusCodes.BAD_REQUEST)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "messgae" : "An error occured."
+            message : 'An error occurred.'
         });
 }
 
@@ -41,7 +41,7 @@ function onUnauthorized(request, response) {
         .status(httpStatusCodes.UNAUTHORIZED)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "Incorrect authentication."
+            message : 'Incorrect authentication.'
         });
 }
 
@@ -50,7 +50,7 @@ function onNotFound(request, response) {
         .status(httpStatusCodes.NOT_FOUND)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "This nesting order does not exist."
+            message : 'This nesting order does not exist.'
         });
 }
 
@@ -59,6 +59,6 @@ function onNotAcceptable(request, response) {
         .status(httpStatusCodes.NOT_ACCEPTABLE)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "This API requests json format."
+            message : 'This API requests json format.'
         });
 }

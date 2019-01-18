@@ -10,6 +10,7 @@ const httpStatusCodes = require('./httpStatusCodes');
 
 module.exports.route = (server) => {
     server.post('/new', (request, response) => nestingHandler.onRequest(request, response));
+    server.get('/result/:id/stats', (request, response) => fetchingHandler.onStatsRequest(request, response));
     server.get('/result/:id/image', (request, response) => fetchingHandler.onImageRequest(request, response));
     server.get('/result/:id/full', (request, response) => fetchingHandler.onFullRequest(request, response));
     server.get('*', (request, response) => errorHandler.onRequest(request, response, httpStatusCodes.BAD_REQUEST));

@@ -15,16 +15,16 @@ module.exports.onRequest = (request, response) => {
     log.debug('Request was came to the nesting handler');
     let requestBody = getRequestBody(request);
     if (!requestBody) {
-        log.debug("Request body is incorrect.");
+        log.debug('Request body is incorrect.');
         sendRequestParsingError(response);
     }
 
     const nestingResult = nesting.optimizeNesting(requestBody);
     if (nestingResult) {
-        log.debug("Successful nesting optimization.");
+        log.debug('Successful nesting optimization.');
         sendNestingOrderResult(response, nestingResult);
     } else {
-        log.debug("Incorrect nesting optimization.");
+        log.debug('Incorrect nesting optimization.');
         sendErrorNestingOptimization(response)
     }
 };
@@ -33,7 +33,7 @@ function getRequestBody(request) {
     try {
         return request.body;
     } catch(e) {
-        log.debug("Request body is incorrect");
+        log.debug('Request body is incorrect');
         return false;
     }
 }
@@ -43,7 +43,7 @@ function sendRequestParsingError(response){
         .status(httpStatusCodes.NOT_ACCEPTABLE)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "This API requests json format."
+            message : 'This API requests json format.'
         });
 }
 
@@ -52,7 +52,7 @@ function sendNestingOrderResult(response, result){
         .status(httpStatusCodes.CREATED)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send(JSON.stringify({
-            message : "Nesting order submitted.",
+            message : 'Nesting order submitted.',
             nesting_order_id : result
         }));
 }
@@ -62,11 +62,11 @@ function sendErrorNestingOptimization(response) {
         .status(httpStatusCodes.BAD_REQUEST)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send(JSON.stringify({
-            message : "An error occured.",
+            message : 'An error occured.',
             errors : [
                 {
-                    path : ["parts", 0, "instances", 0, "orientations"],
-                    message : "[] is too short",
+                    path : ['parts', 0, 'instances', 0, 'orientations'],
+                    message : '[] is too short',
                     error_code : -3000
                 }
             ]

@@ -13,37 +13,34 @@ const httpStatusCodes = require('../httpStatusCodes');
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-module.exports.onFullRequest = (request, response) => {
-    // TODO: will need to add request handling
-    log.debug('Request was came to the fetching handler');
+module.exports.onStatsRequest = (request, response) => {
+    log.debug('onStatsRequest(request, response)');
     response
         .status(httpStatusCodes.OK)
         .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send({
-            "message": "Successfully completed.",
-            "nestings": [
+        .send(
+            {
+                message: 'successfully completed',
+                nestings: [
                 {
-                    "length": 1.0,
-                    "sheet": 123,
-                    "nested_parts": [
+                    sheet: 1,
+                    nested_parts: [
                         {
-                            "id": 42,
-                            "position": [0.0, 0.0],
-                            "angle": 0.0,
-                            "flip": false
+                            id: 1,
                         }
                     ],
-                    "quantity": 1
-                }
-            ]
-        });
+                    quantity: 3,
+                    length: 1.0,
+                    height: 1.0
+                }]
+            });
 };
 
 module.exports.onImageRequest = (request, response) => {
-    log.debug('Request was came to the fetching handler');
-    const fileName = path.join(__dirname, '..', '..', 'images', request.params.id + '.png');
+    log.debug('onImageRequest(request, response)');
+    const fileName = path.join(__dirname, '..', '..', 'images', 'default_preview.png');
     if (!filesystem.isFileExistsSync(fileName)) {
-        log.debug("Nesting order not found.");
+        log.debug('Nesting order not found.');
         sendErrorAbsenceNestingOrder(response);
         return;
     }
@@ -51,7 +48,7 @@ module.exports.onImageRequest = (request, response) => {
     const fileSize = filesystem.getFileSizeSync(fileName);
     log.debug(fileSize);
     if (fileSize > limits.maxContentSize) {
-        log.debug("Nesting order is too big.");
+        log.debug('Nesting order is too big.');
         sendErrorSizeLimit(response);
         return;
     }
@@ -59,11 +56,37 @@ module.exports.onImageRequest = (request, response) => {
     filesystem
         .readFileAsync(fileName)
         .then((data) => {
-            log.debug("Nesting order was sent.");
+            log.debug('Nesting order was sent.');
             sendNestingOrder(response, data);
         }).catch((error) => {
-            log.debug("Nesting order was not read. Cause: " + error);
-            sendErrorAbsenceNestingOrder(response);
+        log.debug('Nesting order was not read. Cause: ' + error);
+        sendErrorAbsenceNestingOrder(response);
+    });
+};
+
+module.exports.onFullRequest = (request, response) => {
+    // TODO: will need to add request handling
+    log.debug('Request was came to the fetching handler');
+    response
+        .status(httpStatusCodes.OK)
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send({
+            message: 'Successfully completed.',
+            nestings: [
+                {
+                    length: 1.0,
+                    sheet: 123,
+                    nested_parts: [
+                        {
+                            id: 42,
+                            position: [0.0, 0.0],
+                            angle: 0.0,
+                            flip: false
+                        }
+                    ],
+                    quantity: 1
+                }
+            ]
         });
 };
 
@@ -79,7 +102,7 @@ function sendErrorAbsenceNestingOrder(response){
         .status(httpStatusCodes.NOT_FOUND)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "This nesting order does not exist"
+            message : 'This nesting order does not exist'
         });
 }
 
@@ -88,6 +111,6 @@ function sendErrorSizeLimit(response){
         .status(httpStatusCodes.BAD_REQUEST)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            "message" : "This nesting is too big."
+            message : 'This nesting is too big.'
         });
 }

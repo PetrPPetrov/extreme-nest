@@ -17,5 +17,5 @@ module.exports.isFileExistsSync = (fileName) => {
 
 module.exports.getFileSizeSync = (fileName) => {
     const stats = fs.statSync(fileName);
-    return stats["size"];
+    return stats['size'];
 };
