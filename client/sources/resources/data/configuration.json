@@ -2,7 +2,37 @@
   "availableServers": [
     {
       "name": "localhost",
-      "address": "http://127.0.0.1:80"
+      "address": "http://127.0.0.1:80",
+      "default": "true"
+    },
+    {
+      "name": "localhost:8080",
+      "address": "http://127.0.0.1:8080"
     }
-  ]
+  ],
+  "defaultNestingRequest": {
+    "parts":
+    [
+      {
+        "geometry": [[[0, 0], [1, 0], [1, 1], [0, 1]]],
+        "instances":
+        [
+          {
+            "id": 42
+          }
+        ]
+      }
+    ],
+
+    "sheets":
+    [
+      {
+        "height": 5.0,
+        "length": 10.0,
+        "id": 123
+      }
+    ],
+
+    "time": 5.0
+  }
 }

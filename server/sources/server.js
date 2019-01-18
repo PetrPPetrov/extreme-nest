@@ -26,6 +26,6 @@ log.level = 'info';
 
 server.listen(configuration.serverPort, configuration.serverAddress, () => {
     router.route(server);
-    log.info('Server was started successfuly. Address: ' +
+    log.info('Server was started successfully. Address: ' +
         configuration.serverAddress + ':' + configuration.serverPort);
 });

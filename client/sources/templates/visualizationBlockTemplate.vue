@@ -7,10 +7,7 @@
             you need get full nesting result and click on <b>Visualize</b> button.
             Also yo can download this image, for it click on button <b>Download</b>.
         </p>
-        <canvas id="canvas" v-show="$root.$data.isClickedOnVisualization"></canvas>
-        <div class="block" v-show="!$root.$data.isClickedOnVisualization">
-            <img :src="image">
-        </div>
+        <canvas id="canvas"/>
     </div>
 
 </template>
@@ -36,6 +33,7 @@
         width: 100%;
         height: 400px;
         border-radius: 5px;
+        border: 10px;
         margin-top: 12px;
     }
 
@@ -43,11 +41,6 @@
         text-align: center;
         margin-top: 13%;
         height: 500%;
-    }
-
-    .block {
-        margin-top: 20%;
-        height: 400px;
     }
 
     img {

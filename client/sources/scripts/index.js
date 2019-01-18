@@ -9,10 +9,10 @@ import visualizationBlockTemplate from '../templates/visualizationBlockTemplate'
 new Vue({
     el : '#app',
     data: {
-       isOpenedImportForms : true,
-       isClickedOnVisualization : false,
-       serverAddress: '',
-       nestingOrderID: 0,
+        isOpenedImportForms : true,
+        serverAddress: '',
+        nestingOrderID: 0,
+        nestingRequest: {}
     },
     components : {
         headerTemplate: headerTemplate,
