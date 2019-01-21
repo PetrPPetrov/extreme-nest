@@ -7,6 +7,10 @@
             you need get full nesting result and click on <b>Visualize</b> button.
             Also yo can download this image, for it click on button <b>Download</b>.
         </p>
+        <button class='block-button' @click="onClickPrevSheet"><</button>
+        <button class="block-button" @click="onClickNextSheet">></button>
+        <button class='block-button' @click="onClickDown">+</button>
+        <button class="block-button" @click="onClickUp">-</button>
         <canvas id="canvas"/>
     </div>
 
@@ -22,6 +26,25 @@
             return {
                 image: image
             }
+        },
+        methods : {
+
+            onClickPrevSheet : function () {
+                
+            },
+
+            onClickNextSheet : function() {
+                
+            },
+
+            onClickDown : function() {
+                
+            },
+
+            onClickUp : function () {
+
+            }
+            
         }
     }
 
@@ -29,11 +52,16 @@
 
 <style scoped>
 
+    .block-button {
+        margin-top: 5px;
+        width: 15%;
+    }
+
     canvas {
         width: 100%;
-        height: 408px;
+        height: 390px;
         border-radius: 5px;
-        margin-top: 12px;
+        margin-top: 8px;
         background-color: white;
     }
 
