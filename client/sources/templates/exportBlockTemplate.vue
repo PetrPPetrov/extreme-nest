@@ -29,6 +29,8 @@
 
     import configuration from '../resources/data/configuration'
 
+    const canvasPainter = require('../scripts/drawing/canvasPainter');
+
     export default {
         name: "exportBlockTemplate",
         data: function () {
@@ -78,12 +80,8 @@
             onClickVisualize: function() {
                 const canvas = document.getElementById("canvas");
                 const context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                context.lineWidth = 1;
-                drawFirstSheet(
-                    JSON.parse(this.$root.$data.nestingRequest),
-                    this.fullNestingResultJSON,
-                    context);
+                canvasPainter.drawNestingOptimization(canvas, context, '');
+
             }
         }
     }
@@ -105,30 +103,6 @@
                 .catch(error => reject(error));
         });
     }
-
-    function getSheetById(nestingRequest, id) {
-        return nestingRequest.sheets.find((sheet) => {
-            if (sheet.id === id) {
-                return sheet;
-            }
-        });
-    }
-
-    function getFirstNestingSheetId(nestingResult) {
-        if (!nestingResult.nestings.length) {
-            throw Error("Nesting Result Processing Error: No Nestings");
-        }
-        console.log('getFirstNestingSheetId: ' + nestingResult.nestings[0].sheet)
-        return nestingResult.nestings[0].sheet;
-    }
-
-    function drawFirstSheet(nestingRequest, nestingResult, context) {
-        console.log('drawFirstSheet');
-        console.log('nestingRequest' + nestingRequest);
-        console.log('nestingResult' + nestingResult);
-        getFirstNestingSheetId(nestingResult);
-    }
-
 
 </script>
 

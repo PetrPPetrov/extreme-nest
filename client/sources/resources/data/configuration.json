@@ -1,4 +1,6 @@
 {
+  "canvasLineWidth" : 1,
+  "canvasBackgroundColor": "#FFFFFF",
   "availableServers": [
     {
       "name": "localhost",

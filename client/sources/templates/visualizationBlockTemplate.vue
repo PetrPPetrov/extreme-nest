@@ -31,10 +31,10 @@
 
     canvas {
         width: 100%;
-        height: 400px;
+        height: 408px;
         border-radius: 5px;
-        border: 10px;
         margin-top: 12px;
+        background-color: white;
     }
 
     .visualization-form {
