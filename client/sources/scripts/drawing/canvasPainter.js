@@ -23,9 +23,12 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
         const geometry = getGeometryById(jsonNestingRequest, part.id);
         geometry.geometry.forEach((vertices) => {
             vertices.forEach((vertex) => {
-               const xPos = vertex[0];
-               const yPos = vertex[1];
-               context.lineTo(xPos * blockWidth, yPos * blockHeight);
+                if (part.angle !== 0) {
+                    rotateVertex(vertex, part.angle);
+                }
+                const xPos = vertex[0] + 15;
+                const yPos = vertex[1] + 15;
+                context.lineTo(xPos * blockWidth, yPos * blockHeight);
             });
         });
         context.fill();
@@ -65,6 +68,11 @@ function getNestingBySheetId(nestingResponse, id) {
             return nesting;
         }
     });
+}
+
+function rotateVertex(vertex, angle) {
+    vertex[0] = vertex[0] * Math.cos(angle) - vertex[1] * Math.sin(angle);
+    vertex[1] = vertex[0] * Math.sin(angle) + vertex[1] * Math.cos(angle);
 }
 
 function getRandomColor() {
