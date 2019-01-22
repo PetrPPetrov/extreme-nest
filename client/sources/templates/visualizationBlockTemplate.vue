@@ -10,11 +10,11 @@
         <button class='block-button'
                 @click="onClickPrevSheet"
                 :disabled="$root.$data.nestingRequest.sheets.length === 1"
-                :class="{'disabled-block-button' : $root.$data.nestingRequest.sheets.length === 1}"><</button>
+                :class="{'disabled-block-button' : ($root.$data.nestingRequest.sheets.length === 1)}"><</button>
         <button class="block-button"
                 @click="onClickNextSheet"
                 :disabled="$root.$data.nestingRequest.sheets.length === 1"
-                :class="{'disabled-block-button' : $root.$data.nestingRequest.sheets.length === 1}">></button>
+                :class="{'disabled-block-button' : ($root.$data.nestingRequest.sheets.length === 1)}">></button>
         <button class='block-button' @click="onClickDown">+</button>
         <button class="block-button" @click="onClickUp">-</button>
         <canvas id="canvas"></canvas>
@@ -37,19 +37,19 @@
         methods : {
 
             onClickPrevSheet : function () {
-                
+                console.log("< was clicked.");
             },
 
             onClickNextSheet : function() {
-                
+                console.log("> was clicked.");
             },
 
             onClickDown : function() {
-                console.log(this.$root.$data.nestingResponse);
+                console.log("+ was clicked.");
             },
 
             onClickUp : function () {
-
+                console.log("- was clicked.");
             }
             
         }
