@@ -5,17 +5,14 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
     context.lineWidth = 0;//configuration.canvasLineWidth;
 
     const sheet = getSheetById(jsonNestingRequest, sheetID);
-    const sheetHeight = sheet.height;
-    const sheetWidth = sheet.length;
-
-    const blockHeight = canvas.height / sheetHeight;
-    const blockWidth = canvas.width / sheetWidth;
+    const blockHeight = canvas.height / sheet.height;
+    const blockWidth = canvas.width / sheet.length;
 
     const nesting = getNestingBySheetId(jsonNestingResponse, sheetID);
     nesting.nested_parts.forEach((part) => {
-        const xPos = part.position[0];
-        const yPos = part.position[1];
-        context.moveTo(xPos * blockWidth, yPos * blockHeight);
+        const xPartPosition = part.position[0];
+        const yPartPosition = part.position[1];
+        context.moveTo(xPartPosition * blockWidth, yPartPosition * blockHeight);
         const color = getRandomColor();
         context.strokeStyle = color;
         context.fillStyle = color;
@@ -26,16 +23,17 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
                 if (part.angle !== 0) {
                     rotateVertex(vertex, part.angle);
                 }
-                const xPos = vertex[0] + 15;
-                const yPos = vertex[1] + 15;
-                context.lineTo(xPos * blockWidth, yPos * blockHeight);
+                const xVertexPosition = vertex[0];
+                const yVertexPosition = vertex[1];
+                context.lineTo(
+                    (xVertexPosition * blockWidth) + xPartPosition,
+                    (yVertexPosition * blockHeight) + yPartPosition
+                );
             });
         });
         context.fill();
         context.closePath();
     });
-
-    context.stroke();
 };
 
 function getSheetById(nestingRequest, id) {
