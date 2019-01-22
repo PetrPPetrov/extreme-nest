@@ -70,6 +70,7 @@
                     .then((data) => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
                         this.fullNestingResultJSON = data;
+                        this.$root.$data.nestingResponse = this.fullNestingResultJSON;
                         this.message = "Full nesting result has been received.";
                         this.fullNestingResult = true;
                     }).catch((error) => {
@@ -80,7 +81,11 @@
             onClickVisualize: function() {
                 const canvas = document.getElementById("canvas");
                 const context = canvas.getContext('2d');
-                canvasPainter.drawNestingOptimization(canvas, context, '');
+                const sheetID = 123; // TODO:
+                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID,
+                    this.$root.$data.nestingRequest,
+                    this.fullNestingResultJSON
+                );
 
             }
         }

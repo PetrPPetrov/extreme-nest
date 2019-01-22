@@ -53,7 +53,7 @@
                 if (!isValidJSONText(this.nestingRequest)) {
                     this.message = 'Error. Nesting request is incorrect.'
                 } else {
-                    this.$root.$data.nestingRequest = this.nestingRequest;
+                    this.$root.$data.nestingRequest = JSON.parse(this.nestingRequest);
                     this.message = 'Request is handling...';
                     this.isRunningSendingRequest = true;
                     const address = getServerAddress(this.availableServers, this.selectedAvailableServer);
@@ -75,7 +75,6 @@
                     this.message = "Nesting order was handled successfully.";
                     this.$root.$data.nestingOrderID = responseBody[componentName];
                     this.$root.$data.isOpenedImportForms = false;
-
                 } else {
                     this.message = "Nesting order was not processed. Try again."
                 }

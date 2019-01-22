@@ -7,11 +7,17 @@
             you need get full nesting result and click on <b>Visualize</b> button.
             Also yo can download this image, for it click on button <b>Download</b>.
         </p>
-        <button class='block-button' @click="onClickPrevSheet"><</button>
-        <button class="block-button" @click="onClickNextSheet">></button>
+        <button class='block-button'
+                @click="onClickPrevSheet"
+                :disabled="$root.$data.nestingRequest.sheets.length === 1"
+                :class="{'disabled-block-button' : $root.$data.nestingRequest.sheets.length === 1}"><</button>
+        <button class="block-button"
+                @click="onClickNextSheet"
+                :disabled="$root.$data.nestingRequest.sheets.length === 1"
+                :class="{'disabled-block-button' : $root.$data.nestingRequest.sheets.length === 1}">></button>
         <button class='block-button' @click="onClickDown">+</button>
         <button class="block-button" @click="onClickUp">-</button>
-        <canvas id="canvas"/>
+        <canvas id="canvas"></canvas>
     </div>
 
 </template>
@@ -24,7 +30,8 @@
         name: "visualizationBlockTemplate",
         data: function () {
             return {
-                image: image
+                image: image,
+                isSingleSheet: true,
             }
         },
         methods : {
@@ -38,7 +45,7 @@
             },
 
             onClickDown : function() {
-                
+                console.log(this.$root.$data.nestingResponse);
             },
 
             onClickUp : function () {
@@ -59,7 +66,7 @@
 
     canvas {
         width: 100%;
-        height: 390px;
+        height: 375px;
         border-radius: 5px;
         margin-top: 8px;
         background-color: white;

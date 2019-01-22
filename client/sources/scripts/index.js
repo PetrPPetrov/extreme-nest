@@ -12,7 +12,8 @@ new Vue({
         isOpenedImportForms : true,
         serverAddress: '',
         nestingOrderID: 0,
-        nestingRequest: {}
+        nestingRequest: {},
+        nestingResponse: {}
     },
     components : {
         headerTemplate: headerTemplate,
