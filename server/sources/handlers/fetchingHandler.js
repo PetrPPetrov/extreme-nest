@@ -40,7 +40,7 @@ module.exports.onImageRequest = (request, response) => {
     log.debug('onImageRequest(request, response)');
     const fileName = path.join(__dirname, '..', '..', 'images', 'default_preview.png');
     if (!filesystem.isFileExistsSync(fileName)) {
-        log.debug('Nesting order not found.');
+        log.debug('Preview image is not found.');
         sendErrorAbsenceNestingOrder(response);
         return;
     }
@@ -48,7 +48,7 @@ module.exports.onImageRequest = (request, response) => {
     const fileSize = filesystem.getFileSizeSync(fileName);
     log.debug(fileSize);
     if (fileSize > limits.maxContentSize) {
-        log.debug('Nesting order is too big.');
+        log.debug('Preview image is too big.');
         sendErrorSizeLimit(response);
         return;
     }
@@ -56,17 +56,16 @@ module.exports.onImageRequest = (request, response) => {
     filesystem
         .readFileAsync(fileName)
         .then((data) => {
-            log.debug('Nesting order was sent.');
-            sendNestingOrder(response, data);
+            log.debug('Preview image has been sent.');
+            sendPreviewImage(response, data);
         }).catch((error) => {
-        log.debug('Nesting order was not read. Cause: ' + error);
+            log.debug('Could not read preview image. Cause: ' + error);
         sendErrorAbsenceNestingOrder(response);
     });
 };
 
 module.exports.onFullRequest = (request, response) => {
-    // TODO: will need to add request handling
-    log.debug('Request was came to the fetching handler');
+    log.debug('onFullRequest(request, response)');
     response
         .status(httpStatusCodes.OK)
         .set({'Content-Type': 'application/json; charset=utf-8'})
@@ -90,7 +89,7 @@ module.exports.onFullRequest = (request, response) => {
         });
 };
 
-function sendNestingOrder(response, data) {
+function sendPreviewImage(response, data) {
     response
         .status(httpStatusCodes.OK)
         .set({'Content-Type': 'image/png'})
