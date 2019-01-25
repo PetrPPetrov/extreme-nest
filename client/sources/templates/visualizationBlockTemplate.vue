@@ -27,7 +27,7 @@
     import image from '../resources/images/visualization-icon.png'
 
     export default {
-        name: "visualizationBlockTemplate",
+        name: 'visualizationBlockTemplate',
         data: function () {
             return {
                 image: image,
@@ -37,19 +37,19 @@
         methods : {
 
             onClickPrevSheet : function () {
-                console.log("< was clicked.");
+                console.log('< was clicked');
             },
 
             onClickNextSheet : function() {
-                console.log("> was clicked.");
+                console.log('> was clicked');
             },
 
             onClickDown : function() {
-                console.log("+ was clicked.");
+                console.log('+ was clicked');
             },
 
             onClickUp : function () {
-                console.log("- was clicked.");
+                console.log('- was clicked');
             }
             
         }

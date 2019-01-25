@@ -32,13 +32,13 @@
     const canvasPainter = require('../scripts/drawing/canvasPainter');
 
     export default {
-        name: "exportBlockTemplate",
+        name: 'exportBlockTemplate',
         data: function () {
             return {
                 nestingOrder : '',
                 fullNestingResult : false,
                 fullNestingResultJSON: {},
-                message : 'Unknown status.'
+                message : 'Unknown status'
             }
         },
         methods: {
@@ -47,21 +47,21 @@
                 getNestingStats(this.$root.$data.serverAddress, this.$root.$data.nestingOrderID)
                     .then((data) => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
-                        this.message = "Nesting stats have been received.";
+                        this.message = 'Nesting stats have been received';
                         this.fullNestingResult = false;
                     }).catch((error) => {
-                        this.message = "Error. Can not receive nesting stats.";
+                        this.message = 'Error. Can not receive nesting stats';
                     });
             },
 
             onClickPreview: function() {
-                const canvas = document.getElementById("canvas");
+                const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
                 const image = new Image();
                 image.src = this.$root.$data.serverAddress + '/result/' + this.$root.$data.nestingOrderID + '/image';
                 image.onload = () => {
                     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-                    this.message = "Preview image has been received.";
+                    this.message = 'Preview image has been received';
                 }
             },
 
@@ -71,15 +71,15 @@
                         this.nestingOrder = JSON.stringify(data, null, 4);
                         this.fullNestingResultJSON = data;
                         this.$root.$data.nestingResponse = this.fullNestingResultJSON;
-                        this.message = "Full nesting result has been received.";
+                        this.message = 'Full nesting result has been received';
                         this.fullNestingResult = true;
                     }).catch((error) => {
-                        this.message = "Error. Can not receive full nesting result.";
+                        this.message = 'Error. Can not receive full nesting result';
                     });
             },
 
             onClickVisualize: function() {
-                const canvas = document.getElementById("canvas");
+                const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
                 const sheetID = 123; // TODO:
                 canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID,

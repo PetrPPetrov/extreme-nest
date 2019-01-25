@@ -26,7 +26,7 @@
     import configuration from '../resources/data/configuration'
 
     export default {
-        name: "importBlockTemplate",
+        name: 'importBlockTemplate',
         data: function () {
             return {
                 availableServers: configuration.availableServers,
@@ -40,18 +40,18 @@
 
             onClickSendNestingRequest: function() {
                 if (this.nestingRequest.length === 0) {
-                    this.message = 'Error. Nesting request is empty.';
+                    this.message = 'Error. Nesting request is empty';
                     return;
                 }
 
                 if ( (this.selectedAvailableServer.length === 0) ||
                      (this.selectedAvailableServer === 'Not selected') ) {
-                    this.message = 'Error. Did not select available server.';
+                    this.message = 'Error. Did not select available server';
                     return;
                 }
 
                 if (!isValidJSONText(this.nestingRequest)) {
-                    this.message = 'Error. Nesting request is incorrect.'
+                    this.message = 'Error. Nesting request is incorrect'
                 } else {
                     this.$root.$data.nestingRequest = JSON.parse(this.nestingRequest);
                     this.message = 'Request is handling...';
@@ -64,7 +64,7 @@
                             this.handleNestingResponse(data);
                         }).catch((error) => {
                             this.isRunningSendingRequest = false;
-                            this.message = 'Error. Can not connect to the selected server.';
+                            this.message = 'Error. Can not connect to the selected server';
                         });
                 }
             },
@@ -72,11 +72,11 @@
             handleNestingResponse: function(responseBody) {
                 const componentName = 'nesting_order_id';
                 if (componentName in responseBody){
-                    this.message = "Nesting order was handled successfully.";
+                    this.message = 'Nesting order was handled successfully';
                     this.$root.$data.nestingOrderID = responseBody[componentName];
                     this.$root.$data.isOpenedImportForms = false;
                 } else {
-                    this.message = "Nesting order was not processed. Try again."
+                    this.message = 'Nesting order was not processed. Try again';
                 }
             }
 
