@@ -64,6 +64,7 @@
                             this.handleNestingResponse(data);
                         }).catch((error) => {
                             this.isRunningSendingRequest = false;
+                            this.nestingRequest = error;
                             this.message = 'Error. Can not connect to the selected server';
                         });
                 }

@@ -51,6 +51,7 @@
                         this.fullNestingResult = false;
                     }).catch((error) => {
                         this.message = 'Error. Can not receive nesting stats';
+                        this.nestingOrder = error;
                     });
             },
 
@@ -75,6 +76,7 @@
                         this.fullNestingResult = true;
                     }).catch((error) => {
                         this.message = 'Error. Can not receive full nesting result';
+                        this.nestingOrder = error;
                     });
             },
 
