@@ -857,6 +857,10 @@ function placeParts(sheets, parts, config, nestindex){
 			var sheetNfp = null;				
 			// try all possible rotations until it fits
 			// (only do this for the first part of each sheet, to ensure that all parts that can be placed are, even if we have to to open a lot of sheets)
+
+			// TODO: Check if it is a bug?
+			// instead of 360/config.rotations
+			// it should be config.rotations
 			for(j=0; j<(360/config.rotations); j++){
 				sheetNfp = getInnerNfp(sheet, part, config);
 				

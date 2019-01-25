@@ -1,0 +1,572 @@
+{
+    "description": "Schema to define a nesting job",
+    "title": "Job Schema",
+    "required": [
+        "parts",
+        "sheets",
+        "time"
+    ],
+    "additionalProperties": false,
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "pre_nestings": {
+            "items": {
+                "additionalProperties": false,
+                "required": [
+                    "nested_parts",
+                    "sheet"
+                ],
+                "type": "object",
+                "properties": {
+                    "sheet": {
+                        "type": "integer",
+                        "description": "id of the sheet"
+                    },
+                    "nested_parts": {
+                        "items": {
+                            "additionalProperties": false,
+                            "required": [
+                                "id",
+                                "position",
+                                "angle",
+                                "flip"
+                            ],
+                            "type": "object",
+                            "properties": {
+                                "position": {
+                                    "minItems": 2,
+                                    "items": {
+                                        "type": "number"
+                                    },
+                                    "type": "array",
+                                    "maxItems": 2
+                                },
+                                "angle": {
+                                    "exclusiveMaximum": true,
+                                    "minimum": 0,
+                                    "type": "number",
+                                    "maximum": 360
+                                },
+                                "id": {
+                                    "type": "integer",
+                                    "description": "id of the part"
+                                },
+                                "flip": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
+                        "type": "array"
+                    },
+                    "quantity": {
+                        "default": 1,
+                        "type": "integer",
+                        "description": "multiplicity of the pre-nesting"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "fill those existing nestings in priority"
+        },
+        "parts": {
+            "minItems": 1,
+            "items": {
+                "additionalProperties": false,
+                "required": [
+                    "geometry",
+                    "instances"
+                ],
+                "type": "object",
+                "properties": {
+                    "geometry": {
+                        "minItems": 1,
+                        "items": [
+                            {
+                                "minItems": 2,
+                                "items": {
+                                    "oneOf": [
+                                        {
+                                            "minItems": 2,
+                                            "items": [
+                                                {
+                                                    "type": "number"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "description": "carthesian coordinates of each point of the shape",
+                                            "maxItems": 2
+                                        },
+                                        {
+                                            "description": "carthesian coordinates of each point of the shape, with possibility to describe an arc",
+                                            "required": [
+                                                "x",
+                                                "y"
+                                            ],
+                                            "maxProperties": 3,
+                                            "additionalProperties": false,
+                                            "type": "object",
+                                            "properties": {
+                                                "y": {
+                                                    "type": "number",
+                                                    "description": "y coordinate of the point"
+                                                },
+                                                "x": {
+                                                    "type": "number",
+                                                    "description": "x coordinate of the point"
+                                                },
+                                                "sag": {
+                                                    "type": "number",
+                                                    "description": "sagitta of the arc between the current and the next point"
+                                                },
+                                                "bul": {
+                                                    "type": "number",
+                                                    "description": "bulge of the arc between the current and the next point"
+                                                },
+                                                "cir": {
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "x",
+                                                        "y",
+                                                        "dir"
+                                                    ],
+                                                    "type": "object",
+                                                    "description": "circle of the arc between the current and the next point",
+                                                    "properties": {
+                                                        "y": {
+                                                            "type": "number",
+                                                            "description": "y coordinate of the circle center"
+                                                        },
+                                                        "x": {
+                                                            "type": "number",
+                                                            "description": "x coordinate of the circle center"
+                                                        },
+                                                        "dir": {
+                                                            "type": "boolean",
+                                                            "description": "direction of the arc circle : False is anti-trigo (clockwise) and True is trigo"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "type": "array",
+                                "description": "the geometry of a single outline, with a list of pairs of coordinates, and optional sagittas of arcs"
+                            }
+                        ],
+                        "type": "array",
+                        "description": "the list of external outlines of the part to nest"
+                    },
+                    "instances": {
+                        "minItems": 1,
+                        "items": {
+                            "additionalProperties": false,
+                            "required": [
+                                "id"
+                            ],
+                            "type": "object",
+                            "properties": {
+                                "quantity": {
+                                    "default": 1,
+                                    "minimum": 1,
+                                    "type": "integer"
+                                },
+                                "orientations": {
+                                    "minItems": 1,
+                                    "items": {
+                                        "oneOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "required": [
+                                                    "angle"
+                                                ],
+                                                "type": "object",
+                                                "description": "a simple orientation is described as an angle, in degrees with a value in [0, 359.99], and a flip",
+                                                "properties": {
+                                                    "angle": {
+                                                        "exclusiveMaximum": true,
+                                                        "minimum": 0,
+                                                        "type": "number",
+                                                        "maximum": 360
+                                                    },
+                                                    "flip": {
+                                                        "default": false,
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "required": [
+                                                    "min_angle",
+                                                    "max_angle"
+                                                ],
+                                                "type": "object",
+                                                "description": "a range orientation is described as an angle interval, in degrees with values in [0, 359.99], and a flip",
+                                                "properties": {
+                                                    "flip": {
+                                                        "default": false,
+                                                        "type": "boolean"
+                                                    },
+                                                    "min_angle": {
+                                                        "exclusiveMinimum": false,
+                                                        "minimum": 0,
+                                                        "type": "number"
+                                                    },
+                                                    "max_angle": {
+                                                        "exclusiveMaximum": true,
+                                                        "type": "number",
+                                                        "maximum": 360
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "type": "array",
+                                    "description": "the list of allowed orientations"
+                                },
+                                "id": {
+                                    "type": "integer",
+                                    "description": "unique identifier of the part"
+                                }
+                            }
+                        },
+                        "type": "array",
+                        "description": "describe the actual parts (quantities, authorizations, ...) having this geometry"
+                    },
+                    "protection_offset": {
+                        "default": 0,
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "holes": {
+                        "minItems": 1,
+                        "items": [
+                            {
+                                "minItems": 2,
+                                "items": {
+                                    "oneOf": [
+                                        {
+                                            "minItems": 2,
+                                            "items": [
+                                                {
+                                                    "type": "number"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "description": "carthesian coordinates of each point of the shape",
+                                            "maxItems": 2
+                                        },
+                                        {
+                                            "description": "carthesian coordinates of each point of the shape, with possibility to describe an arc",
+                                            "required": [
+                                                "x",
+                                                "y"
+                                            ],
+                                            "maxProperties": 3,
+                                            "additionalProperties": false,
+                                            "type": "object",
+                                            "properties": {
+                                                "y": {
+                                                    "type": "number",
+                                                    "description": "y coordinate of the point"
+                                                },
+                                                "x": {
+                                                    "type": "number",
+                                                    "description": "x coordinate of the point"
+                                                },
+                                                "sag": {
+                                                    "type": "number",
+                                                    "description": "sagitta of the arc between the current and the next point"
+                                                },
+                                                "bul": {
+                                                    "type": "number",
+                                                    "description": "bulge of the arc between the current and the next point"
+                                                },
+                                                "cir": {
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "x",
+                                                        "y",
+                                                        "dir"
+                                                    ],
+                                                    "type": "object",
+                                                    "description": "circle of the arc between the current and the next point",
+                                                    "properties": {
+                                                        "y": {
+                                                            "type": "number",
+                                                            "description": "y coordinate of the circle center"
+                                                        },
+                                                        "x": {
+                                                            "type": "number",
+                                                            "description": "x coordinate of the circle center"
+                                                        },
+                                                        "dir": {
+                                                            "type": "boolean",
+                                                            "description": "direction of the arc circle : False is anti-trigo (clockwise) and True is trigo"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "type": "array",
+                                "description": "the geometry of a single outline, with a list of pairs of coordinates, and optional sagittas of arcs"
+                            }
+                        ],
+                        "type": "array",
+                        "description": "the list holes of the part"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Defines all the parts to nest: geometries, quantities, properties, ...",
+            "maxItems": 1500
+        },
+        "sheets": {
+            "minItems": 1,
+            "type": "array",
+            "desciption": "Description of all formats and quantities available for this nesting job",
+            "items": {
+                "description": "one format and its quantity",
+                "allOf": [
+                    {
+                        "not": {
+                            "required": [
+                                "contour",
+                                "length"
+                            ]
+                        }
+                    },
+                    {
+                        "not": {
+                            "required": [
+                                "contour",
+                                "height"
+                            ]
+                        }
+                    },
+                    {
+                        "oneOf": [
+                            {
+                                "required": [
+                                    "length",
+                                    "height"
+                                ]
+                            },
+                            {
+                                "required": [
+                                    "contour"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "required": [
+                    "id"
+                ],
+                "additionalProperties": false,
+                "type": "object",
+                "properties": {
+                    "border_gap": {
+                        "oneOf": [
+                            {
+                                "default": 0,
+                                "minimum": 0,
+                                "type": "number"
+                            },
+                            {
+                                "minItems": 4,
+                                "items": {
+                                    "minimum": 0,
+                                    "type": "number"
+                                },
+                                "type": "array",
+                                "description": "Set a different border gap for each side a sheet, described in the following order: left, right, bottom and top",
+                                "maxItems": 4
+                            }
+                        ]
+                    },
+                    "contour": {
+                        "minItems": 2,
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "minItems": 2,
+                                    "items": [
+                                        {
+                                            "type": "number"
+                                        }
+                                    ],
+                                    "type": "array",
+                                    "description": "carthesian coordinates of each point of the shape",
+                                    "maxItems": 2
+                                },
+                                {
+                                    "description": "carthesian coordinates of each point of the shape, with possibility to describe an arc",
+                                    "required": [
+                                        "x",
+                                        "y"
+                                    ],
+                                    "maxProperties": 3,
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                        "y": {
+                                            "type": "number",
+                                            "description": "y coordinate of the point"
+                                        },
+                                        "x": {
+                                            "type": "number",
+                                            "description": "x coordinate of the point"
+                                        },
+                                        "sag": {
+                                            "type": "number",
+                                            "description": "sagitta of the arc between the current and the next point"
+                                        },
+                                        "bul": {
+                                            "type": "number",
+                                            "description": "bulge of the arc between the current and the next point"
+                                        },
+                                        "cir": {
+                                            "additionalProperties": false,
+                                            "required": [
+                                                "x",
+                                                "y",
+                                                "dir"
+                                            ],
+                                            "type": "object",
+                                            "description": "circle of the arc between the current and the next point",
+                                            "properties": {
+                                                "y": {
+                                                    "type": "number",
+                                                    "description": "y coordinate of the circle center"
+                                                },
+                                                "x": {
+                                                    "type": "number",
+                                                    "description": "x coordinate of the circle center"
+                                                },
+                                                "dir": {
+                                                    "type": "boolean",
+                                                    "description": "direction of the arc circle : False is anti-trigo (clockwise) and True is trigo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "description": "the geometry of a single outline, with a list of pairs of coordinates, and optional sagittas of arcs"
+                    },
+                    "length": {
+                        "type": "number",
+                        "description": "-1 to set an infinite length"
+                    },
+                    "defects": {
+                        "minItems": 1,
+                        "items": [
+                            {
+                                "minItems": 2,
+                                "items": {
+                                    "oneOf": [
+                                        {
+                                            "minItems": 2,
+                                            "items": [
+                                                {
+                                                    "type": "number"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "description": "carthesian coordinates of each point of the shape",
+                                            "maxItems": 2
+                                        },
+                                        {
+                                            "description": "carthesian coordinates of each point of the shape, with possibility to describe an arc",
+                                            "required": [
+                                                "x",
+                                                "y"
+                                            ],
+                                            "maxProperties": 3,
+                                            "additionalProperties": false,
+                                            "type": "object",
+                                            "properties": {
+                                                "y": {
+                                                    "type": "number",
+                                                    "description": "y coordinate of the point"
+                                                },
+                                                "x": {
+                                                    "type": "number",
+                                                    "description": "x coordinate of the point"
+                                                },
+                                                "sag": {
+                                                    "type": "number",
+                                                    "description": "sagitta of the arc between the current and the next point"
+                                                },
+                                                "bul": {
+                                                    "type": "number",
+                                                    "description": "bulge of the arc between the current and the next point"
+                                                },
+                                                "cir": {
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "x",
+                                                        "y",
+                                                        "dir"
+                                                    ],
+                                                    "type": "object",
+                                                    "description": "circle of the arc between the current and the next point",
+                                                    "properties": {
+                                                        "y": {
+                                                            "type": "number",
+                                                            "description": "y coordinate of the circle center"
+                                                        },
+                                                        "x": {
+                                                            "type": "number",
+                                                            "description": "x coordinate of the circle center"
+                                                        },
+                                                        "dir": {
+                                                            "type": "boolean",
+                                                            "description": "direction of the arc circle : False is anti-trigo (clockwise) and True is trigo"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "type": "array",
+                                "description": "the geometry of a single outline, with a list of pairs of coordinates, and optional sagittas of arcs"
+                            }
+                        ],
+                        "type": "array",
+                        "description": "the list of defects outlines of the sheet"
+                    },
+                    "height": {
+                        "exclusiveMinimum": true,
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "description": "unique identifier of the sheet"
+                    },
+                    "quantity": {
+                        "default": 1,
+                        "minimum": 1,
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "time": {
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "type": "number",
+            "description": "Time given for the job in seconds",
+            "maximum": 300
+        }
+    }
+}

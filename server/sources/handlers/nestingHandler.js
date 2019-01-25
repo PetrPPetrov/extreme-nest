@@ -2,73 +2,46 @@
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
+'use strict';
 
 const log4js = require('log4js');
-
-const nesting = require('../nesting/nesting');
+const validator = require('jsonschema');
+const common = require('./common');
 const httpStatusCodes = require('../httpStatusCodes');
+const nesting = require('../nesting/nestingRequest');
+const jsonSchema = require('../../resources/job_schema');
 
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-module.exports.onRequest = (request, response) => {
-    log.debug('Request was came to the nesting handler');
-    let requestBody = getRequestBody(request);
-    if (!requestBody) {
-        log.debug('Request body is incorrect.');
-        sendRequestParsingError(response);
+module.exports.onNestingRequest = (request, response) => {
+    log.debug('onNestingRequest(request, response)');
+    const nestingRequest = common.getRequestBody(request);
+    if (!nestingRequest) {
+        log.debug('Nesting request is incorrect');
+        common.sendRequestParsingError(response);
+        return;
     }
 
-    const nestingResult = nesting.optimizeNesting(requestBody);
-    if (nestingResult) {
-        log.debug('Successful nesting optimization.');
-        sendNestingOrderResult(response, nestingResult);
-    } else {
-        log.debug('Incorrect nesting optimization.');
-        sendErrorNestingOptimization(response)
+    const jsonValidator = new validator.Validator();
+    const validationResult = jsonValidator.validate(nestingRequest, jsonSchema);
+    if (!validationResult.valid) {
+        log.debug('JSON scheme validation failure');
+        common.sendRequestValidationError(response, validationResult.errors);
+        return;
     }
+
+    const orderID = nesting.processNestingRequest(nestingRequest);
+    log.debug('OrderID ' + orderID);
+    sendNestingOrderID(response, orderID);
 };
 
-function getRequestBody(request) {
-    try {
-        return request.body;
-    } catch(e) {
-        log.debug('Request body is incorrect');
-        return false;
-    }
-}
-
-function sendRequestParsingError(response){
-    response
-        .status(httpStatusCodes.NOT_ACCEPTABLE)
-        .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send({
-            message : 'This API requests json format.'
-        });
-}
-
-function sendNestingOrderResult(response, result){
+function sendNestingOrderID(response, orderID){
     response
         .status(httpStatusCodes.CREATED)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send(JSON.stringify({
-            message : 'Nesting order submitted.',
-            nesting_order_id : result
-        }));
-}
-
-function sendErrorNestingOptimization(response) {
-    response
-        .status(httpStatusCodes.BAD_REQUEST)
-        .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send(JSON.stringify({
-            message : 'An error occured.',
-            errors : [
-                {
-                    path : ['parts', 0, 'instances', 0, 'orientations'],
-                    message : '[] is too short',
-                    error_code : -3000
-                }
-            ]
+            message : 'Nesting order submitted',
+            nesting_order_id : orderID
         }));
 }

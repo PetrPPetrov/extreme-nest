@@ -2,9 +2,11 @@
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
+'use strict';
 
 module.exports.OK = 200;
 module.exports.CREATED = 201;
+module.exports.STILL_COMPUTING = 202;
 
 module.exports.BAD_REQUEST = 400;
 module.exports.UNAUTHORIZED = 401;

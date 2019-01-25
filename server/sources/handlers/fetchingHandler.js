@@ -2,6 +2,7 @@
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
+'use strict';
 
 const path = require('path');
 const log4js = require('log4js');
@@ -64,31 +65,6 @@ module.exports.onImageRequest = (request, response) => {
     });
 };
 
-module.exports.onFullRequest = (request, response) => {
-    log.debug('onFullRequest(request, response)');
-    response
-        .status(httpStatusCodes.OK)
-        .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send({
-            message: 'Successfully completed.',
-            nestings: [
-                {
-                    length: 1.0,
-                    sheet: 123,
-                    nested_parts: [
-                        {
-                            id: 42,
-                            position: [0.0, 0.0],
-                            angle: 0.0,
-                            flip: false
-                        }
-                    ],
-                    quantity: 1
-                }
-            ]
-        });
-};
-
 function sendPreviewImage(response, data) {
     response
         .status(httpStatusCodes.OK)
@@ -110,6 +86,6 @@ function sendErrorSizeLimit(response){
         .status(httpStatusCodes.BAD_REQUEST)
         .set({'Content-Type': 'application/json; charset=utf-8'})
         .send({
-            message : 'This nesting is too big.'
+            message : 'This nesting is too big'
         });
 }
