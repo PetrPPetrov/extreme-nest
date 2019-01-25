@@ -12,25 +12,40 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
     nesting.nested_parts.forEach((part) => {
         const xPartPosition = part.position[0];
         const yPartPosition = part.position[1];
-        context.moveTo(xPartPosition * blockWidth, yPartPosition * blockHeight);
         const color = getRandomColor();
         context.strokeStyle = color;
         context.fillStyle = color;
         context.beginPath();
+        if (part.angle !== 0) {
+            context.save();
+            context.translate(xPartPosition * blockWidth, yPartPosition * blockHeight);
+            context.rotate(part.angle * Math.PI / 180.0);
+            context.moveTo(0, 0);
+        } else {
+            context.moveTo(xPartPosition * blockWidth, yPartPosition * blockHeight);
+        }
         const geometry = getGeometryById(jsonNestingRequest, part.id);
         geometry.geometry.forEach((vertices) => {
             vertices.forEach((vertex) => {
-                if (part.angle !== 0) {
-                    rotateVertex(vertex, part.angle);
-                }
                 const xVertexPosition = vertex[0];
                 const yVertexPosition = vertex[1];
-                context.lineTo(
-                    (xVertexPosition * blockWidth) + xPartPosition,
-                    (yVertexPosition * blockHeight) + yPartPosition
-                );
+                if (part.angle !== 0) {
+                    context.lineTo(
+                        xVertexPosition * blockWidth,
+                        yVertexPosition * blockHeight
+                    );
+                } else {
+                    context.lineTo(
+                        (xVertexPosition + xPartPosition) * blockWidth,
+                        (yVertexPosition + yPartPosition) * blockHeight
+                    );
+                }
+
             });
         });
+        if (part.angle !== 0) {
+            context.restore();
+        }
         context.fill();
         context.closePath();
     });
@@ -66,11 +81,6 @@ function getNestingBySheetId(nestingResponse, id) {
             return nesting;
         }
     });
-}
-
-function rotateVertex(vertex, angle) {
-    vertex[0] = vertex[0] * Math.cos(angle) - vertex[1] * Math.sin(angle);
-    vertex[1] = vertex[0] * Math.sin(angle) + vertex[1] * Math.cos(angle);
 }
 
 function getRandomColor() {
