@@ -1,18 +1,24 @@
-//import configuration from '../../resources/data/configuration'
+// Copyright (c) 2019 by
+// GkmSoft (individual entrepreneur Petr Petrovich Petrov)
+// This file is part of deep-nest-rest project.
+// This software is intellectual property of GkmSoft.
+
+const requestParser = require('./nestingRequestParser');
+const responseParser = require('./nestingResponseParser');
 
 module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.lineWidth = 0;//configuration.canvasLineWidth;
 
-    const sheet = getSheetById(jsonNestingRequest, sheetID);
+    const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
     const blockHeight = canvas.height / sheet.height;
     const blockWidth = canvas.width / sheet.length;
 
-    const nesting = getNestingBySheetId(jsonNestingResponse, sheetID);
+    const nesting = responseParser.getNestingBySheetId(jsonNestingResponse, sheetID);
     nesting.nested_parts.forEach((part) => {
         const xPartPosition = part.position[0];
         const yPartPosition = part.position[1];
-        const color = getRandomColor();
+        const color = generateColor();
         context.strokeStyle = color;
         context.fillStyle = color;
         context.beginPath();
@@ -24,7 +30,7 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
         } else {
             context.moveTo(xPartPosition * blockWidth, yPartPosition * blockHeight);
         }
-        const geometry = getGeometryById(jsonNestingRequest, part.id);
+        const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
         geometry.geometry.forEach((vertices) => {
             vertices.forEach((vertex) => {
                 const xVertexPosition = vertex[0];
@@ -40,7 +46,6 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
                         (yVertexPosition + yPartPosition) * blockHeight
                     );
                 }
-
             });
         });
         if (part.angle !== 0) {
@@ -51,39 +56,7 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
     });
 };
 
-function getSheetById(nestingRequest, id) {
-    return nestingRequest.sheets.find((sheet) => {
-        if (sheet.id === id) {
-            return sheet;
-        }
-    });
-}
-
-function getGeometryById(nestingRequest, id) {
-    return nestingRequest.parts.find((part) => {
-        if (isExistInstanceInPartWithId(part, id)) {
-            return part.geometry;
-        }
-    });
-}
-
-function isExistInstanceInPartWithId(part, id) {
-    return part.instances.find((instance) => {
-        if (instance.id === id) {
-            return true;
-        }
-    });
-}
-
-function getNestingBySheetId(nestingResponse, id) {
-    return nestingResponse.nestings.find((nesting) => {
-        if (nesting.sheet === id) {
-            return nesting;
-        }
-    });
-}
-
-function getRandomColor() {
+function generateColor() {
     const letters = '0123456789ABCDE';
     let color = '#';
     for (let i = 0; i < 6; i++) {

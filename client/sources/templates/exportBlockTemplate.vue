@@ -29,7 +29,8 @@
 
     import configuration from '../resources/data/configuration'
 
-    const canvasPainter = require('../scripts/drawing/canvasPainter');
+    const canvasPainter = require('../scripts/canvasPainter');
+    const nestingRequestParser = require('../scripts/nestingRequestParser');
 
     export default {
         name: 'exportBlockTemplate',
@@ -37,7 +38,6 @@
             return {
                 nestingOrder : '',
                 fullNestingResult : false,
-                fullNestingResultJSON: {},
                 message : 'Unknown status'
             }
         },
@@ -70,8 +70,7 @@
                 getFullNestingResult(this.$root.$data.serverAddress, this.$root.$data.nestingOrderID)
                     .then((data) => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
-                        this.fullNestingResultJSON = data;
-                        this.$root.$data.nestingResponse = this.fullNestingResultJSON;
+                        this.$root.$data.nestingResponse = data;
                         this.message = 'Full nesting result has been received';
                         this.fullNestingResult = true;
                     }).catch((error) => {
@@ -83,12 +82,10 @@
             onClickVisualize: function() {
                 const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
-                const sheetID = 123; // TODO:
-                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID,
-                    this.$root.$data.nestingRequest,
-                    this.fullNestingResultJSON
-                );
-
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
+                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID, nestingRequest, nestingResponse);
             }
         }
     }

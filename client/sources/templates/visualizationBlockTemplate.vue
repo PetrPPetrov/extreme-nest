@@ -7,14 +7,8 @@
             you need get full nesting result and click on <b>Visualize</b> button.
             Also yo can download this image, for it click on button <b>Download</b>.
         </p>
-        <button class='block-button'
-                @click="onClickPrevSheet"
-                :disabled="$root.$data.nestingRequest.sheets.length === 1"
-                :class="{'disabled-block-button' : ($root.$data.nestingRequest.sheets.length === 1)}"><</button>
-        <button class="block-button"
-                @click="onClickNextSheet"
-                :disabled="$root.$data.nestingRequest.sheets.length === 1"
-                :class="{'disabled-block-button' : ($root.$data.nestingRequest.sheets.length === 1)}">></button>
+        <button class='block-button' @click="onClickPrevSheet"><</button>
+        <button class="block-button" @click="onClickNextSheet">></button>
         <button class='block-button' @click="onClickDown">+</button>
         <button class="block-button" @click="onClickUp">-</button>
         <canvas id="canvas"></canvas>
@@ -26,22 +20,42 @@
 
     import image from '../resources/images/visualization-icon.png'
 
+    const canvasPainter = require('../scripts/canvasPainter');
+    const nestingRequestParser = require('../scripts/nestingRequestParser');
+
     export default {
         name: 'visualizationBlockTemplate',
         data: function () {
             return {
                 image: image,
                 isSingleSheet: true,
+                openedSheetIndex: 0
             }
         },
         methods : {
 
             onClickPrevSheet : function () {
-                console.log('< was clicked');
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
+                if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
+                    const sheetId = sheetsId[--this.openedSheetIndex];
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse);
+                }
             },
 
             onClickNextSheet : function() {
-                console.log('> was clicked');
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
+                if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
+                    const sheetId = sheetsId[++this.openedSheetIndex];
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse);
+                }
             },
 
             onClickDown : function() {
