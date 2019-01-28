@@ -33,7 +33,7 @@ module.exports.onNestingRequest = (request, response) => {
     }
 
     const orderID = nesting.processNestingRequest(nestingRequest);
-    log.debug('OrderID ' + orderID);
+    log.debug(`Created new nesting request, ${orderID}`);
     sendNestingOrderID(response, orderID);
 };
 

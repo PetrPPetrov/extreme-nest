@@ -1,12 +1,11 @@
-/*!
- * Deepnest
- * Licensed under GPLv3
- */
+// Copyright (c) 2019 by
+// GkmSoft (individual entrepreneur Petr Petrovich Petrov)
+// This file is part of deep-nest-rest project.
+// This software is intellectual property of GkmSoft.
 
 'use strict';
 
 const log4js = require('log4js');
-const worker = require('worker_threads');
 const ClipperLib = require('../../dependencies/deepnest/util/clippernode');
 const GeometryUtil = require('../../dependencies/deepnest/util/geometryutil');
 const simplifyLib = require('../../dependencies/deepnest/util/simplify');
@@ -16,14 +15,15 @@ const FitnessCalculator = require('./calculateFitness');
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-worker.parentPort.on('message', (nestingRequest) => {
-    log.debug('Started nesting');
+module.exports = function(nestingRequest, done) {
+    log.debug(`Started nesting, orderID = ${nestingRequest.orderID}`);
 
     let deepNest = new DeepNest(nestingRequest);
-    deepNest.start();
+    deepNest.nest();
 
-    process.exit();
-});
+    log.debug(`Done nesting, orderID = ${nestingRequest.orderID}, generation count = ${deepNest.GA.generationNumber}`);
+    done(deepNest.fullResult);
+};
 
 class DeepNest {
     constructor(nestingRequest){
@@ -132,7 +132,7 @@ class DeepNest {
         }
     }
 
-    start() {
+    nest() {
         this.offset_parts = [];
 
         // send only bare essentials through ipc
@@ -219,15 +219,13 @@ class DeepNest {
 
             let best = this.GA.best();
             this.fillResult(best);
-            worker.parentPort.postMessage({type: 'best', result: this.fullResult});
 
-            log.debug('new generation!');
-            // all individuals have been evaluated, start next generation
+            //log.debug(`New generation, OrderID ${this.nestingRequest.orderID}`);
+            // all individuals have been evaluated, nest next generation
             this.GA.generation();
 
             if ((Date.now() - this.startTime) > this.nestingRequest.time * 1000) {
                 condition = false;
-                worker.parentPort.postMessage({type: 'finished'});
             }
         }
     }
@@ -737,6 +735,7 @@ class GeneticAlgorithm {
             let mutant = this.mutate(this.population[0]);
             this.population.push(mutant);
         }
+        this.generationNumber = 1;
    }
 
     // returns a mutated individual with the given mutation rate
@@ -808,6 +807,8 @@ class GeneticAlgorithm {
     }
 
     generation() {
+        this.generationNumber++;
+
         // Individuals with higher fitness are more likely to be selected for mating
         this.population.sort(function(a, b){
             return a.fitness - b.fitness;

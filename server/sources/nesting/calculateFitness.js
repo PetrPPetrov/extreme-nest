@@ -1,7 +1,7 @@
-/*!
- * Deepnest
- * Licensed under GPLv3
- */
+// Copyright (c) 2019 by
+// GkmSoft (individual entrepreneur Petr Petrovich Petrov)
+// This file is part of deep-nest-rest project.
+// This software is intellectual property of GkmSoft.
 
 'use strict';
 
@@ -68,7 +68,7 @@ fitnessCalculator.db = {
 
     find : function(obj, inner){
         var key = 'A'+obj.A+'B'+obj.B+'Arot'+parseInt(obj.Arotation)+'Brot'+parseInt(obj.Brotation);
-        //console.log('key: ', key);
+        //log.debug('key: ', key);
         if(fitnessCalculator.nfpcache[key]){
             return cloneNfp(fitnessCalculator.nfpcache[key], inner);
         }
@@ -96,8 +96,8 @@ fitnessCalculator.db = {
         var key = 'A'+obj.A+'B'+obj.B+'Arot'+parseInt(obj.Arotation)+'Brot'+parseInt(obj.Brotation);
         //if(fitnessCalculator.performance.memory.totalJSHeapSize < 0.8*fitnessCalculator.performance.memory.jsHeapSizeLimit){
             fitnessCalculator.nfpcache[key] = cloneNfp(obj.nfp, inner);
-            //console.log('cached: ',fitnessCalculator.cache[key].poly);
-            //console.log('using', fitnessCalculator.performance.memory.totalJSHeapSize/fitnessCalculator.performance.memory.jsHeapSizeLimit);
+            //log.debug('cached: ',fitnessCalculator.cache[key].poly);
+            //log.debug('using', fitnessCalculator.performance.memory.totalJSHeapSize/fitnessCalculator.performance.memory.jsHeapSizeLimit);
         //}
 
         /*obj.children = obj.nfp.children;
@@ -105,7 +105,7 @@ fitnessCalculator.db = {
         var keypath = './nfpcache/'+key+'.json';
         fq.writeFile(keypath, JSON.stringify(obj), function (err) {
             if (err){
-                console.log("couldn't write");
+                log.debug("couldn't write");
             }
         });*/
     }
@@ -160,7 +160,7 @@ module.exports.calculateFitness = function(deepNest, individual, index) {
         }
     }
 
-    log.debug('pairs: ', pairs.length);
+    //log.debug('pairs: ', pairs.length);
 
     let process = function(pair){
         let A = rotatePolygon(pair.A, pair.Arotation);
@@ -235,20 +235,20 @@ module.exports.calculateFitness = function(deepNest, individual, index) {
 
     // run the placement synchronously
     function sync() {
-        //console.log('starting synchronous calculations', Object.keys(fitnessCalculator.nfpCache).length);
-        console.log('in sync');
+        //log.debug('starting synchronous calculations', Object.keys(fitnessCalculator.nfpCache).length);
+        //log.debug('in sync');
         let c=0;
         for (let key in fitnessCalculator.nfpcache) {
             c++;
         }
-        console.log('nfp cached:', c);
+        //log.debug('nfp cached:', c);
         let placement = placeParts(deepNest.sheets, parts, deepNest.config, index);
         individual.fitness = placement.fitness;
         individual.allplacements = placement.placements;
         placement.index = index;
     }
 
-    console.time('Total');
+    //console.time('Total');
 
     function getPart(source){
         for(let k=0; k<parts.length; k++){
@@ -305,8 +305,8 @@ module.exports.calculateFitness = function(deepNest, individual, index) {
             };
             fitnessCalculator.db.insert(doc);
         }
-        console.timeEnd('Total');
-        console.log('before sync');
+        //console.timeEnd('Total');
+        //log.debug('before sync');
         sync();
     }
     else{
@@ -608,14 +608,14 @@ function getOuterNfp(A, B, inside){
 
     // not found in cache
     if(inside || (A.children && A.children.length > 0)){
-        //console.log('computing minkowski: ',A.length, B.length);
+        //log.debug('computing minkowski: ',A.length, B.length);
         //console.time('addon');
         nfp = addon.calculateNFP({A: A, B: B});
         //console.timeEnd('addon');
     }
     else{
-        console.log('minkowski', A.length, B.length, A.source, B.source);
-        console.time('clipper');
+        //log.debug('minkowski', A.length, B.length, A.source, B.source);
+        //console.time('clipper');
 
         let Ac = toClipperCoordinates(A);
         ClipperLib.JS.ScaleUpPath(Ac, 10000000);
@@ -626,7 +626,7 @@ function getOuterNfp(A, B, inside){
             Bc[i].Y *= -1;
         }
         let solution = ClipperLib.Clipper.MinkowskiSum(Ac, Bc, true);
-        //console.log(solution.length, solution);
+        //log.debug(solution.length, solution);
         //var clipperNfp = toNestCoordinates(solution[0], 10000000);
         let clipperNfp;
 
@@ -646,12 +646,12 @@ function getOuterNfp(A, B, inside){
         }
 
         nfp = [clipperNfp];
-        //console.log('clipper nfp', JSON.stringify(nfp));
-        console.timeEnd('clipper');
+        //log.debug('clipper nfp', JSON.stringify(nfp));
+        //console.timeEnd('clipper');
     }
 
     if(!nfp || nfp.length === 0){
-        //console.log('holy shit', nfp, A, B, JSON.stringify(A), JSON.stringify(B));
+        //log.debug('holy shit', nfp, A, B, JSON.stringify(A), JSON.stringify(B));
         return null
     }
 
@@ -703,7 +703,7 @@ function getInnerNfp(A, B, config){
         let doc = fitnessCalculator.db.find({ A: A.source, B: B.source, Arotation: 0, Brotation: B.rotation }, true);
 
         if(doc){
-            //console.log('fetch inner', A.source, B.source, doc);
+            //log.debug('fetch inner', A.source, B.source, doc);
             return doc;
         }
     }
@@ -754,7 +754,7 @@ function getInnerNfp(A, B, config){
 
     if(typeof A.source !== 'undefined' && typeof B.source !== 'undefined'){
         // insert into db
-        console.log('inserting inner: ',A.source, B.source, B.rotation, f);
+        //log.debug('inserting inner: ',A.source, B.source, B.rotation, f);
         let doc = {
             A: A.source,
             B: B.source,
@@ -814,9 +814,9 @@ function placeParts(sheets, parts, config, nestindex){
         fitness += sheetarea; // add 1 for each new sheet opened (lower fitness is better)
 
         let clipCache = [];
-        //console.log('new sheet');
+        //log.debug('new sheet');
         for(i=0; i<parts.length; i++){
-            console.time('placement');
+            //console.time('placement');
             part = parts[i];
 
             // inner NFP
@@ -866,7 +866,7 @@ function placeParts(sheets, parts, config, nestindex){
                     }
                 }
                 if(position === null){
-                    console.log(sheetNfp);
+                    //log.debug(sheetNfp);
                 }
                 placements.push(position);
                 placed.push(part);
@@ -919,7 +919,7 @@ function placeParts(sheets, parts, config, nestindex){
             }
 
             if(error || !clipper.Execute(ClipperLib.ClipType.ctUnion, combinedNfp, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero)){
-                console.log('clipper error', error);
+                //log.debug('clipper error', error);
                 continue;
             }
 
@@ -933,7 +933,7 @@ function placeParts(sheets, parts, config, nestindex){
                 index: placed.length-1
             };
 
-            console.log('save cache', placed.length-1);
+            //log.debug('save cache', placed.length-1);
 
             // difference with sheet polygon
             let finalNfp = new ClipperLib.Paths();
@@ -989,7 +989,7 @@ function placeParts(sheets, parts, config, nestindex){
             }
             for(j=0; j<finalNfp.length; j++){
                 nf = finalNfp[j];
-                //console.log('evalnf',nf.length);
+                //log.debug('evalnf',nf.length);
                 for(k=0; k<nf.length; k++){
 
                     shiftvector = {
@@ -1099,9 +1099,9 @@ function placeParts(sheets, parts, config, nestindex){
             for(j=0; j<allplacements.length; j++){
                 placednum += allplacements[j].sheetplacements.length;
             }
-            //console.log(placednum, totalnum);
+            //log.debug(placednum, totalnum);
             //ipcRenderer.send('background-progress', {index: nestindex, progress: 0.5 + 0.5*(placednum/totalnum)});
-            console.timeEnd('placement');
+            //console.timeEnd('placement');
         }
 
         if(minwidth && minarea){
@@ -1140,5 +1140,5 @@ function placeParts(sheets, parts, config, nestindex){
 
 // clipperjs uses alerts for warnings
 function alert(message) {
-    console.log('alert: ', message);
+    //log.debug('alert: ', message);
 }

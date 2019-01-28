@@ -6,7 +6,9 @@
 'use strict';
 
 const log4js = require('log4js');
-const worker = require('worker_threads');
+const threads = require('threads');
+const config  = threads.config;
+const spawn   = threads.spawn;
 
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
@@ -26,31 +28,27 @@ module.exports.processNestingRequest = (nestingRequest) => {
         orderID: orderID,
         error: false,
         errorObject: null,
-        partiallyReady: false,
-        completeReady: false,
+        ready: false,
         fullResult: null
     });
+    nestingRequest.orderID = orderID;
 
-    const thread = new worker.Worker('./sources/nesting/nestingOptimization.js');
-    thread.on('message', (nestingResult) => {
-        if (nestingResult.type === 'finished') {
-            nestingOrders.get(orderID).completeReady = true;
-        }
-        else if (nestingResult.type === 'best') {
-            nestingOrders.get(orderID).partiallyReady = true;
-            nestingOrders.get(orderID).fullResult = nestingResult.result;
-        }
-    });
-    // thread.on('error', (error) => {
-    //     log.debug('Error in working thread, text = ' + error);
-    //     let nestingOrder = nestingOrders.get(orderID);
-    //     nestingOrder.error = true;
-    //     nestingOrder.errorObject = error;
-    // });
-    thread.on('exit', () => {
-        log.debug('Nesting thread finished, orderID ' + orderID);
-    });
-    thread.postMessage(nestingRequest);
+    const thread = spawn('./sources/nesting/nestingOptimization.js');
+    thread
+        .send(nestingRequest)
+        .on('message', (nestingResult) => {
+            nestingOrders.get(orderID).ready = true;
+            nestingOrders.get(orderID).fullResult = nestingResult;
+        })
+        .on('error', (error) => {
+            log.debug('Error in working thread, text = ' + error);
+            let nestingOrder = nestingOrders.get(orderID);
+            nestingOrder.error = true;
+            nestingOrder.errorObject = error;
+        })
+        .on('exit', () => {
+            log.debug('Nesting thread finished, orderID ' + orderID);
+        });
 
     return orderID;
 };

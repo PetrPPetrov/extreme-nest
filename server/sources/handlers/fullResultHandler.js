@@ -14,11 +14,11 @@ const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
 module.exports.onFullRequest = (request, response) => {
-    log.debug('onFullRequest(request, response)');
+    log.debug(`onFullRequest(request, response), OrderID ${request.params.id}`);
 
     const id = parseInt(request.params.id);
     if (!nesting.nestingOrders.has(id)) {
-        log.debug('OrderID ' + id + ' does not exist');
+        log.debug(`OrderID ${id} does not exist`);
         common.sendAbsenceNestingOrder(response);
         return;
     }
@@ -26,19 +26,13 @@ module.exports.onFullRequest = (request, response) => {
     const order = nesting.nestingOrders.get(id);
 
     if (order.error) {
-        log.debug('OrderID ' + id + ' caused some error, error = ' + order.errorObject);
+        log.debug(`OrderID ${id} caused some error, error = ${order.errorObject}`);
         common.sendRequestValidationError(response, [order.errorObject.toString()]);
         return;
     }
 
-    if (!order.partiallyReady) {
-        log.debug('OrderID ' + id + ' is still computing');
-        common.sendStillComputing(response);
-        return;
-    }
-
-    if (!order.completeReady) {
-        log.debug('OrderID ' + id + ' is still computing');
+    if (!order.ready) {
+        log.debug(`OrderID ${id} is still computing`);
         common.sendStillComputing(response);
         return;
     }
