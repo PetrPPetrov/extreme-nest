@@ -1,7 +1,7 @@
-// Copyright (c) 2019 by
-// GkmSoft (individual entrepreneur Petr Petrovich Petrov)
-// This file is part of deep-nest-rest project.
-// This software is intellectual property of GkmSoft.
+/*!
+ * Deepnest
+ * Licensed under GPLv3
+ */
 
 'use strict';
 
