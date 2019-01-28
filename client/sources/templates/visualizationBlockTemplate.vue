@@ -29,7 +29,10 @@
             return {
                 image: image,
                 isSingleSheet: true,
-                openedSheetIndex: 0
+                openedSheetIndex: 0,
+                currentScaling: 1,
+                minScaling: 1,
+                maxScaling: 5,
             }
         },
         methods : {
@@ -42,7 +45,7 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
                 }
             },
 
@@ -54,16 +57,32 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
                 }
             },
 
             onClickDown : function() {
-                console.log('+ was clicked');
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                if (this.currentScaling + 1 <= this.maxScaling) {
+                    this.currentScaling++;
+                    const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                }
             },
 
             onClickUp : function () {
-                console.log('- was clicked');
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                if (this.currentScaling - 1 >= this.minScaling) {
+                    this.currentScaling--;
+                    const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                }
             }
             
         }

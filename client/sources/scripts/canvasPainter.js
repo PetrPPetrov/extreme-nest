@@ -6,13 +6,13 @@
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
-module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse) => {
+module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.lineWidth = 0;//configuration.canvasLineWidth;
 
     const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
-    const blockHeight = canvas.height / sheet.height;
-    const blockWidth = canvas.width / sheet.length;
+    const blockHeight = (canvas.height / sheet.height) / scaling;
+    const blockWidth = (canvas.width / sheet.length) / scaling;
 
     const nesting = responseParser.getNestingBySheetId(jsonNestingResponse, sheetID);
     nesting.nested_parts.forEach((part) => {
