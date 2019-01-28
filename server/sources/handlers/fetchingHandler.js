@@ -2,6 +2,7 @@
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
+
 'use strict';
 
 const path = require('path');
@@ -13,29 +14,6 @@ const httpStatusCodes = require('../httpStatusCodes');
 
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
-
-module.exports.onStatsRequest = (request, response) => {
-    log.debug('onStatsRequest(request, response)');
-    response
-        .status(httpStatusCodes.OK)
-        .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send(
-            {
-                message: 'successfully completed',
-                nestings: [
-                {
-                    sheet: 1,
-                    nested_parts: [
-                        {
-                            id: 1,
-                        }
-                    ],
-                    quantity: 3,
-                    length: 1.0,
-                    height: 1.0
-                }]
-            });
-};
 
 module.exports.onImageRequest = (request, response) => {
     log.debug('onImageRequest(request, response)');

@@ -2,6 +2,7 @@
 // GkmSoft (individual entrepreneur Petr Petrovich Petrov)
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
+
 'use strict';
 
 const log4js = require('log4js');
@@ -12,9 +13,7 @@ log.level = 'debug';
 
 const nestingOrders = new Map();
 
-module.exports.getNestingOrders = () => {
-    return nestingOrders;
-};
+module.exports.nestingOrders = nestingOrders;
 
 module.exports.processNestingRequest = (nestingRequest) => {
     let orderID = getNewOrderID();

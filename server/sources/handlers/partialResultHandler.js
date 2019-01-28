@@ -13,8 +13,8 @@ const nesting = require('../nesting/nestingRequest');
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-module.exports.onFullRequest = (request, response) => {
-    log.debug('onFullRequest(request, response)');
+module.exports.onPartialRequest = (request, response) => {
+    log.debug('onPartialRequest(request, response)');
 
     const id = parseInt(request.params.id);
     if (!nesting.nestingOrders.has(id)) {
@@ -43,8 +43,17 @@ module.exports.onFullRequest = (request, response) => {
         return;
     }
 
+    let partialResult = JSON.parse(JSON.stringify(order.fullResult));
+    for(let i=0; i<partialResult.nestings.length; i++) {
+        for(let j=0; j<partialResult.nestings[i].nested_parts.length; j++) {
+            delete partialResult.nestings[i].nested_parts[j]["position"];
+            delete partialResult.nestings[i].nested_parts[j]["angle"];
+            delete partialResult.nestings[i].nested_parts[j]["flip"];
+        }
+    }
+
     response
         .status(httpStatusCodes.OK)
         .set({'Content-Type': 'application/json; charset=utf-8'})
-        .send(order.fullResult);
+        .send(partialResult);
 };

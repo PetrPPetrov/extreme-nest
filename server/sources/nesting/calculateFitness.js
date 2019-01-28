@@ -1,3 +1,8 @@
+// Copyright (c) 2019 by
+// GkmSoft (individual entrepreneur Petr Petrovich Petrov)
+// This file is part of deep-nest-rest project.
+// This software is intellectual property of GkmSoft.
+
 'use strict';
 
 const log4js = require('log4js');
