@@ -3,8 +3,8 @@
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 visualization-form" v-show="!$root.$data.isOpenedImportForms">
         <p class="block-title">Visualization area</p>
         <p class="description">
-            Count sheets: {{ $root.$data.nestingRequest.sheets.length }} <br>
-            Current sheet: {{ openedSheetIndex + 1 }}  ID: {{ opendeSheetNumber }} <br>
+            Count sheets: {{ $root.$data.nestingRequest.sheets.length }}
+            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ opendeSheetNumber }}
         </p>
         <button class='block-button' @click="onClickPrevSheet"><</button>
         <button class="block-button" @click="onClickNextSheet">></button>
@@ -101,7 +101,7 @@
     
     canvas {
         width: 100%;
-        height: 375px;
+        height: 432px;
         border-radius: 5px;
         margin-top: 8px;
         background-color: white;
@@ -122,6 +122,7 @@
     .description {
         margin-left: 0;
         float: unset;
+        font-size: 15px;
     }
 
 </style>
