@@ -1,0 +1,149 @@
+<html>
+  <h1>Extreme Nest code style convention</h1>
+  <ol>
+    <li><h2>Language standard</h2>
+      We use the latest Visual Studio 2017 version for development and a C++ compiler which supports C++ 14.
+    </li>
+    <li><h2>File names</h2>
+      <ol>
+        <li><h3>Source code file names and extensions</h3>
+          Source code should be stored in files either with <i>.cpp</i> or <i>.h</i> extensions.
+          File names should use <i>snake_case</i> naming convention.
+        </li>
+      </ol>
+    </li>
+    <li><h2>Formatting</h2>
+        <ol>
+          <li>Spaces should be used in source and header files. Tabs symbols are prohibited.</li>
+          <li>Tab size should be equal to 4 space symbols.</li>
+          <li>Local scopes (<i>{}</i> statements) should be located each at new line.</li>
+          <li>Don't use space symbols at the end of lines.</li>
+          <li>Empty lines should not contain space symbols.</li>
+          <li>Each source or header file should contain one empty line at the end of file.</li>
+          <li>Instead of using macros, <i>#pragma once</i> directive should be used.</li>
+          <li>Usually comments inside source code should begin with double slash (//) symbols, then a space should come.
+            Text should begin with a capital letter, like that: <i>// Compress points</i>.
+            Comments could be at the end of the source code line and should be separated by a space from the source code:
+            <pre>int i = 1; // Comment text</pre></li>
+          <li>Use <i>unsigned</i> keyword instead of <i>unsigned int</i>.</li>
+          <li>For pointer and reference types use <i>type_name* var_name</i> or <i>type_name& var_name</i> scheme.</li>
+        </ol>
+      </li>
+    <li><h2>Conventions of file inclusions</h2>
+        The file inclusions should be organized in fhe following order:
+        <p>
+          <ol>
+            <li>Include system headers, like <pre>#include &lt;vector&gt;</pre></li>
+            <li>Include widely used libraries, like <i>Boost</i>: <pre>#include &lt;boost/mpl/list.hpp&gt;</pre>
+            </li>
+            <li>Include Extreme Nest specific libraries, like <pre>#include "protocol.h"</pre></li>
+            <li>Include all other local headers.</li>
+          </ol>
+        </p>
+    </li>
+    <li><h2>Naming convention</h2>
+      <ol>
+        <li><h3>Namespaces</h3>
+          Namespace names should be in <i>PascalCase</i> naming convention.
+          If namespace name is contraction then all letters should be in upper case.
+          Prefer names in singular form rather than plural names.
+          For instance, use <i>Network::Container</i> instead of <i>Network::Containers</i>.</li>
+        <li><h3>Interfaces</h3>
+          Interface names should be in <i>PascalCase</i> naming convention starting with capital <i>I</i> letter.
+          For instance, <i>IMemoryBuffer</i>.</li>
+        <li><h3>Interface methods</h3>
+          Interface methods should use <i>camelCase</i> naming convention.</li>
+        <li><h3>Classes and structures</h3>
+          Classes and structures should use <i>PascalCase</i> naming convention.</li>
+        <li><h3>Class and structure methods</h3>
+          Class and structure methods should have the same names as corresponding interface methods.
+          However, if a method is not a part of any interface, then <i>camelCase</i> should be used.</li>
+        <li><h3>Arguments</h3>
+          Arguments for methods, interface methods, functions, constructors and destructors should use <i>snake_case</i> naming convention.</li>
+        <li><h3>Local variables</h3>
+          Local variables should use <i>snake_case</i> naming convention.</li>
+        <li><h3>Class and structure fields</h3>
+          Class and structure fields should use <i>snake_case</i> naming convention starting without any prefix.
+          For instance, <i>buffer</i>. If field name conflicts with argument name then add "_" suffix to the argument name,
+          for instance, <i>buffer_</i>.</li>
+        <li><h3>Template parameters</h3>
+          Template parameters should use <i>PascalCase</i> naming convention.
+          For instance, <i>Vector</i>.</li>
+        </li>
+        <li><h3>Standalone functions</h3>
+          Standalone functions should use <i>camelCase</i> naming convention.
+        </li>
+        <li><h3>Enumerators</h3>
+          Enumerators should be declared inside structures, classes or namespaces. They should use <i>PascalCase</i> naming convention without any prefix.
+          Enumerator members also should use <i>PascalCase</i> naming convention without any prefix.</li>
+        <li><h3>Constants</h3></li>
+          Constants could be declared inside structures, classes or namespaces. They should use <i>MACROS_CASE</i> naming convention.</li>
+        <li><h3>Macros</h3>
+          Macros should be used where they are really needed. They should use <i>MACROS_CASE</i> naming convention.</li>
+        <li><h3>Typedefs</h3>
+          Typedefs should use <i>snake_case</i> naming convention.</li>
+      </ol>
+    </li>
+    <li><h2>Coding recommendations</h2>
+      <ol>
+        <li><h3>Const specifier</h3>
+          The C++ "const" specifier should be used where it is possible.</li>
+        <li><h3>Override and final specifiers</h3>
+          The C++ "override" and "final" specifiers should be used where it is possible.</li>
+        <li><h3>C-style type casting</h3>
+          The C-style type casting is prohibited, instead use C++ style type casting, for instance, <i>static_cast&lt;&gt;</i> or other.</li>
+      </ol>
+    </li>
+    <li><h2>Exception safety</h2>
+      Code should be exception safety as much as possible. We should satisfy at least <i>basic</i> guarantee.
+      <ol>
+        <li><h3>New and delete statements</h3>
+          New and delete statements are prohibited, except case when new statement is a part of smart pointer initialization expression.
+          Instead consider to use <i>std::vector</i> for temporary buffers or other smart buffer types.
+          Consider to use factories which return smart pointers. Use smart pointers instead of raw pointers.
+          Use raw pointers only when you need to have an non-owning pointers which are not required to be deallocated.
+          Use <i>boost::scoped_ptr</i> with scope lifetime objects.</li>
+        <li><h3>FILE* pointers</h3>
+          FILE* pointers are prohibited. Instead consider to use <i>std::fstream</i> to work with files.</li>
+      </ol>
+    </li>
+    <li><h2>Thread safety</h2>
+      We should allow running our code in parallel environment where it is possible.
+      <ol>
+        <li><h3>Global variables</h3>
+          Don't use global variables where it is possible.
+          Always consider to use <i>boost::thread_specific_ptr</i> wrapper.
+          Use <i>g_</i> prefix for global variables.</li>
+      </ol>
+    </li>
+    <li><h2>Glossary</h2>
+      <ol>
+        <li><h3><i>PascalCase</i> naming convention</h3>
+          Naming convention where names start with a capital letter.
+          Name can consist from several words and each word starts with capital letter.
+          Other letters are small. Some examples are <i>MemoryBuffer</i>, <i>TriangleFan</i>, <i>CreateMemoryBuffer</i>.
+          </li>
+        <li><h3><i>camelCase</i> naming convention</h3>
+          Naming convention where names start with a small letter.
+          Name can consist from several words and each word starts with capital letter (except first letter).
+          Other letters are small. Some examples are <i>memoryBuffer</i>, <i>triangleFan</i>, <i>createMemoryBuffer</i>.
+          </li>
+        <li><h3><i>snake_case</i> naming convention</h3>
+          Naming convention where all letters in a name are small.
+          Name can consist from several words and each word is separated from other words by using under-scope symbol.
+          Some examples are <i>memory_buffer</i>, <i>triangle_fan</i>, <i>create_memory_buffer</i>.
+          </li>
+        <li><h3><i>kebab-case</i> naming convention</h3>
+          Naming convention where all letters in a name are small.
+          Name can consist from several words and each word is separated from other words by using hyphen symbol.
+          Some examples are <i>memory-buffer</i>, <i>triangle-fan</i>, <i>create-memory-buffer</i>.
+          </li>
+        <li><h3><i>MACROS_CASE</i> naming convention</h3>
+          Naming convention where all letters in a name are capital.
+          Name can consist from several words and each word is separated from other words by using under-scope symbol.
+          Some examples are <i>MEMORY_BUFFER</i>, <i>TRIANGLE_FAN</i>, <i>CREATE_MEMORY_BUFFER</i>.
+          </li>
+      </ol>
+    </li>
+  </ol>
+</html>
