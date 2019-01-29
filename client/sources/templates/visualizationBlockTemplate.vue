@@ -10,7 +10,11 @@
         <button class="block-button" @click="onClickNextSheet">></button>
         <button class='block-button' @click="onClickDown">+</button>
         <button class="block-button" @click="onClickUp">-</button>
-        <canvas id="canvas"></canvas>
+        <canvas
+                @mousemove="onMouseMoveInCanvas"
+                @mousedown="onMouseDownInCanvas"
+                @mouseup="omMouseUpInCanvas"
+                id="canvas"></canvas>
     </div>
 
 </template>
@@ -30,12 +34,43 @@
                 isSingleSheet: true,
                 openedSheetIndex: 0,
                 opendeSheetNumber: 0,
-                currentScaling: 20,
-                minScaling: 5,
-                maxScaling: 35,
+                currentScaling: 25,
+                minScaling: 10,
+                maxScaling: 50,
+                alignmentX: 0,
+                alignmentY: 0,
+                isMousePressed: false,
+                mousePressedXPos: 0,
+                mousePressedYPos: 0
             }
         },
         methods : {
+
+            onMouseMoveInCanvas: function(event){
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                const nestingRequest = this.$root.$data.nestingRequest;
+                const nestingResponse = this.$root.$data.nestingResponse;
+                const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
+                if (this.isMousePressed) {
+                    const currentXPos = event.pageX;
+                    const currentYPos = event.pageY;
+                    this.alignmentX = currentXPos - this.mousePressedXPos;
+                    this.alignmentY = this.mousePressedYPos - currentYPos;
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
+                        this.currentScaling, this.alignmentX, this.alignmentY);
+                }
+            },
+
+            onMouseDownInCanvas: function(event) {
+                this.mousePressedXPos = event.pageX;
+                this.mousePressedYPos = event.pageY;
+                this.isMousePressed = true;
+            },
+
+            omMouseUpInCanvas: function(event){
+                this.isMousePressed = false;
+            },
 
             onClickPrevSheet : function () {
                 const canvas = document.getElementById('canvas');
@@ -46,7 +81,8 @@
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
                     this.opendeSheetNumber = sheetId;
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
+                        this.currentScaling, this.alignmentX, this.alignmentY);
                 }
             },
 
@@ -59,7 +95,8 @@
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
                     this.opendeSheetNumber = sheetId;
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
+                        this.currentScaling, this.alignmentX, this.alignmentY);
                 }
             },
 
@@ -68,10 +105,11 @@
                 const context = canvas.getContext('2d');
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
-                if (this.currentScaling - 5 >= this.minScaling) {
-                    this.currentScaling -= 5;
+                if (this.currentScaling + 5 <= this.maxScaling) {
+                    this.currentScaling += 5;
                     const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
+                        this.currentScaling, this.alignmentX, this.alignmentY);
                 }
             },
 
@@ -80,10 +118,11 @@
                 const context = canvas.getContext('2d');
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
-                if (this.currentScaling + 5 <= this.maxScaling) {
-                    this.currentScaling += 5;
+                if (this.currentScaling - 5 >= this.minScaling) {
+                    this.currentScaling -= 5;
                     const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
-                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
+                    canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
+                        this.currentScaling, this.alignmentX, this.alignmentY);
                 }
             }
             
@@ -100,6 +139,7 @@
     }
     
     canvas {
+        cursor: move;
         width: 100%;
         height: 432px;
         border-radius: 5px;

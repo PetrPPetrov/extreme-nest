@@ -7,15 +7,16 @@ const functional = require('./functionalUtils');
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
-module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling) => {
+module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling, alignmentX, alignmentY) => {
     const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
-    canvas.height = sheet.height * 25;
-    canvas.width = sheet.length * 25;
+    canvas.height = sheet.height * 30;
+    canvas.width = sheet.length * 30;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.lineWidth = 0;
-    context.save();
+    context.scale(1, 1);
     context.transform(1, 0, 0, -1, 0, canvas.height);
+    context.translate(alignmentX, alignmentY);
 
     drawSheetBorder(context, sheet.length * scaling, sheet.height * scaling);
     responseParser.getNestingBySheetId(jsonNestingResponse, sheetID).nested_parts.forEach((part) => {
@@ -37,8 +38,6 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
             })
         );
     });
-
-    context.restore();
 };
 
 function drawSheetBorder(context, canvasWidth, canvasHeight) {

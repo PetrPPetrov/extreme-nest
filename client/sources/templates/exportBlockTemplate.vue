@@ -86,7 +86,7 @@
                 const nestingResponse = this.$root.$data.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
                 const scaling = 20;
-                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID, nestingRequest, nestingResponse, scaling);
+                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID, nestingRequest, nestingResponse, scaling, 0, 0);
             }
         }
     }
