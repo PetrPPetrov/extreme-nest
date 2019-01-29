@@ -55,7 +55,10 @@ function drawSheetBorder(context, canvasWidth, canvasHeight) {
 }
 
 function drawGeometry(context, geometry, angle, dimension) {
-    const color = generateColor();
+    const color = generateColorByPosition(
+        dimension.xPartPosition,
+        dimension.yPartPosition
+    );
     context.strokeStyle = color;
     context.fillStyle = color;
 
@@ -121,6 +124,12 @@ function drawHoles(context, holes, angle, dimension){
         context.closePath();
         context.restore();
     });
+}
+
+function generateColorByPosition(xPos, yPos) {
+    const x = ((xPos + 17) * 23).toString(16).padStart(3, 0);
+    const y = ((yPos + 13) * 31).toString(16).padStart(3, 0);
+    return `#${x}${y}`.slice(0, 7);
 }
 
 function generateColor() {
