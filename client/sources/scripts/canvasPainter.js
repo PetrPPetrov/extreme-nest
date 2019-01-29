@@ -14,29 +14,24 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
     context.transform(1, 0, 0, -1, 0, canvas.height);
 
     const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
-    const blockHeight = (canvas.height / sheet.height) / scaling;
-    const blockWidth = (canvas.width / sheet.length) / scaling;
-
     responseParser.getNestingBySheetId(jsonNestingResponse, sheetID).nested_parts.forEach((part) => {
         const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
         functional.doIf(geometry !== undefined, () => {
             drawGeometry(context, geometry.geometry, part.angle, generateColor(), {
-                blockWidth: blockWidth,
-                blockHeight: blockHeight,
+                scaling: scaling,
                 xPartPosition: part.position[0],
                 yPartPosition: part.position[1]
             });
         });
 
-        // const holes = requestParser.getHolesById(jsonNestingRequest, part.id);
-        // functional.doIf(holes !== undefined, () =>
-        //     drawGeometry(context, holes.holes, part.angle, '#000000', {
-        //         blockWidth: blockWidth,
-        //         blockHeight: blockHeight,
-        //         xPartPosition: part.position[0],
-        //         yPartPosition: part.position[1]
-        //     })
-        // );
+        const holes = requestParser.getHolesById(jsonNestingRequest, part.id);
+        functional.doIf(holes !== undefined, () =>
+            drawGeometry(context, holes.holes, part.angle, '#FFFFFF', {
+                scaling: scaling,
+                xPartPosition: part.position[0],
+                yPartPosition: part.position[1]
+            })
+        );
     });
 
     context.restore();
@@ -50,19 +45,19 @@ function drawGeometry(context, geometry, angle, color, dimension) {
     geometry.forEach((vertices) => {
         context.save();
         context.translate(
-            dimension.xPartPosition * dimension.blockWidth,
-            dimension.yPartPosition * dimension.blockHeight
+            dimension.xPartPosition * dimension.scaling,
+            dimension.yPartPosition * dimension.scaling
         );
         functional.doIf(angle !== 0, () => context.rotate(angle * Math.PI / 180.0));
         context.moveTo(
-            vertices[0][0] * dimension.blockWidth,
-            vertices[1][1] * dimension.blockHeight
+            vertices[0][0] * dimension.scaling,
+            vertices[0][1] * dimension.scaling
         );
         vertices.forEach((vertex) => {
             console.log(vertex);
             context.lineTo(
-                vertex[0] * dimension.blockWidth,
-                vertex[1] * dimension.blockHeight
+                vertex[0] * dimension.scaling,
+                vertex[1] * dimension.scaling
             );
         });
         context.restore();

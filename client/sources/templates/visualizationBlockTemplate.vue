@@ -30,9 +30,9 @@
                 isSingleSheet: true,
                 openedSheetIndex: 0,
                 opendeSheetNumber: 0,
-                currentScaling: 1,
-                minScaling: 1,
-                maxScaling: 5,
+                currentScaling: 20,
+                minScaling: 5,
+                maxScaling: 35,
             }
         },
         methods : {
@@ -68,8 +68,8 @@
                 const context = canvas.getContext('2d');
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
-                if (this.currentScaling - 1 >= this.minScaling) {
-                    this.currentScaling--;
+                if (this.currentScaling - 5 >= this.minScaling) {
+                    this.currentScaling -= 5;
                     const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
                     canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
                 }
@@ -80,8 +80,8 @@
                 const context = canvas.getContext('2d');
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
-                if (this.currentScaling + 1 <= this.maxScaling) {
-                    this.currentScaling++;
+                if (this.currentScaling + 5 <= this.maxScaling) {
+                    this.currentScaling += 5;
                     const sheetId = nestingRequestParser.getAllSheetsId(nestingRequest)[this.openedSheetIndex];
                     canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse, this.currentScaling);
                 }
