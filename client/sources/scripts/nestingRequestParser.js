@@ -25,6 +25,14 @@ module.exports.getGeometryById = (nestingRequest, id) => {
     });
 };
 
+module.exports.getHolesById = (nestingRequest, id) => {
+    return nestingRequest.parts.find((part) => {
+         if (isExistInstanceInPartWithId(part, id)) {
+             return part.holes;
+         }
+    });
+};
+
 function isExistInstanceInPartWithId(part, id) {
     return part.instances.find((instance) => {
         if (instance.id === id) {
@@ -32,3 +40,4 @@ function isExistInstanceInPartWithId(part, id) {
         }
     });
 }
+

@@ -3,58 +3,74 @@
 // This file is part of deep-nest-rest project.
 // This software is intellectual property of GkmSoft.
 
+const functional = require('./functionalUtils');
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
 module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.lineWidth = 0;//configuration.canvasLineWidth;
+    context.lineWidth = 0;
+    context.save();
+    context.transform(1, 0, 0, -1, 0, canvas.height);
 
     const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
     const blockHeight = (canvas.height / sheet.height) / scaling;
     const blockWidth = (canvas.width / sheet.length) / scaling;
 
-    const nesting = responseParser.getNestingBySheetId(jsonNestingResponse, sheetID);
-    nesting.nested_parts.forEach((part) => {
-        const xPartPosition = part.position[0];
-        const yPartPosition = part.position[1];
-        const color = generateColor();
-        context.strokeStyle = color;
-        context.fillStyle = color;
-        context.beginPath();
-        if (part.angle !== 0) {
-            context.save();
-            context.translate(xPartPosition * blockWidth, yPartPosition * blockHeight);
-            context.rotate(part.angle * Math.PI / 180.0);
-            context.moveTo(0, 0);
-        } else {
-            context.moveTo(xPartPosition * blockWidth, yPartPosition * blockHeight);
-        }
+    responseParser.getNestingBySheetId(jsonNestingResponse, sheetID).nested_parts.forEach((part) => {
         const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
-        geometry.geometry.forEach((vertices) => {
-            vertices.forEach((vertex) => {
-                const xVertexPosition = vertex[0];
-                const yVertexPosition = vertex[1];
-                if (part.angle !== 0) {
-                    context.lineTo(
-                        xVertexPosition * blockWidth,
-                        yVertexPosition * blockHeight
-                    );
-                } else {
-                    context.lineTo(
-                        (xVertexPosition + xPartPosition) * blockWidth,
-                        (yVertexPosition + yPartPosition) * blockHeight
-                    );
-                }
+        functional.doIf(geometry !== undefined, () => {
+            drawGeometry(context, geometry.geometry, part.angle, generateColor(), {
+                blockWidth: blockWidth,
+                blockHeight: blockHeight,
+                xPartPosition: part.position[0],
+                yPartPosition: part.position[1]
             });
         });
-        if (part.angle !== 0) {
-            context.restore();
-        }
-        context.fill();
-        context.closePath();
+
+        // const holes = requestParser.getHolesById(jsonNestingRequest, part.id);
+        // functional.doIf(holes !== undefined, () =>
+        //     drawGeometry(context, holes.holes, part.angle, '#000000', {
+        //         blockWidth: blockWidth,
+        //         blockHeight: blockHeight,
+        //         xPartPosition: part.position[0],
+        //         yPartPosition: part.position[1]
+        //     })
+        // );
     });
+
+    context.restore();
 };
+
+function drawGeometry(context, geometry, angle, color, dimension) {
+    context.strokeStyle = color;
+    context.fillStyle = color;
+    context.beginPath();
+
+    geometry.forEach((vertices) => {
+        context.save();
+        context.translate(
+            dimension.xPartPosition * dimension.blockWidth,
+            dimension.yPartPosition * dimension.blockHeight
+        );
+        functional.doIf(angle !== 0, () => context.rotate(angle * Math.PI / 180.0));
+        context.moveTo(
+            vertices[0][0] * dimension.blockWidth,
+            vertices[1][1] * dimension.blockHeight
+        );
+        vertices.forEach((vertex) => {
+            console.log(vertex);
+            context.lineTo(
+                vertex[0] * dimension.blockWidth,
+                vertex[1] * dimension.blockHeight
+            );
+        });
+        context.restore();
+    });
+
+    context.fill();
+    context.closePath();
+}
 
 function generateColor() {
     const letters = '0123456789ABCDE';
