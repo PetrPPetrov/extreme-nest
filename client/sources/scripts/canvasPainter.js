@@ -8,12 +8,16 @@ const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
 module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling) => {
+    const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
+    canvas.height = sheet.height * 25;
+    canvas.width = sheet.length * 25;
+
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.lineWidth = 0;
     context.save();
     context.transform(1, 0, 0, -1, 0, canvas.height);
 
-    const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
+    drawSheetBorder(context, sheet.length * scaling, sheet.height * scaling);
     responseParser.getNestingBySheetId(jsonNestingResponse, sheetID).nested_parts.forEach((part) => {
         const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
         functional.doIf(geometry !== undefined, () => {
@@ -36,6 +40,20 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
 
     context.restore();
 };
+
+function drawSheetBorder(context, canvasWidth, canvasHeight) {
+    context.strokeStyle = '#000';
+    context.fillStyle = '#000';
+
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.lineTo(0 , canvasHeight);
+    context.lineTo(canvasWidth, canvasHeight);
+    context.lineTo(canvasWidth, 0);
+    context.lineTo(0, 0);
+    context.stroke();
+    context.closePath();
+}
 
 function drawGeometry(context, geometry, angle, dimension) {
     const color = generateColor();
@@ -79,8 +97,8 @@ function drawLocalCoordinateSystem(context, scaling) {
 }
 
 function drawHoles(context, holes, angle, dimension){
-    context.strokeStyle = '#FFFFFF';
-    context.fillStyle = '#FFFFFF';
+    context.strokeStyle = '#FFF';
+    context.fillStyle = '#FFF';
 
     holes.forEach((vertices) => {
         context.save();
