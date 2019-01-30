@@ -37,13 +37,6 @@ struct Part
 };
 typedef boost::shared_ptr<Part> part_ptr;
 
-struct PartInstantiation
-{
-    part_ptr part;
-    point2d_t position;
-    size_t instantiation_index = 0;
-};
-
 struct Sheet
 {
     geometry_ptr geometry;
@@ -57,6 +50,14 @@ struct NestingTask
     std::list<sheet_ptr> sheets;
 };
 typedef boost::shared_ptr<NestingTask> nesting_task_ptr;
+
+struct PartInstantiation
+{
+    part_ptr part;
+    sheet_ptr sheet;
+    point2d_t position;
+    size_t instantiation_index = 0;
+};
 
 struct NestingResult
 {

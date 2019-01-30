@@ -5,5 +5,12 @@
 
 #pragma once
 
-const double ROTATION_ANGLE_STEP = 0.1;
-const double POSITION_STEP = 0.1;
+#include "nesting_task.h"
+
+namespace Pr
+{
+    struct Optimization
+    {
+        nesting_result_ptr nest(const nesting_task_ptr& task);
+    };
+}

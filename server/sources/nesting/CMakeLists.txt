@@ -35,6 +35,7 @@ if(WIN32)
   add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
 
+include_directories(${PROJECT_SOURCE_DIR})
 set(HEADERS
   ${PROJECT_SOURCE_DIR}/config.h
   ${PROJECT_SOURCE_DIR}/nesting_request.h
@@ -46,6 +47,7 @@ set(SOURCES
   ${PROJECT_SOURCE_DIR}/main.cpp
 )
 
+include_directories(${PROJECT_SOURCE_DIR}/nfp_optimization)
 set(NFP_OPTIMIZATION
   ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
@@ -55,11 +57,18 @@ set(NFP_OPTIMIZATION
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
 )
 
+include_directories(${PROJECT_SOURCE_DIR}/pr_optimization)
+set(PR_OPTIMIZATION
+  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.h
+  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.cpp
+)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(extreme_nest ${HEADERS} ${SOURCES} ${NFP_OPTIMIZATION})
+add_executable(extreme_nest ${HEADERS} ${SOURCES} ${NFP_OPTIMIZATION} ${PR_OPTIMIZATION})
 source_group(nfp FILES ${NFP_OPTIMIZATION})
+source_group(pr FILES ${PR_OPTIMIZATION})
 
 if(WIN32)
   set_target_properties(extreme_nest PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${RUN_AREA_DIR})
