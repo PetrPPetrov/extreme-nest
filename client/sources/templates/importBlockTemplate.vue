@@ -33,7 +33,7 @@
                 selectedAvailableServer: getDefaultServerName(configuration.availableServers),
                 nestingRequest: JSON.stringify(configuration.defaultNestingRequest, null, 4),
                 isRunningSendingRequest : false,
-                message: 'Unknown status.'
+                message: 'Unknown status'
             }
         },
         methods: {

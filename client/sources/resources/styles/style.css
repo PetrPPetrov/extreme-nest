@@ -85,7 +85,7 @@ section div div {
     color: white;
     padding: 7px 25px 6px 25px;
     width: 39%;
-    margin-left: 1%;
+    margin: 0 .5% 0 .5%;
     border-radius: 5px;
     font-size: 15px;
     border: 0;

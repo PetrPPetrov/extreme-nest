@@ -1,6 +1,6 @@
 <template>
 
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 block export-form" v-show="!$root.$data.isOpenedImportForms">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 export-form" v-show="!$root.$data.isOpenedImportForms">
         <p class="block-title">Get Full Nesting Result (Order ID {{ $root.$data.nestingOrderID }})</p>
         <textarea disabled class="block-textarea"
                   placeholder="Nesting result will be here..."
@@ -87,6 +87,7 @@
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
                 const scaling = 20;
                 canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID, nestingRequest, nestingResponse, scaling, 0, 0);
+                this.$root.$data.isEmptyCanvas = false;
             }
         }
     }
@@ -113,8 +114,22 @@
 
 <style scoped>
 
-    .block-button {
-        width: fit-content;
+    .block-button:nth-of-type(1),
+    .block-button:nth-of-type(2){
+        width: 18%;
+    }
+
+    .block-button:nth-of-type(3){
+        width: 39%;
+    }
+
+    .block-button:nth-of-type(4){
+        width: 21%;
+    }
+
+    .export-form {
+        text-align: center;
+        margin-top: 13%;
     }
 
     .export-form div {

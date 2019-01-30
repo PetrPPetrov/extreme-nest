@@ -2,20 +2,32 @@
 
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 visualization-form" v-show="!$root.$data.isOpenedImportForms">
         <p class="block-title">Visualization area</p>
-        <p class="description">
-            Count sheets: {{ $root.$data.nestingRequest.sheets.length }}
-            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ opendeSheetNumber }}
-        </p>
-        <button class='block-button' @click="onClickPrevSheet"><</button>
-        <button class="block-button" @click="onClickNextSheet">></button>
-        <button class='block-button' @click="onClickDown">+</button>
-        <button class="block-button" @click="onClickUp">-</button>
         <canvas
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
                 @mouseup="omMouseUpInCanvas"
                 @wheel="onMouseWheelInCanvas"
                 id="canvas"></canvas>
+        <button class='block-button'
+                @click="onClickPrevSheet"
+                :class="{'disabled-block-button' : $root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1}"
+                :disabled="$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1"><</button>
+        <button class="block-button"
+                @click="onClickNextSheet"
+                :class="{'disabled-block-button' :$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1}"
+                :disabled="$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1">></button>
+        <button class='block-button'
+                @click="onClickDown"
+                :class="{'disabled-block-button' : $root.$data.isEmptyCanvas}"
+                :disabled="$root.$data.isEmptyCanvas">+</button>
+        <button class="block-button"
+                @click="onClickUp"
+                :class="{'disabled-block-button' : $root.$data.isEmptyCanvas}"
+                :disabled="$root.$data.isEmptyCanvas">-</button>
+        <p class="log-message">
+            Count sheets: {{ $root.$data.nestingRequest.sheets.length }}
+            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ openedSheetNumber }}
+        </p>
     </div>
 
 </template>
@@ -34,7 +46,7 @@
                 image: image,
                 isSingleSheet: true,
                 openedSheetIndex: 0,
-                opendeSheetNumber: 0,
+                openedSheetNumber: 0,
                 currentScaling: 25,
                 minScaling: 10,
                 maxScaling: 100,
@@ -89,7 +101,7 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
-                    this.opendeSheetNumber = sheetId;
+                    this.openedSheetNumber = sheetId;
                     canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
                         this.currentScaling, this.alignmentX, this.alignmentY);
                 }
@@ -103,7 +115,7 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
-                    this.opendeSheetNumber = sheetId;
+                    this.openedSheetNumber = sheetId;
                     canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
                         this.currentScaling, this.alignmentX, this.alignmentY);
                 }
@@ -143,23 +155,20 @@
 <style scoped>
 
     .block-button {
-        margin-top: 5px;
-        width: 15%;
+        width: 24%;
     }
     
     canvas {
         cursor: move;
         width: 100%;
-        height: 432px;
+        height: 405px;
         border-radius: 5px;
-        margin-top: 8px;
         background-color: white;
     }
 
     .visualization-form {
         text-align: center;
         margin-top: 13%;
-        height: 500%;
     }
 
     img {
@@ -168,10 +177,8 @@
         margin-top: 25%;
     }
 
-    .description {
-        margin-left: 0;
-        float: unset;
-        font-size: 15px;
+    .log-message{
+        display: inline-block;
     }
 
 </style>
