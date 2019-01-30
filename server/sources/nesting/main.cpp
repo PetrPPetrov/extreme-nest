@@ -7,6 +7,7 @@
 #include <boost/system/system_error.hpp>
 #include "log.h"
 #include "nesting_request.h"
+#include "nesting_task.h"
 
 extern std::ofstream* g_log_file = nullptr;
 
@@ -28,6 +29,7 @@ int main(int argc, char** argv)
     {
         NestingRequest::Order nesting_order(argv[1]);
         std::cout << "time " << nesting_order.time << std::endl;
+        nesting_task_ptr nesting_task = generateTask(nesting_order);
     }
     catch (boost::system::system_error& error)
     {

@@ -54,22 +54,35 @@ namespace NestingRequest
         void load(const boost::property_tree::ptree& point)
         {
             type = PointXY;
-            x = point.get<double>("x");
-            y = point.get<double>("y");
-            if (point.get_optional<double>("sag").has_value())
+            if (!point.get_optional<double>("x").has_value() && !point.get_optional<double>("y").has_value())
             {
-                type = ArcSag;
-                sag = point.get<double>("sag");
+                if (point.size() >= 2)
+                {
+                    auto it = point.begin();
+                    x = it->second.get_value<double>();
+                    ++it;
+                    y = it->second.get_value<double>();
+                }
             }
-            else if (point.get_optional<double>("bul").has_value())
+            else
             {
-                type = ArcBul;
-                bul = point.get<double>("bul");
-            }
-            else if (point.get_child_optional("cir").has_value())
-            {
-                type = ArcCir;
-                cir.load(point.get_child("cir"));
+                x = point.get<double>("x");
+                y = point.get<double>("y");
+                if (point.get_optional<double>("sag").has_value())
+                {
+                    type = ArcSag;
+                    sag = point.get<double>("sag");
+                }
+                else if (point.get_optional<double>("bul").has_value())
+                {
+                    type = ArcBul;
+                    bul = point.get<double>("bul");
+                }
+                else if (point.get_child_optional("cir").has_value())
+                {
+                    type = ArcCir;
+                    cir.load(point.get_child("cir"));
+                }
             }
         }
     };
@@ -92,25 +105,6 @@ namespace NestingRequest
         }
     };
     typedef boost::shared_ptr<Contour> contour_ptr;
-
-    struct Geometry
-    {
-        std::list<contour_ptr> contours;
-
-        Geometry(const boost::property_tree::ptree& geometry)
-        {
-            load(geometry);
-        }
-        void load(const boost::property_tree::ptree& geometry)
-        {
-            contours.clear();
-            for (auto& child : geometry)
-            {
-                contours.push_back(boost::make_shared<Contour>(child.second));
-            }
-        }
-    };
-    typedef boost::shared_ptr<Geometry> geometry_ptr;
 
     struct Orientation
     {
@@ -166,9 +160,12 @@ namespace NestingRequest
         void load(const boost::property_tree::ptree& instance)
         {
             orientations.clear();
-            for (auto& child : instance.get_child("orientations"))
+            if (instance.get_child_optional("orientations").has_value())
             {
-                orientations.push_back(Orientation(child.second));
+                for (auto& child : instance.get_child("orientations"))
+                {
+                    orientations.push_back(Orientation(child.second));
+                }
             }
             id = instance.get<int>("id");
             quantity = instance.get<int>("quantity", 1);
@@ -178,8 +175,8 @@ namespace NestingRequest
 
     struct Part
     {
-        std::list<geometry_ptr> geometries;
-        std::list<geometry_ptr> holes;
+        std::list<contour_ptr> geometry;
+        std::list<contour_ptr> holes;
         std::list<instance_ptr> instances;
         double protection_offset = 0.0;
 
@@ -189,17 +186,17 @@ namespace NestingRequest
         }
         void load(const boost::property_tree::ptree& part)
         {
-            geometries.clear();
+            geometry.clear();
             for (auto& child : part.get_child("geometry"))
             {
-                geometries.push_back(boost::make_shared<Geometry>(child.second));
+                geometry.push_back(boost::make_shared<Contour>(child.second));
             }
             holes.clear();
             if (part.get_child_optional("holes").has_value())
             {
                 for (auto& child : part.get_child("holes"))
                 {
-                    holes.push_back(boost::make_shared<Geometry>(child.second));
+                    geometry.push_back(boost::make_shared<Contour>(child.second));
                 }
             }
             instances.clear();

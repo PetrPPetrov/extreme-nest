@@ -36,15 +36,20 @@ if(WIN32)
 endif()
 
 set(HEADERS
+  ${PROJECT_SOURCE_DIR}/config.h
   ${PROJECT_SOURCE_DIR}/nesting_request.h
   ${PROJECT_SOURCE_DIR}/nesting_task.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 
 set(SOURCES
+  ${PROJECT_SOURCE_DIR}/nesting_task.cpp
   ${PROJECT_SOURCE_DIR}/main.cpp
+)
+
+set(NFP_OPTIMIZATION
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
   ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
@@ -53,7 +58,8 @@ set(SOURCES
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(extreme_nest ${HEADERS} ${SOURCES})
+add_executable(extreme_nest ${HEADERS} ${SOURCES} ${NFP_OPTIMIZATION})
+source_group(nfp FILES ${NFP_OPTIMIZATION})
 
 if(WIN32)
   set_target_properties(extreme_nest PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${RUN_AREA_DIR})

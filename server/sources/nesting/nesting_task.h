@@ -5,19 +5,21 @@
 
 #pragma once
 
+#include <list>
 #include <vector>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared.hpp>
+#include "nesting_request.h"
 
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> point2d_t;
-typedef std::vector<point2d_t> contour2d_t;
+typedef std::list<point2d_t> contour2d_t;
 
 struct Geometry
 {
-    std::vector<contour2d_t> geometry;
-    std::vector<contour2d_t> holes;
+    std::list<contour2d_t> outer_contours;
+    std::list<contour2d_t> holes;
 };
 typedef boost::shared_ptr<Geometry> geometry_ptr;
 
@@ -30,7 +32,7 @@ struct PartVariation
 
 struct Part
 {
-    std::vector<PartVariation> variations;
+    std::vector<PartVariation> variations; // We need a fast access by index, so, we use std::vector
     int id = -1;
 };
 typedef boost::shared_ptr<Part> part_ptr;
@@ -51,13 +53,15 @@ typedef boost::shared_ptr<Sheet> sheet_ptr;
 
 struct NestingTask
 {
-    std::vector<part_ptr> parts;
-    std::vector<sheet_ptr> sheets;
+    std::list<part_ptr> parts;
+    std::list<sheet_ptr> sheets;
 };
 typedef boost::shared_ptr<NestingTask> nesting_task_ptr;
 
 struct NestingResult
 {
-    std::vector<PartInstantiation> instantiations;
+    std::list<PartInstantiation> instantiations;
 };
 typedef boost::shared_ptr<NestingResult> nesting_result_ptr;
+
+nesting_task_ptr generateTask(const NestingRequest::Order& nesting_order);
