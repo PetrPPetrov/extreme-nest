@@ -14,6 +14,7 @@
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
                 @mouseup="omMouseUpInCanvas"
+                @wheel="onMouseWheelInCanvas"
                 id="canvas"></canvas>
     </div>
 
@@ -36,7 +37,7 @@
                 opendeSheetNumber: 0,
                 currentScaling: 25,
                 minScaling: 10,
-                maxScaling: 50,
+                maxScaling: 100,
                 alignmentX: 0,
                 alignmentY: 0,
                 isMousePressed: false,
@@ -70,6 +71,14 @@
 
             omMouseUpInCanvas: function(event){
                 this.isMousePressed = false;
+            },
+
+            onMouseWheelInCanvas: function(event){
+                if (event.deltaY < 0) {
+                    this.onClickDown();
+                } else {
+                    this.onClickUp();
+                }
             },
 
             onClickPrevSheet : function () {
