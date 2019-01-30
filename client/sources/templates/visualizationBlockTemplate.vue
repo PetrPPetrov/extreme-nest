@@ -68,8 +68,8 @@
                 if (this.isMousePressed) {
                     const currentXPos = event.pageX;
                     const currentYPos = event.pageY;
-                    this.alignmentX = currentXPos - this.mousePressedXPos;
-                    this.alignmentY = this.mousePressedYPos - currentYPos;
+                    this.alignmentX += (currentXPos - this.mousePressedXPos) / 20;
+                    this.alignmentY += (this.mousePressedYPos - currentYPos) / 20;
                     canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetId, nestingRequest, nestingResponse,
                         this.currentScaling, this.alignmentX, this.alignmentY);
                 }
