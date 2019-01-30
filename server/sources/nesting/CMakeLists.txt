@@ -36,17 +36,18 @@ if(WIN32)
 endif()
 
 set(HEADERS
-  ${PROJECT_SOURCE_DIR}/genetic_algorithm.h
-  ${PROJECT_SOURCE_DIR}/nesting_optimization.h
   ${PROJECT_SOURCE_DIR}/nesting_request.h
-  ${PROJECT_SOURCE_DIR}/nofit_polygon.h
+  ${PROJECT_SOURCE_DIR}/nesting_task.h
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 
 set(SOURCES
-  ${PROJECT_SOURCE_DIR}/genetic_algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/nesting_optimization.cpp
-  ${PROJECT_SOURCE_DIR}/nofit_polygon.cpp
   ${PROJECT_SOURCE_DIR}/main.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
 )
 
 set(CMAKE_CXX_STANDARD 14)
