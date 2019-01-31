@@ -4,8 +4,35 @@
 // This software is intellectual property of GkmSoft.
 
 #include <stdexcept>
+#include <iterator>
+#include <boost/math/constants/constants.hpp>
 #include "config.h"
 #include "nesting_task.h"
+
+geometry_ptr PartVariation::calculateActualGeometry() const
+{
+    geometry_ptr geometry = boost::make_shared<Geometry>();
+    *geometry = *source_geometry;
+
+    const double pi = boost::math::constants::pi<double>();
+    const double a = angle * pi / 180.0; // Convert from degrees to radians
+    const bool mirror_y = flip;
+
+    auto transform_point = [a, mirror_y](point_t& point)
+    {
+        const double nx = cos(a)*point.x() - sin(a)*point.y();
+        const double ny = sin(a)*point.x() + cos(a)*point.y();
+        point = mirror_y ? point_t(nx, -ny) : point_t(nx, ny);
+    };
+    auto transform_contour = [transform_point](contour_t& contour)
+    {
+        std::for_each(contour.begin(), contour.end(), transform_point);
+    };
+
+    std::for_each(geometry->outer_contours.begin(), geometry->outer_contours.end(), transform_contour);
+    std::for_each(geometry->holes.begin(), geometry->holes.end(), transform_contour);
+    return geometry;
+}
 
 class TaskGenerator
 {
@@ -80,7 +107,7 @@ class TaskGenerator
                     if (orientation.type == NestingRequest::Orientation::Punctual)
                     {
                         PartVariation new_variation;
-                        new_variation.geometry = geometry;
+                        new_variation.source_geometry = geometry;
                         new_variation.angle = orientation.angle;
                         new_variation.flip = orientation.flip;
                         new_part->variations.push_back(new_variation);
@@ -90,7 +117,7 @@ class TaskGenerator
                         for (double angle = orientation.min_angle; angle <= orientation.max_angle; angle += ROTATION_ANGLE_STEP)
                         {
                             PartVariation new_variation;
-                            new_variation.geometry = geometry;
+                            new_variation.source_geometry = geometry;
                             new_variation.angle = orientation.angle;
                             new_variation.flip = orientation.flip;
                             new_part->variations.push_back(new_variation);
@@ -100,7 +127,7 @@ class TaskGenerator
                 if (new_part->variations.empty())
                 {
                     PartVariation new_variation;
-                    new_variation.geometry = geometry;
+                    new_variation.source_geometry = geometry;
                     new_variation.angle = 0.0;
                     new_variation.flip = false;
                     new_part->variations.push_back(new_variation);

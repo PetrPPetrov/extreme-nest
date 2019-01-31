@@ -17,8 +17,9 @@
 typedef boost::geometry::model::box<point_t> box_t;
 typedef boost::geometry::model::polygon<point_t> polygon_t;
 typedef boost::shared_ptr<polygon_t> polygon_ptr;
+typedef std::list<polygon_ptr> polygons_t;
 
-inline void toPolygons(const Geometry& geometry, std::list<polygon_ptr>& polygons)
+inline void toPolygons(const Geometry& geometry, polygons_t& polygons)
 {
     polygons.clear();
     for (auto outer_contour : geometry.outer_contours)
@@ -40,7 +41,7 @@ inline void toPolygons(const Geometry& geometry, std::list<polygon_ptr>& polygon
     }
 }
 
-inline box_t calculateBoundingBox(const std::list<polygon_ptr>& polygons)
+inline box_t calculateBoundingBox(const polygons_t& polygons)
 {
     bool first_iteration = true;
     box_t result;

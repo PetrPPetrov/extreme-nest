@@ -19,10 +19,51 @@ namespace Pr
         const nesting_task_ptr& task;
         nesting_result_ptr result;
 
+        struct PartVariationInfo
+        {
+            PartVariation variation;
+            polygons_t polygons;
+            box_t bounding_box;
+        };
+        typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
+        typedef std::vector<part_variation_into_ptr> part_variations_info_t;
+        struct PartInfo
+        {
+            part_ptr part;
+            part_variations_info_t variations_info;
+        };
+        typedef boost::shared_ptr<PartInfo> part_info_ptr;
+        std::vector<part_info_ptr> parts_info;
+
+        part_info_ptr calculatePartInfo(const part_ptr& part)
+        {
+            part_info_ptr result = boost::make_shared<PartInfo>();
+            result->part = part;
+            result->variations_info.reserve(part->variations.size());
+            for (auto variation : part->variations)
+            {
+                part_variation_into_ptr variation_info = boost::make_shared<PartVariationInfo>();
+                variation_info->variation = variation;
+                geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
+                toPolygons(*actual_variation_geometry, variation_info->polygons);
+                variation_info->bounding_box = calculateBoundingBox(variation_info->polygons);
+                result->variations_info.push_back(variation_info);
+            }
+            return result;
+        }
+        void calculatePartsInfo()
+        {
+            parts_info.reserve(task->parts.size());
+            for (auto part : task->parts)
+            {
+                parts_info.push_back(calculatePartInfo(part));
+            }
+        }
+
         struct SheetInfo
         {
             sheet_ptr sheet;
-            std::list<polygon_ptr> sheet_polygons;
+            polygons_t polygons;
             box_t bounding_box;
             size_t max_position_x = 1;
             size_t max_position_y = 1;
@@ -34,15 +75,15 @@ namespace Pr
         {
             sheet_info_ptr result = boost::make_shared<SheetInfo>();
             result->sheet = sheet;
-            toPolygons(*sheet->geometry, result->sheet_polygons);
-            result->bounding_box = calculateBoundingBox(result->sheet_polygons);
+            toPolygons(*sheet->geometry, result->polygons);
+            result->bounding_box = calculateBoundingBox(result->polygons);
             const double delta_x = result->bounding_box.max_corner().x() - result->bounding_box.min_corner().x();
             const double delta_y = result->bounding_box.max_corner().y() - result->bounding_box.min_corner().y();
             result->max_position_x = static_cast<size_t>(delta_x / POSITION_STEP);
             result->max_position_y = static_cast<size_t>(delta_y / POSITION_STEP);
             return result;
         }
-        void calculateSheetInfos()
+        void calculateSheetsInfo()
         {
             sheets_info.reserve(task->sheets.size());
             for (auto sheet : task->sheets)
@@ -62,7 +103,8 @@ namespace Pr
         }
         void run()
         {
-            calculateSheetInfos();
+            calculatePartsInfo();
+            calculateSheetsInfo();
         }
     };
 }

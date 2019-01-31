@@ -25,9 +25,10 @@ typedef boost::shared_ptr<Geometry> geometry_ptr;
 
 struct PartVariation
 {
-    geometry_ptr geometry;
+    geometry_ptr source_geometry;
     double angle = 0.0;
     bool flip = false;
+    geometry_ptr calculateActualGeometry() const;
 };
 
 struct Part
