@@ -5,9 +5,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                     <img class="small-icon" :src="image">
-                    <p class="header-title">DEEP-</p>
-                    <p class="header-title">NEST</p>
-                    <p class="header-title">-REST</p>
+                    <p class="header-title">EXTREME-NEST</p>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 toolbar">
                     <p class="hyper">Documentation</p>
@@ -54,10 +52,6 @@
         margin: 12px 0 0 0;
         font-size: 22px;
         font-family: 'Staatliches', cursive;
-    }
-
-    .header-title:nth-of-type(2) {
-        color: #B42329;
     }
 
     .hyper {
