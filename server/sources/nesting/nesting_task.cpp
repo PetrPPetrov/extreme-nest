@@ -12,16 +12,16 @@ class TaskGenerator
     const NestingRequest::Order& nesting_order;
     nesting_task_ptr result;
 
-    contour2d_t extractContour(const NestingRequest::contour_ptr& contour)
+    contour_t extractContour(const NestingRequest::contour_ptr& contour)
     {
-        contour2d_t result;
+        contour_t result;
         //result.reserve(contour->points.size());
         for (auto& point : contour->points)
         {
             switch (point.type)
             {
             case NestingRequest::Point::PointXY:
-                result.push_back(point2d_t(point.x, point.y));
+                result.push_back(point_t(point.x, point.y));
                 break;
             default:
                 // TODO: add support of arcs
@@ -128,11 +128,11 @@ class TaskGenerator
             // TODO: add "border_gap" support
             // TODO: add infinite length support
             new_sheet->geometry = boost::make_shared<Geometry>();
-            contour2d_t outer_contour;
-            outer_contour.push_back(point2d_t(0.0, 0.0));
-            outer_contour.push_back(point2d_t(sheet->length, 0.0));
-            outer_contour.push_back(point2d_t(sheet->length, sheet->height));
-            outer_contour.push_back(point2d_t(0.0, sheet->height));
+            contour_t outer_contour;
+            outer_contour.push_back(point_t(0.0, 0.0));
+            outer_contour.push_back(point_t(sheet->length, 0.0));
+            outer_contour.push_back(point_t(sheet->length, sheet->height));
+            outer_contour.push_back(point_t(0.0, sheet->height));
             new_sheet->geometry->outer_contours.push_back(outer_contour);
             result->sheets.push_back(new_sheet);
         }

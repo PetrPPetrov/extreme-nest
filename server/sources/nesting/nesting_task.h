@@ -13,13 +13,13 @@
 #include <boost/smart_ptr/make_shared.hpp>
 #include "nesting_request.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> point2d_t;
-typedef std::list<point2d_t> contour2d_t;
+typedef boost::geometry::model::d2::point_xy<double> point_t;
+typedef std::list<point_t> contour_t;
 
 struct Geometry
 {
-    std::list<contour2d_t> outer_contours;
-    std::list<contour2d_t> holes;
+    std::list<contour_t> outer_contours;
+    std::list<contour_t> holes;
 };
 typedef boost::shared_ptr<Geometry> geometry_ptr;
 
@@ -55,7 +55,7 @@ struct PartInstantiation
 {
     part_ptr part;
     sheet_ptr sheet;
-    point2d_t position;
+    point_t position;
     size_t instantiation_index = 0;
 };
 

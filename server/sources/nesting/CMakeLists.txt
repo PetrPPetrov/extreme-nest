@@ -38,6 +38,7 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR})
 set(HEADERS
   ${PROJECT_SOURCE_DIR}/config.h
+  ${PROJECT_SOURCE_DIR}/common.h
   ${PROJECT_SOURCE_DIR}/nesting_request.h
   ${PROJECT_SOURCE_DIR}/nesting_task.h
 )
