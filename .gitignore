@@ -1,7 +1,7 @@
-.idea/*
-test-client/node_modules/*
-client/sources/node_modules/*
-server/node_modules/*
-server/build/*
+**/node_modules/
+**/.idea/
+**/venv/
+**/__pycache__/
+**/build/
 server/ebuild/*
 server/bin/*
