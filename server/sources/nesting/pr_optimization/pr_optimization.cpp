@@ -29,11 +29,6 @@ namespace Pr
         return result;
     }
 
-    class GeneticAlgorithm
-    {
-
-    };
-
     class CellSpace
     {
         cell_t size;
@@ -164,6 +159,65 @@ namespace Pr
         result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
         return result;
     }
+
+    class GeneticAlgorithm
+    {
+    public:
+        struct Gene
+        {
+            cell_t position;
+            size_t variation;
+        };
+        struct Individual
+        {
+            std::vector<Gene> genotype;
+            double fitness;
+        };
+        typedef boost::shared_ptr<Individual> individual_ptr;
+    private:
+        typedef std::list<individual_ptr> population_t;
+
+        population_t population;
+        std::vector<part_info_ptr> parts_info;
+        sheet_info_ptr sheet_info;
+
+        individual_ptr randomIndividual() const
+        {
+            // TODO:
+            return boost::make_shared<Individual>();
+        }
+        void calculateFitness(individual_ptr individual) const
+        {
+            // TODO:
+        }
+        void mutate(const individual_ptr& individual) const
+        {
+            // TODO:
+        }
+        population_t mate(const individual_ptr& male, const individual_ptr& female) const
+        {
+            // TODO:
+            return population_t();
+        }
+    public:
+        GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const sheet_info_ptr& sheet_info_) :
+            parts_info(parts_info_), sheet_info(sheet_info_)
+        {
+            for (size_t i = 0; i < POPULATION_SIZE; ++i)
+            {
+                population.push_back(randomIndividual());
+            }
+        }
+        void nextGeneration()
+        {
+            // TODO:
+        }
+        individual_ptr getBest() const
+        {
+            // TODO:
+            return boost::make_shared<Individual>();
+        }
+    };
 
     class Nesting
     {

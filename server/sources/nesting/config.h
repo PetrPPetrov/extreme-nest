@@ -7,3 +7,4 @@
 
 const double ROTATION_ANGLE_STEP = 0.1;
 const double POSITION_STEP = 0.1;
+const size_t POPULATION_SIZE = 100;
