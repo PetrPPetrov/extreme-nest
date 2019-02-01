@@ -4,12 +4,31 @@
 // This software is intellectual property of GkmSoft.
 
 #include <cassert>
+#include <boost/geometry/algorithms/overlaps.hpp>
+#include <boost/geometry/algorithms/within.hpp>
 #include "config.h"
 #include "common.h"
 #include "pr_optimization.h"
 
 namespace Pr
 {
+    typedef boost::geometry::model::d2::point_xy<int> cell_t;
+    typedef boost::geometry::model::box<cell_t> cell_box_t;
+
+    inline cell_t point_to_cell(const point_t& point)
+    {
+        return cell_t(static_cast<int>(point.x() / POSITION_STEP), static_cast<int>(point.y() / POSITION_STEP));
+    }
+    inline cell_box_t box_to_cell_box(const box_t& box)
+    {
+        cell_box_t result;
+        result.min_corner() = point_to_cell(box.min_corner());
+        cell_t max_point = point_to_cell(box.max_corner());
+        result.max_corner().x(max_point.x() + 1);
+        result.max_corner().y(max_point.y() + 1);
+        return result;
+    }
+
     class GeneticAlgorithm
     {
 
@@ -17,29 +36,73 @@ namespace Pr
 
     class CellSpace
     {
-        size_t length;
-        size_t height;
+        cell_t size;
         std::vector<bool> data;
-        size_t getIndex(size_t length_, size_t height_) const
+        size_t getPlainIndex(cell_t index) const
         {
-            return length_ * height + height_;
+            assert(index.x() < size.x());
+            assert(index.y() < size.y());
+            return index.x() * size.y() + index.y();
         }
     public:
-        CellSpace(size_t length_, size_t height_) :
-            length(length_), height(height_), data(length * height)
+        CellSpace(cell_t size_) :
+            size(size_), data(size.x() * size.y())
         {
         }
-        void setCell(size_t length_, size_t height_, bool value)
+        CellSpace(const polygons_t& polygons, const cell_box_t& cell_box, bool is_sheet = false) :
+            CellSpace(cell_t(cell_box.max_corner().x() - cell_box.min_corner().x(), cell_box.max_corner().y() - cell_box.min_corner().y()))
         {
-            assert(length_ < length);
-            assert(height_ < height);
-            data[getIndex(length_, height_)] = value;
+            for (int x = 0; x < size.x(); ++x)
+            {
+                for (int y = 0; y < size.y(); ++y)
+                {
+                    const int base_point_x = x + cell_box.min_corner().x();
+                    const int base_point_y = y + cell_box.min_corner().y();
+                    const int end_point_x = base_point_x + 1;
+                    const int end_point_y = base_point_y + 1;
+
+                    contour_t cell_contour;
+                    cell_contour.push_back(point_t(base_point_x * POSITION_STEP, base_point_y * POSITION_STEP));
+                    cell_contour.push_back(point_t(base_point_x * POSITION_STEP, end_point_y * POSITION_STEP));
+                    cell_contour.push_back(point_t(end_point_x * POSITION_STEP, end_point_y * POSITION_STEP));
+                    cell_contour.push_back(point_t(end_point_x * POSITION_STEP, base_point_y * POSITION_STEP));
+
+                    polygon_t cell;
+                    cell.outer().assign(cell_contour.begin(), cell_contour.end());
+
+                    if (is_sheet)
+                    {
+                        setCell(cell_t(x, y), true);
+                        for (auto polygon : polygons)
+                        {
+                            if (boost::geometry::within(cell, *polygon))
+                            {
+                                setCell(cell_t(x, y), false);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (auto polygon : polygons)
+                        {
+                            if (boost::geometry::overlaps(cell, *polygon))
+                            {
+                                setCell(cell_t(x, y), true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        bool getCell(size_t length_, size_t height_) const
+        void setCell(cell_t index, bool value)
         {
-            assert(length_ < length);
-            assert(height_ < height);
-            return data[getIndex(length_, height_)];
+            data[getPlainIndex(index)] = value;
+        }
+        bool getCell(cell_t index) const
+        {
+            return data[getPlainIndex(index)];
         }
     };
     typedef boost::shared_ptr<CellSpace> cell_space_ptr;
@@ -49,7 +112,7 @@ namespace Pr
         PartVariation variation;
         polygons_t polygons;
         box_t bounding_box;
-        point_t adjusted_begin_point;
+        cell_box_t cell_box;
         cell_space_ptr cell_space;
     };
     typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
@@ -74,6 +137,8 @@ namespace Pr
             geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
             toPolygons(*actual_variation_geometry, variation_info->polygons);
             variation_info->bounding_box = calculateBoundingBox(variation_info->polygons);
+            variation_info->cell_box = box_to_cell_box(variation_info->bounding_box);
+            variation_info->cell_space = boost::make_shared<CellSpace>(variation_info->polygons, variation_info->cell_box);
             result->variations_info.push_back(variation_info);
         }
         return result;
@@ -84,8 +149,8 @@ namespace Pr
         sheet_ptr sheet;
         polygons_t polygons;
         box_t bounding_box;
-        size_t max_position_x = 1;
-        size_t max_position_y = 1;
+        cell_box_t cell_box;
+        cell_space_ptr cell_space;
     };
     typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
 
@@ -95,10 +160,8 @@ namespace Pr
         result->sheet = sheet;
         toPolygons(*sheet->geometry, result->polygons);
         result->bounding_box = calculateBoundingBox(result->polygons);
-        const double delta_x = result->bounding_box.max_corner().x() - result->bounding_box.min_corner().x();
-        const double delta_y = result->bounding_box.max_corner().y() - result->bounding_box.min_corner().y();
-        result->max_position_x = static_cast<size_t>(delta_x / POSITION_STEP);
-        result->max_position_y = static_cast<size_t>(delta_y / POSITION_STEP);
+        result->cell_box = box_to_cell_box(result->bounding_box);
+        result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
         return result;
     }
 

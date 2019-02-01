@@ -157,9 +157,9 @@ class TaskGenerator
             new_sheet->geometry = boost::make_shared<Geometry>();
             contour_t outer_contour;
             outer_contour.push_back(point_t(0.0, 0.0));
-            outer_contour.push_back(point_t(sheet->length, 0.0));
-            outer_contour.push_back(point_t(sheet->length, sheet->height));
             outer_contour.push_back(point_t(0.0, sheet->height));
+            outer_contour.push_back(point_t(sheet->length, sheet->height));
+            outer_contour.push_back(point_t(sheet->length, 0.0));
             new_sheet->geometry->outer_contours.push_back(outer_contour);
             result->sheets.push_back(new_sheet);
         }
