@@ -18,7 +18,8 @@ new Vue({
         serverAddress: '',
         nestingOrderID: 0,
         nestingRequest: {},
-        nestingResponse: {}
+        nestingResponse: {},
+        canvas: {}
     },
     components : {
         headerTemplate: headerTemplate,

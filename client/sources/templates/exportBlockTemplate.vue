@@ -24,11 +24,13 @@
 
 <script>
 
+
     import axios from 'axios'
     import { saveAs } from 'file-saver';
 
     import configuration from '../resources/data/configuration'
 
+    const fabric = require('fabric').fabric;
     const canvasPainter = require('../scripts/canvasPainter');
     const nestingRequestParser = require('../scripts/nestingRequestParser');
 
@@ -80,14 +82,17 @@
             },
 
             onClickVisualize: function() {
-                const canvas = document.getElementById('canvas');
-                const context = canvas.getContext('2d');
+                this.$root.$data.canvas = new fabric.StaticCanvas('canvas', {
+                    scale: 1,
+                    width: 600,
+                    height: 400,
+                    selection: false
+                });
+
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
-                const scaling = 20;
-                canvasPainter.drawNestingOptimizationSheet(canvas, context, sheetID, nestingRequest, nestingResponse, scaling, 0, 0);
-                this.$root.$data.isEmptyCanvas = false;
+                canvasPainter.draw(this.$root.$data.canvas, sheetID, nestingRequest, nestingResponse)
             }
         }
     }

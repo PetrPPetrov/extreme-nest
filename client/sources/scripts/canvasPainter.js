@@ -40,6 +40,18 @@ module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNes
     });
 };
 
+module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse) => {
+    const circle = new fabric.Circle({
+        radius: 20, fill: 'green', left: 100, top: 100
+    });
+    const triangle = new fabric.Triangle({
+        width: 20, height: 30, fill: 'blue', left: 50, top: 50
+    });
+
+    canvas.add(circle, triangle);
+    canvas.renderAll();
+};
+
 function drawSheetBorder(context, canvasWidth, canvasHeight) {
     context.strokeStyle = '#000';
     context.fillStyle = '#000';
