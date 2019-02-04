@@ -4,6 +4,8 @@
 // This software is intellectual property of GkmSoft.
 
 #include <cassert>
+#include <iostream>
+#include <random>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include "config.h"
@@ -99,6 +101,10 @@ namespace Pr
         {
             return data[getPlainIndex(index)];
         }
+        cell_t getSize() const
+        {
+            return size;
+        }
     };
     typedef boost::shared_ptr<CellSpace> cell_space_ptr;
 
@@ -167,6 +173,10 @@ namespace Pr
         {
             cell_t position;
             size_t variation;
+            const size_t max_variation;
+            Gene(size_t max_variation_) : max_variation(max_variation_)
+            {
+            }
         };
         struct Individual
         {
@@ -181,9 +191,21 @@ namespace Pr
         std::vector<part_info_ptr> parts_info;
         sheet_info_ptr sheet_info;
 
+        mutable std::mt19937 engine;
+        mutable std::uniform_int_distribution<size_t> uniform;
+
         individual_ptr randomIndividual() const
         {
-            // TODO:
+            individual_ptr result = boost::make_shared<Individual>();
+            result->genotype.reserve(parts_info.size());
+            for (auto part_info : parts_info)
+            {
+                Gene new_gene(part_info->variations_info.size());
+                new_gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
+                new_gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
+                new_gene.variation = uniform(engine) % part_info->variations_info.size();
+                result->genotype.push_back(new_gene);
+            }
             return boost::make_shared<Individual>();
         }
         void calculateFitness(individual_ptr individual) const
@@ -192,30 +214,86 @@ namespace Pr
         }
         void mutate(const individual_ptr& individual) const
         {
-            // TODO:
+            for (auto& gene : individual->genotype)
+            {
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
+                }
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
+                }
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.variation = uniform(engine) % gene.max_variation;
+                }
+            }
         }
         population_t mate(const individual_ptr& male, const individual_ptr& female) const
         {
-            // TODO:
-            return population_t();
+            const size_t genes_count = parts_info.size();
+            const size_t genes_cross_area_size = genes_count * 80 / 100;
+            const size_t genes_cross_area_base = genes_count * 10 / 100;
+            size_t cross_point = uniform(engine) % genes_cross_area_size + genes_cross_area_base;
+            population_t result;
+            individual_ptr child1 = boost::make_shared<Individual>();
+            child1->genotype.reserve(genes_count);
+            individual_ptr child2 = boost::make_shared<Individual>();
+            child2->genotype.reserve(genes_count);
+            for (size_t i = 0; i < genes_count; ++i)
+            {
+                if (i < cross_point)
+                {
+                    child1->genotype.push_back(male->genotype[i]);
+                    child2->genotype.push_back(female->genotype[i]);
+                }
+                else
+                {
+                    child1->genotype.push_back(female->genotype[i]);
+                    child2->genotype.push_back(male->genotype[i]);
+                }
+            }
+            result.push_back(child1);
+            result.push_back(child2);
+            return result;
         }
     public:
         GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const sheet_info_ptr& sheet_info_) :
-            parts_info(parts_info_), sheet_info(sheet_info_)
+            parts_info(parts_info_), sheet_info(sheet_info_), engine(std::random_device()())
         {
             for (size_t i = 0; i < POPULATION_SIZE; ++i)
             {
                 population.push_back(randomIndividual());
             }
         }
+        void calculateFitness()
+        {
+            for (auto individual : population)
+            {
+                calculateFitness(individual);
+            }
+        }
+        void sort()
+        {
+            population.sort([](const individual_ptr& a, const individual_ptr& b)
+            {
+                return a->fitness < b->fitness;
+            });
+        }
         void nextGeneration()
         {
-            // TODO:
+            population_t next_population;
+            next_population.push_back(getBest());
+            for (size_t i = 1; i < POPULATION_SIZE; ++i)
+            {
+                // TODO:
+            }
+            population = next_population;
         }
         individual_ptr getBest() const
         {
-            // TODO:
-            return boost::make_shared<Individual>();
+            return *population.begin();
         }
     };
 
@@ -255,6 +333,7 @@ namespace Pr
         {
             calculatePartsInfo();
             calculateSheetsInfo();
+            GeneticAlgorithm alg(parts_info, sheets_info.at(0));
         }
     };
 }
