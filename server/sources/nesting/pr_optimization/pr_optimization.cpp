@@ -258,6 +258,33 @@ namespace Pr
             result.push_back(child2);
             return result;
         }
+        std::vector<individual_ptr> getRandomPair() const
+        {
+            const size_t max_random = POPULATION_SIZE * POPULATION_SIZE;
+            std::vector<individual_ptr> result;
+            result.reserve(2);
+            while (result.size() < 2)
+            {
+                size_t index = 0;
+                for (auto individual : population)
+                {
+                    if (!result.empty() && *result.begin() == individual)
+                    {
+                        continue;
+                    }
+                    if (uniform(engine) % max_random < 2*(POPULATION_SIZE - index))
+                    {
+                        result.push_back(individual);
+                        if (result.size() >= 2)
+                        {
+                            return result;
+                        }
+                    }
+                    index++;
+                }
+            }
+            return result; // Just to avoid compilation warning
+        }
     public:
         GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const sheet_info_ptr& sheet_info_) :
             parts_info(parts_info_), sheet_info(sheet_info_), engine(std::random_device()())
@@ -285,9 +312,21 @@ namespace Pr
         {
             population_t next_population;
             next_population.push_back(getBest());
-            for (size_t i = 1; i < POPULATION_SIZE; ++i)
+            while (next_population.size() < POPULATION_SIZE)
             {
-                // TODO:
+                auto pair = getRandomPair();
+                population_t children = mate(pair[0], pair[1]);
+                for (auto child : children)
+                {
+                    if (next_population.size() < POPULATION_SIZE)
+                    {
+                        next_population.push_back(child);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
             population = next_population;
         }
