@@ -93,6 +93,37 @@ namespace Pr
                 }
             }
         }
+        size_t merge(cell_t point, const CellSpace& image)
+        {
+            size_t overlapped_cell_count = 0;
+            for (int x = 0; x < image.getSize().x(); ++x)
+            {
+                for (int y = 0; y < image.getSize().y(); ++y)
+                {
+                    if (image.getCell(cell_t(x, y)))
+                    {
+                        const int cur_x = point.x() + x;
+                        const int cur_y = point.y() + y;
+                        if (cur_x < size.x() && cur_y < size.y())
+                        {
+                            if (getCell(cell_t(cur_x, cur_y)))
+                            {
+                                overlapped_cell_count++;
+                            }
+                            else
+                            {
+                                setCell(cell_t(cur_x, cur_y), true);
+                            }
+                        }
+                        else
+                        {
+                            overlapped_cell_count++;
+                        }
+                    }
+                }
+            }
+            return overlapped_cell_count;
+        }
         void setCell(cell_t index, bool value)
         {
             data[getPlainIndex(index)] = value;
@@ -181,7 +212,7 @@ namespace Pr
         struct Individual
         {
             std::vector<Gene> genotype;
-            double fitness;
+            size_t penalty;
         };
         typedef boost::shared_ptr<Individual> individual_ptr;
     private:
@@ -208,9 +239,45 @@ namespace Pr
             }
             return boost::make_shared<Individual>();
         }
-        void calculateFitness(individual_ptr individual) const
+        void calculatePenalty(individual_ptr individual) const
         {
-            // TODO:
+            size_t overlapped_cell_count = 0;
+            const CellSpace& original_sheet_mask = *sheet_info->cell_space;
+            CellSpace image = original_sheet_mask; // Perform copy
+            size_t part_index = 0;
+            for (auto gene : individual->genotype)
+            {
+                const cell_t position = gene.position;
+                const CellSpace& part_variation_mask = *parts_info[part_index]->variations_info[gene.variation]->cell_space;
+                overlapped_cell_count += image.merge(position, part_variation_mask);
+            }
+            size_t max_point_x = 0;
+            size_t max_point_y = 0;
+            for (int x = 0; x < image.getSize().x(); ++x)
+            {
+                for (int y = 0; y < image.getSize().y(); ++y)
+                {
+                    const cell_t point(x, y);
+                    if (image.getCell(point) && !original_sheet_mask.getCell(point))
+                    {
+                        if (x > max_point_x)
+                        {
+                            max_point_x = x;
+                        }
+                        if (y > max_point_y)
+                        {
+                            max_point_y = y;
+                        }
+                    }
+                }
+            }
+            const size_t size_x = original_sheet_mask.getSize().x();
+            const size_t size_y = original_sheet_mask.getSize().y();
+            const size_t sheet_area = size_x * size_y;
+            const size_t penalty_for_overlap = overlapped_cell_count * sheet_area;
+            const size_t penalty_for_used_sheet_length = max_point_x * size_y;
+            const size_t penalty_for_used_sheet_height = max_point_y;
+            individual->penalty = penalty_for_overlap + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
         }
         void mutate(const individual_ptr& individual) const
         {
@@ -294,18 +361,18 @@ namespace Pr
                 population.push_back(randomIndividual());
             }
         }
-        void calculateFitness()
+        void calculatePenalty()
         {
             for (auto individual : population)
             {
-                calculateFitness(individual);
+                calculatePenalty(individual);
             }
         }
         void sort()
         {
             population.sort([](const individual_ptr& a, const individual_ptr& b)
             {
-                return a->fitness < b->fitness;
+                return a->penalty < b->penalty;
             });
         }
         void nextGeneration()
