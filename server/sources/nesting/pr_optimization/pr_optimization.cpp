@@ -78,7 +78,7 @@ namespace Pr
                         setCell(cell_t(x, y), true);
                         for (auto polygon : polygons)
                         {
-                            if (boost::geometry::within(cell, *polygon))
+                            if (boost::geometry::overlaps(cell, *polygon) || boost::geometry::within(cell, *polygon))
                             {
                                 setCell(cell_t(x, y), false);
                                 break;
@@ -89,7 +89,7 @@ namespace Pr
                     {
                         for (auto polygon : polygons)
                         {
-                            if (boost::geometry::overlaps(cell, *polygon))
+                            if (boost::geometry::overlaps(cell, *polygon) || boost::geometry::within(cell, *polygon))
                             {
                                 setCell(cell_t(x, y), true);
                                 break;
@@ -129,6 +129,26 @@ namespace Pr
                 }
             }
             return overlapped_cell_count;
+        }
+        void dump() const
+        {
+            int y = size.y() - 1;
+            while (y >= 0)
+            {
+                for (int x = 0; x < size.x(); ++x)
+                {
+                    if (getCell(cell_t(x, y)))
+                    {
+                        std::cout << "*";
+                    }
+                    else
+                    {
+                        std::cout << ".";
+                    }
+                }
+                std::cout << "\n";
+                --y;
+            }
         }
         void setCell(cell_t index, bool value)
         {
@@ -180,6 +200,8 @@ namespace Pr
             variation_info->zero_position_inside_cell_box.x(0.0 - variation_info->cell_box.min_corner().x() * POSITION_STEP);
             variation_info->zero_position_inside_cell_box.y(0.0 - variation_info->cell_box.min_corner().y() * POSITION_STEP);
             variation_info->cell_space = boost::make_shared<CellSpace>(variation_info->polygons, variation_info->cell_box);
+            std::cout << "part image" << std::endl;
+            variation_info->cell_space->dump();
             result->variations_info.push_back(variation_info);
         }
         return result;
@@ -206,6 +228,8 @@ namespace Pr
         result->zero_position_inside_cell_box.x(0.0 - result->cell_box.min_corner().x() * POSITION_STEP);
         result->zero_position_inside_cell_box.y(0.0 - result->cell_box.min_corner().y() * POSITION_STEP);
         result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
+        std::cout << "sheet image" << std::endl;
+        result->cell_space->dump();
         return result;
     }
 

@@ -25,11 +25,12 @@ inline void toPolygons(const Geometry& geometry, polygons_t& polygons)
     for (auto outer_contour : geometry.outer_contours)
     {
         polygon_ptr new_polygon = boost::make_shared<polygon_t>();
-        new_polygon->outer().assign(outer_contour.begin(), outer_contour.end());
+        // TODO: check if contour is counter-clock wise or clock-wise
+        new_polygon->outer().assign(outer_contour.rbegin(), outer_contour.rend());
         for (auto inner_contour : geometry.holes)
         {
             polygon_t inner_polygon;
-            inner_polygon.outer().assign(inner_contour.begin(), inner_contour.end());
+            inner_polygon.outer().assign(inner_contour.rbegin(), inner_contour.rend());
             // Check if the current hole is completely inside the current outer contour
             if (boost::geometry::within(inner_polygon, *new_polygon))
             {
