@@ -12,6 +12,7 @@
 #include <boost/geometry/algorithms/within.hpp>
 #include <boost/geometry/algorithms/envelope.hpp>
 #include <boost/geometry/algorithms/expand.hpp>
+#include <boost/geometry/algorithms/correct.hpp>
 #include "nesting_task.h"
 
 typedef boost::geometry::model::box<point_t> box_t;
@@ -25,12 +26,11 @@ inline void toPolygons(const Geometry& geometry, polygons_t& polygons)
     for (auto outer_contour : geometry.outer_contours)
     {
         polygon_ptr new_polygon = boost::make_shared<polygon_t>();
-        // TODO: check if contour is counter-clock wise or clock-wise
-        new_polygon->outer().assign(outer_contour.rbegin(), outer_contour.rend());
+        new_polygon->outer().assign(outer_contour.begin(), outer_contour.end());
         for (auto inner_contour : geometry.holes)
         {
             polygon_t inner_polygon;
-            inner_polygon.outer().assign(inner_contour.rbegin(), inner_contour.rend());
+            inner_polygon.outer().assign(inner_contour.begin(), inner_contour.end());
             // Check if the current hole is completely inside the current outer contour
             if (boost::geometry::within(inner_polygon, *new_polygon))
             {
@@ -38,6 +38,7 @@ inline void toPolygons(const Geometry& geometry, polygons_t& polygons)
                 new_polygon->inners().push_back(inner_polygon.outer());
             }
         }
+        boost::geometry::correct(*new_polygon);
         polygons.push_back(new_polygon);
     }
 }
