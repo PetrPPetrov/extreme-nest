@@ -49,6 +49,7 @@ struct NestingTask
 {
     std::list<part_ptr> parts;
     std::list<sheet_ptr> sheets;
+    double time_in_seconds;
 };
 typedef boost::shared_ptr<NestingTask> nesting_task_ptr;
 

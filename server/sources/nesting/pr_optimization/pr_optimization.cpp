@@ -4,8 +4,10 @@
 // This software is intellectual property of GkmSoft.
 
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <random>
+#include <chrono>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include "config.h"
@@ -17,9 +19,13 @@ namespace Pr
     typedef boost::geometry::model::d2::point_xy<int> cell_t;
     typedef boost::geometry::model::box<cell_t> cell_box_t;
 
+    inline int coordinate_to_cell(double coordinate)
+    {
+        return static_cast<int>(floor(coordinate / POSITION_STEP));
+    }
     inline cell_t point_to_cell(const point_t& point)
     {
-        return cell_t(static_cast<int>(point.x() / POSITION_STEP), static_cast<int>(point.y() / POSITION_STEP));
+        return cell_t(coordinate_to_cell(point.x()), coordinate_to_cell(point.y()));
     }
     inline cell_box_t box_to_cell_box(const box_t& box)
     {
@@ -145,6 +151,7 @@ namespace Pr
         polygons_t polygons;
         box_t bounding_box;
         cell_box_t cell_box;
+        point_t zero_position_inside_cell_box;
         cell_space_ptr cell_space;
     };
     typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
@@ -170,6 +177,8 @@ namespace Pr
             toPolygons(*actual_variation_geometry, variation_info->polygons);
             variation_info->bounding_box = calculateBoundingBox(variation_info->polygons);
             variation_info->cell_box = box_to_cell_box(variation_info->bounding_box);
+            variation_info->zero_position_inside_cell_box.x(0.0 - variation_info->cell_box.min_corner().x() * POSITION_STEP);
+            variation_info->zero_position_inside_cell_box.y(0.0 - variation_info->cell_box.min_corner().y() * POSITION_STEP);
             variation_info->cell_space = boost::make_shared<CellSpace>(variation_info->polygons, variation_info->cell_box);
             result->variations_info.push_back(variation_info);
         }
@@ -182,6 +191,7 @@ namespace Pr
         polygons_t polygons;
         box_t bounding_box;
         cell_box_t cell_box;
+        point_t zero_position_inside_cell_box;
         cell_space_ptr cell_space;
     };
     typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
@@ -193,6 +203,8 @@ namespace Pr
         toPolygons(*sheet->geometry, result->polygons);
         result->bounding_box = calculateBoundingBox(result->polygons);
         result->cell_box = box_to_cell_box(result->bounding_box);
+        result->zero_position_inside_cell_box.x(0.0 - result->cell_box.min_corner().x() * POSITION_STEP);
+        result->zero_position_inside_cell_box.y(0.0 - result->cell_box.min_corner().y() * POSITION_STEP);
         result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
         return result;
     }
@@ -361,7 +373,7 @@ namespace Pr
                 population.push_back(randomIndividual());
             }
         }
-        void calculatePenalty()
+        void calculatePenalties()
         {
             for (auto individual : population)
             {
@@ -426,9 +438,30 @@ namespace Pr
                 sheets_info.push_back(calculateSheetInfo(sheet));
             }
         }
+        void fillResult(const GeneticAlgorithm::individual_ptr& best)
+        {
+            result = boost::make_shared<NestingResult>();
+            size_t index = 0;
+            sheet_info_ptr sheet_info = sheets_info.at(0);
+            const double base_sheet_x = sheet_info->cell_box.min_corner().x() * POSITION_STEP;
+            const double base_sheet_y = sheet_info->cell_box.min_corner().y() * POSITION_STEP;
+            for (auto gene : best->genotype)
+            {
+                const double zero_offset_x = parts_info[index]->variations_info[gene.variation]->zero_position_inside_cell_box.x();
+                const double zero_offset_y = parts_info[index]->variations_info[gene.variation]->zero_position_inside_cell_box.y();
+
+                PartInstantiation part;
+                part.instantiation_index = gene.variation;
+                part.part = parts_info[index]->part;
+                part.position.x(base_sheet_x + gene.position.x() * POSITION_STEP + zero_offset_x);
+                part.position.y(base_sheet_y + gene.position.y() * POSITION_STEP + zero_offset_y);
+                part.sheet = sheets_info.at(0)->sheet;
+                index++;
+            }
+        }
     public:
         Nesting(const nesting_task_ptr& task_) :
-            task(task_), result(boost::make_shared<NestingResult>())
+            task(task_)
         {
         }
         nesting_result_ptr getResult()
@@ -437,9 +470,23 @@ namespace Pr
         }
         void run()
         {
+            auto start = std::chrono::steady_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
+
             calculatePartsInfo();
             calculateSheetsInfo();
-            GeneticAlgorithm alg(parts_info, sheets_info.at(0));
+            GeneticAlgorithm genetic_algorithm(parts_info, sheets_info.at(0));
+            GeneticAlgorithm::individual_ptr best;
+            while (duration.count() < task->time_in_seconds)
+            {
+                genetic_algorithm.calculatePenalties();
+                genetic_algorithm.sort();
+                best = genetic_algorithm.getBest();
+                genetic_algorithm.nextGeneration();
+
+                duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
+            }
+            fillResult(best);
         }
     };
 }

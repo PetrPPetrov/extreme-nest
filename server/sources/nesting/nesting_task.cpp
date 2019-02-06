@@ -177,6 +177,7 @@ public:
     {
         fillParts();
         fillSheets();
+        result->time_in_seconds = nesting_order.time;
     }
     nesting_task_ptr getResult()
     {
