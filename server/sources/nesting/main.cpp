@@ -29,9 +29,10 @@ int main(int argc, char** argv)
     try
     {
         NestingRequest::Order nesting_order(argv[1]);
-        std::cout << "time " << nesting_order.time << std::endl;
         nesting_task_ptr nesting_task = generateTask(nesting_order);
         nesting_result_ptr nesting_result = Pr::Optimization().nest(nesting_task);
+        std::string result_json = generateJsonResult(*nesting_task, *nesting_result);
+        std::cout << result_json << std::endl;
     }
     catch (boost::system::system_error& error)
     {
