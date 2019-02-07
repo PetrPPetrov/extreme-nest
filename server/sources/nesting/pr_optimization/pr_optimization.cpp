@@ -273,7 +273,7 @@ namespace Pr
                 new_gene.variation = uniform(engine) % part_info->variations_info.size();
                 result->genotype.push_back(new_gene);
             }
-            return boost::make_shared<Individual>();
+            return result;
         }
         void calculatePenalty(individual_ptr individual) const
         {
@@ -315,30 +315,39 @@ namespace Pr
             const size_t penalty_for_used_sheet_height = max_point_y;
             individual->penalty = penalty_for_overlap + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
         }
-        void mutate(const individual_ptr& individual) const
+        std::vector<individual_ptr> getRandomPair() const
         {
-            for (auto& gene : individual->genotype)
+            const size_t max_random = POPULATION_SIZE * POPULATION_SIZE;
+            std::vector<individual_ptr> result;
+            result.reserve(2);
+            while (result.size() < 2)
             {
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                size_t index = 0;
+                for (auto individual : population)
                 {
-                    gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
-                }
-                if (uniform(engine) % 100 < MUTATION_RATE)
-                {
-                    gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
-                }
-                if (uniform(engine) % 100 < MUTATION_RATE)
-                {
-                    gene.variation = uniform(engine) % gene.max_variation;
+                    if (!result.empty() && *result.begin() == individual)
+                    {
+                        continue;
+                    }
+                    if (uniform(engine) % max_random < 2 * (POPULATION_SIZE - index))
+                    {
+                        result.push_back(individual);
+                        if (result.size() >= 2)
+                        {
+                            return result;
+                        }
+                    }
+                    index++;
                 }
             }
+            return result; // Just to avoid compilation warning
         }
         population_t mate(const individual_ptr& male, const individual_ptr& female) const
         {
             const size_t genes_count = parts_info.size();
-            const size_t genes_cross_area_size = genes_count * 80 / 100;
-            const size_t genes_cross_area_base = genes_count * 10 / 100;
-            size_t cross_point = uniform(engine) % genes_cross_area_size + genes_cross_area_base;
+            const size_t genes_cross_area_size = genes_count * 80 / 10; // 80%
+            const size_t genes_cross_area_base = genes_count * 10 / 10; // 10%
+            size_t cross_point = (uniform(engine) % genes_cross_area_size + genes_cross_area_base) / 10;
             population_t result;
             individual_ptr child1 = boost::make_shared<Individual>();
             child1->genotype.reserve(genes_count);
@@ -361,32 +370,23 @@ namespace Pr
             result.push_back(child2);
             return result;
         }
-        std::vector<individual_ptr> getRandomPair() const
+        void mutate(const individual_ptr& individual) const
         {
-            const size_t max_random = POPULATION_SIZE * POPULATION_SIZE;
-            std::vector<individual_ptr> result;
-            result.reserve(2);
-            while (result.size() < 2)
+            for (auto& gene : individual->genotype)
             {
-                size_t index = 0;
-                for (auto individual : population)
+                if (uniform(engine) % 100 < MUTATION_RATE)
                 {
-                    if (!result.empty() && *result.begin() == individual)
-                    {
-                        continue;
-                    }
-                    if (uniform(engine) % max_random < 2*(POPULATION_SIZE - index))
-                    {
-                        result.push_back(individual);
-                        if (result.size() >= 2)
-                        {
-                            return result;
-                        }
-                    }
-                    index++;
+                    gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
+                }
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
+                }
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.variation = uniform(engine) % gene.max_variation;
                 }
             }
-            return result; // Just to avoid compilation warning
         }
     public:
         GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const sheet_info_ptr& sheet_info_) :
@@ -423,6 +423,7 @@ namespace Pr
                 {
                     if (next_population.size() < POPULATION_SIZE)
                     {
+                        mutate(child);
                         next_population.push_back(child);
                     }
                     else
@@ -480,6 +481,7 @@ namespace Pr
                 part.position.x(base_sheet_x + gene.position.x() * POSITION_STEP + zero_offset_x);
                 part.position.y(base_sheet_y + gene.position.y() * POSITION_STEP + zero_offset_y);
                 part.sheet = sheets_info.at(0)->sheet;
+                result->instantiations.push_back(part);
                 index++;
             }
         }
@@ -497,6 +499,7 @@ namespace Pr
             auto start = std::chrono::steady_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
 
+            size_t generation_count = 0;
             calculatePartsInfo();
             calculateSheetsInfo();
             GeneticAlgorithm genetic_algorithm(parts_info, sheets_info.at(0));
@@ -507,10 +510,12 @@ namespace Pr
                 genetic_algorithm.sort();
                 best = genetic_algorithm.getBest();
                 genetic_algorithm.nextGeneration();
+                generation_count++;
 
                 duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
             }
             fillResult(best);
+            std::cout << "generation count " << generation_count << std::endl;
         }
     };
 }

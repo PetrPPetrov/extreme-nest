@@ -3,6 +3,10 @@
 // This file is part of Extreme Nest project.
 // This software is intellectual property of GkmSoft.
 
+#if defined(_WIN32) && defined(_DEBUG)
+#include <crtdbg.h>
+#endif
+
 #include <iostream>
 #include <boost/system/system_error.hpp>
 #include "log.h"
@@ -14,6 +18,10 @@ extern std::ofstream* g_log_file = nullptr;
 
 int main(int argc, char** argv)
 {
+#if defined(_WIN32) && defined(_DEBUG)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     std::cout << "Extreme Nest Copyright (c) 2019 by GkmSoft" << std::endl;
 
     if (argc < 2)

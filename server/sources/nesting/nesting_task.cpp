@@ -200,9 +200,14 @@ namespace ExtremeJson
         size_t cur_indent = 0;
         size_t indent_size = 4;
     public:
+        void writeIndent()
+        {
+            stream << std::string(cur_indent * indent_size, ' ');
+        }
         void write(const std::string& value)
         {
-            stream << std::string(cur_indent * indent_size, ' ') << value;
+            writeIndent();
+            stream << value;
         }
         void writeLn(const std::string& value)
         {
@@ -319,13 +324,14 @@ namespace ExtremeJson
     };
     struct Object : public Writable
     {
-        typedef std::map<std::string, writable_ptr> children_t;
+        //typedef std::map<std::string, writable_ptr> children_t;
+        typedef std::list<std::pair<std::string, writable_ptr> > children_t;
         typedef children_t::value_type item_t;
         children_t children;
 
         virtual void write(Output& output) override
         {
-            output.writeLn("{");
+            output.rawWrite("{\n");
             {
                 Scope scope(output);
                 bool first = true;
@@ -335,11 +341,13 @@ namespace ExtremeJson
                     {
                         output.rawWrite(",\n");
                     }
+                    output.writeIndent();
                     String(child.first).write(output);
                     output.rawWrite(": ");
                     child.second->write(output);
                     first = false;
                 }
+                output.rawWrite("\n");
             }
             output.write("}");
         }
@@ -354,7 +362,7 @@ namespace ExtremeJson
 
         virtual void write(Output& output) override
         {
-            output.writeLn("[");
+            output.rawWrite("[\n");
             {
                 Scope scope(output);
                 bool first = true;
@@ -364,9 +372,11 @@ namespace ExtremeJson
                     {
                         output.rawWrite(",\n");
                     }
+                    output.writeIndent();
                     child->write(output);
                     first = false;
                 }
+                output.rawWrite("\n");
             }
             output.write("]");
         }
@@ -382,10 +392,10 @@ std::string generateJsonResult(const NestingTask& task, const NestingResult& res
     using namespace ExtremeJson;
 
     Object root;
-    root.children.insert(Object::item_t("message", String::make("successfully completed")));
+    root.children.push_back(Object::item_t("message", String::make("successfully completed")));
 
     Array* nestings = new Array();
-    root.children.insert(Object::item_t("nestings", writable_ptr(nestings)));
+    root.children.push_back(Object::item_t("nestings", writable_ptr(nestings)));
 
     typedef std::map<sheet_ptr, Array*> sheet_to_nested_parts_t;
     sheet_to_nested_parts_t sheet_to_nested_parts;
@@ -399,24 +409,24 @@ std::string generateJsonResult(const NestingTask& task, const NestingResult& res
             Object* sheet_json = new Object();
             nestings->children.push_back(writable_ptr(sheet_json));
 
-            sheet_json->children.insert(Object::item_t("sheet", Integer::make(instantiation.sheet->id)));
-            sheet_json->children.insert(Object::item_t("length", Number::make(1.0))); // TODO:
-            sheet_json->children.insert(Object::item_t("quantity", Integer::make(1)));
+            sheet_json->children.push_back(Object::item_t("sheet", Integer::make(instantiation.sheet->id)));
+            sheet_json->children.push_back(Object::item_t("length", Number::make(1.0))); // TODO:
+            sheet_json->children.push_back(Object::item_t("quantity", Integer::make(1)));
 
             Array* nested_parts = new Array();
-            sheet_json->children.insert(Object::item_t("nested_parts", writable_ptr(nested_parts)));
+            sheet_json->children.push_back(Object::item_t("nested_parts", writable_ptr(nested_parts)));
             it = sheet_to_nested_parts.insert(sheet_to_nested_parts_t::value_type(instantiation.sheet, nested_parts)).first;
         }
         Object* nested_part = new Object();
         it->second->children.push_back(writable_ptr(nested_part));
 
-        nested_part->children.insert(Object::item_t("id", Integer::make(instantiation.part->id)));
+        nested_part->children.push_back(Object::item_t("id", Integer::make(instantiation.part->id)));
         Array* position = new Array;
-        nested_part->children.insert(Object::item_t("position", writable_ptr(position)));
+        nested_part->children.push_back(Object::item_t("position", writable_ptr(position)));
         position->children.push_back(Number::make(instantiation.position.x()));
         position->children.push_back(Number::make(instantiation.position.y()));
-        nested_part->children.insert(Object::item_t("angle", Number::make(instantiation.part->variations[instantiation.instantiation_index].angle)));
-        nested_part->children.insert(Object::item_t("flip", Boolean::make(instantiation.part->variations[instantiation.instantiation_index].flip)));
+        nested_part->children.push_back(Object::item_t("angle", Number::make(instantiation.part->variations[instantiation.instantiation_index].angle)));
+        nested_part->children.push_back(Object::item_t("flip", Boolean::make(instantiation.part->variations[instantiation.instantiation_index].flip)));
 
         index++;
     }
