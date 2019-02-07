@@ -200,8 +200,10 @@ namespace Pr
             variation_info->zero_position_inside_cell_box.x(0.0 - variation_info->cell_box.min_corner().x() * POSITION_STEP);
             variation_info->zero_position_inside_cell_box.y(0.0 - variation_info->cell_box.min_corner().y() * POSITION_STEP);
             variation_info->cell_space = boost::make_shared<CellSpace>(variation_info->polygons, variation_info->cell_box);
+#ifdef _DEBUG
             std::cout << "part image" << std::endl;
             variation_info->cell_space->dump();
+#endif
             result->variations_info.push_back(variation_info);
         }
         return result;
@@ -228,8 +230,10 @@ namespace Pr
         result->zero_position_inside_cell_box.x(0.0 - result->cell_box.min_corner().x() * POSITION_STEP);
         result->zero_position_inside_cell_box.y(0.0 - result->cell_box.min_corner().y() * POSITION_STEP);
         result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
+#ifdef _DEBUG
         std::cout << "sheet image" << std::endl;
         result->cell_space->dump();
+#endif
         return result;
     }
 
@@ -515,7 +519,9 @@ namespace Pr
                 duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
             }
             fillResult(best);
+#ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;
+#endif
         }
     };
 }

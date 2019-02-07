@@ -68,4 +68,4 @@ struct NestingResult
 typedef boost::shared_ptr<NestingResult> nesting_result_ptr;
 
 nesting_task_ptr generateTask(const NestingRequest::Order& nesting_order);
-std::string generateJsonResult(const NestingTask& task, const NestingResult& result);
+std::string generateJson(const NestingResult& result, const NestingTask& task);

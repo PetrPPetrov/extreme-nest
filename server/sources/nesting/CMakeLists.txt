@@ -37,8 +37,10 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 set(HEADERS
-  ${PROJECT_SOURCE_DIR}/config.h
   ${PROJECT_SOURCE_DIR}/common.h
+  ${PROJECT_SOURCE_DIR}/config.h
+  ${PROJECT_SOURCE_DIR}/extreme_error.h
+  ${PROJECT_SOURCE_DIR}/extreme_json.h
   ${PROJECT_SOURCE_DIR}/nesting_request.h
   ${PROJECT_SOURCE_DIR}/nesting_task.h
 )
@@ -50,18 +52,18 @@ set(SOURCES
 
 include_directories(${PROJECT_SOURCE_DIR}/nfp_optimization)
 set(NFP_OPTIMIZATION
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
   ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
   ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
+  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/pr_optimization)
 set(PR_OPTIMIZATION
-  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.h
   ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.cpp
+  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.h
 )
 
 set(CMAKE_CXX_STANDARD 14)
