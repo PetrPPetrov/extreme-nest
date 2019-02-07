@@ -56,3 +56,10 @@ module.exports.sendRequestValidationError = (response, errors) => {
             errors : errors
         }));
 }
+
+module.exports.sendErrorObjects = (response, errors) => {
+    response
+        .status(httpStatusCodes.BAD_REQUEST)
+        .set({'Content-Type': 'application/json; charset=utf-8'})
+        .send(errors);
+}

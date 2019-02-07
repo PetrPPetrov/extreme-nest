@@ -6,9 +6,8 @@
 'use strict';
 
 const log4js = require('log4js');
-const threads = require('threads');
-const config  = threads.config;
-const spawn   = threads.spawn;
+const fs = require('fs');
+const { spawn } = require('child_process');
 
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
@@ -27,28 +26,39 @@ module.exports.processNestingRequest = (nestingRequest) => {
         nestingRequest: nestingRequest,
         orderID: orderID,
         error: false,
-        errorObject: null,
         ready: false,
         fullResult: null
     });
     nestingRequest.orderID = orderID;
 
-    const thread = spawn('./sources/nesting/nestingOptimization.js');
-    thread
-        .send(nestingRequest)
-        .on('message', (nestingResult) => {
-            nestingOrders.get(orderID).ready = true;
-            nestingOrders.get(orderID).fullResult = nestingResult;
-        })
-        .on('error', (error) => {
-            log.debug('Error in working thread, text = ' + error);
-            let nestingOrder = nestingOrders.get(orderID);
-            nestingOrder.error = true;
-            nestingOrder.errorObject = error;
-        })
-        .on('exit', () => {
-            log.debug('Nesting thread finished, orderID ' + orderID);
-        });
+    const nestingRequestFileName = `./sources/nesting/run_area/${orderID}.json`;
+    // TODO: check if file exists and remove it if required
+    const nestingRequestAsString = JSON.stringify(nestingRequest);
+    fs.writeFile(nestingRequestFileName, nestingRequestAsString, (error) => {
+        if (error) {
+            console.log(error);
+        }else {
+            const process = spawn('./sources/nesting/bin/extreme_nest', [nestingRequestFileName]);
+
+            process.stdout.on('data', (data) => {
+                nestingOrders.get(orderID).fullResult = JSON.parse(data);
+                nestingOrders.get(orderID).ready = true;
+            });
+
+            process.stderr.on('data', (data) => {
+                nestingOrders.get(orderID).error = true;
+                log.debug(`Error in working process, text = ${data}`);
+            });
+
+            process.on('close', (code) => {
+                if (code !== 0) {
+                    nestingOrders.get(orderID).error = true;
+                    log.debug(`Nesting process failed, orderID ${orderID}, exit code ${code}`);
+                }
+                log.debug(`Nesting process finished, orderID ${orderID}`);
+            });
+        }
+    });
 
     return orderID;
 };

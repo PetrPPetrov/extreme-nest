@@ -26,8 +26,8 @@ module.exports.onFullRequest = (request, response) => {
     const order = nesting.nestingOrders.get(id);
 
     if (order.error) {
-        log.debug(`OrderID ${id} caused some error, error = ${order.errorObject}`);
-        common.sendRequestValidationError(response, [order.errorObject.toString()]);
+        log.debug(`OrderID ${id} caused some error, error = ${order.fullResult}`);
+        common.sendErrorObjects(response, order.fullResult);
         return;
     }
 
