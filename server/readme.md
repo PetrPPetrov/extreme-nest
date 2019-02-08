@@ -5,6 +5,9 @@ To build Extreme-Nest RESTfull server to need to install:
 * Microsoft Visual Studio 2017 (or Microsoft Visual Studio 2015)
 * CMake build system, version 3.2 or higher (for Extreme-Nest C++ module)
 * Python 2.x interpreter (for node-gyp, used by Deep-Nest Minkowski C++ addon)
+* boost 1.60.0 library or higher, you can download a pre-built binaries from:
+    * 64-bit for Visual Studio 2017 https://sourceforge.net/projects/boost/files/boost-binaries/1.69.0/boost_1_69_0-msvc-14.1-64.exe/download
+    * 64-bit for Visual Studio 2015 https://sourceforge.net/projects/boost/files/boost-binaries/1.69.0/boost_1_69_0-msvc-14.0-64.exe/download
 
 First, you need to run 'npm install' from this folder.
 
@@ -16,6 +19,7 @@ TODO for Extreme Nest:
 ======================
 * ~~Add support for orientations~~
 * ~~Add support for flip flag~~
+* Add support of multiple sheets
 * Add support of infinite sheet length
 * Add support of non-rectangular sheets
 * Add support for pre-nesting
