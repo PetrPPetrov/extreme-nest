@@ -7,8 +7,8 @@
 
 const log4js = require('log4js');
 const common = require('./common');
+const nesting = require('./nestingRequest');
 const httpStatusCodes = require('../httpStatusCodes');
-const nesting = require('../nesting/nestingRequest');
 
 const log = log4js.getLogger(__filename);
 log.level = 'debug';

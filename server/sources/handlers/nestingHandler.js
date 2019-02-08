@@ -8,8 +8,8 @@
 const log4js = require('log4js');
 const validator = require('jsonschema');
 const common = require('./common');
+const nesting = require('./nestingRequest');
 const httpStatusCodes = require('../httpStatusCodes');
-const nesting = require('../nesting/nestingRequest');
 const jsonSchema = require('../../resources/job_schema');
 
 const log = log4js.getLogger(__filename);

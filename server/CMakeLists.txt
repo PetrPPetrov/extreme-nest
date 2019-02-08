@@ -5,7 +5,7 @@
 
 project(extreme_nest)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 
 find_package(Boost 1.60 REQUIRED)
 
@@ -35,35 +35,36 @@ if(WIN32)
   add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR})
+set(EXTREME_NEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/sources/nesting)
+include_directories(${EXTREME_NEST_SOURCE_DIR})
 set(HEADERS
-  ${PROJECT_SOURCE_DIR}/common.h
-  ${PROJECT_SOURCE_DIR}/config.h
-  ${PROJECT_SOURCE_DIR}/extreme_error.h
-  ${PROJECT_SOURCE_DIR}/extreme_json.h
-  ${PROJECT_SOURCE_DIR}/nesting_request.h
-  ${PROJECT_SOURCE_DIR}/nesting_task.h
+  ${EXTREME_NEST_SOURCE_DIR}/common.h
+  ${EXTREME_NEST_SOURCE_DIR}/config.h
+  ${EXTREME_NEST_SOURCE_DIR}/extreme_error.h
+  ${EXTREME_NEST_SOURCE_DIR}/extreme_json.h
+  ${EXTREME_NEST_SOURCE_DIR}/nesting_request.h
+  ${EXTREME_NEST_SOURCE_DIR}/nesting_task.h
 )
 
 set(SOURCES
-  ${PROJECT_SOURCE_DIR}/nesting_task.cpp
-  ${PROJECT_SOURCE_DIR}/main.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/nesting_task.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/main.cpp
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/nfp_optimization)
+include_directories(${EXTREME_NEST_SOURCE_DIR}/nfp_optimization)
 set(NFP_OPTIMIZATION
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
-  ${PROJECT_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/pr_optimization)
+include_directories(${EXTREME_NEST_SOURCE_DIR}/pr_optimization)
 set(PR_OPTIMIZATION
-  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.cpp
-  ${PROJECT_SOURCE_DIR}/pr_optimization/pr_optimization.h
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/pr_optimization.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/pr_optimization.h
 )
 
 set(CMAKE_CXX_STANDARD 14)

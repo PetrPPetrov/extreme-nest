@@ -31,14 +31,14 @@ module.exports.processNestingRequest = (nestingRequest) => {
     });
     nestingRequest.orderID = orderID;
 
-    const nestingRequestFileName = `./sources/nesting/run_area/${orderID}.json`;
+    const nestingRequestFileName = `./run_area/${orderID}.json`;
     // TODO: check if file exists and remove it if required
     const nestingRequestAsString = JSON.stringify(nestingRequest);
     fs.writeFile(nestingRequestFileName, nestingRequestAsString, (error) => {
         if (error) {
             console.log(error);
         }else {
-            const process = spawn('./sources/nesting/bin/extreme_nest', [nestingRequestFileName]);
+            const process = spawn('./bin/extreme_nest', [nestingRequestFileName]);
 
             process.stdout.on('data', (data) => {
                 nestingOrders.get(orderID).fullResult = JSON.parse(data);

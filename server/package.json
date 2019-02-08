@@ -1,19 +1,22 @@
 {
-  "name": "deep-nest-rest-server",
+  "name": "extreme-nest",
   "version": "0.0.1",
-  "description": "",
+  "description": "Provides 2D Nesting Service",
   "main": "./sources/server.js",
   "scripts": {
-    "configure": "node-gyp configure --release",
-    "build": "node-gyp build",
-    "start": "node %NODE_DEBUG_OPTION% ./sources/server.js"
+    "configure": "cmake-js configure && node-gyp configure --release",
+    "build": "cmake-js compile && node-gyp build",
+    "start": "node ./sources/server.js",
+    "debug": "node %NODE_DEBUG_OPTION% ./sources/server.js",
+    "install": "cmake-js compile && node-gyp rebuild"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/PetrPPetrov/deep-nest-rest.git"
+    "url": "https://github.com/PetrPPetrov/extreme-nest.git"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cmake-js": "^5.0.1",
     "express": "^4.16.4",
     "jsonschema": "^1.2.4",
     "log4js": "^3.0.6",

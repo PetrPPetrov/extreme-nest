@@ -2,6 +2,4 @@
 client/sources/node_modules/*
 server/node_modules/*
 server/build/*
-server/sources/nesting/build/*
-server/sources/nesting/bin/*
-server/sources/nesting/.vs/*
+server/bin/*
