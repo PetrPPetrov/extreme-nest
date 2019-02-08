@@ -41,21 +41,22 @@ module.exports.processNestingRequest = (nestingRequest) => {
                 console.log(error);
             } else {
                 const process = spawn('./bin/extreme_nest', [nestingRequestFileName]);
+                log.debug(`Started nesting [Extreme-Nest], orderID = ${orderID}`);
                 process.stdout.on('data', (data) => {
                     let nestingOrder = nestingOrders.get(orderID);
                     nestingOrder.fullResult = JSON.parse(data);
                     nestingOrder.ready = true;
                 });
                 process.stderr.on('data', (data) => {
-                    log.debug(`Error in working process, text = ${data}`);
+                    log.debug(`Error in nesting process [Extreme-Nest], text = ${data}`);
                     nestingOrders.get(orderID).error = true;
                 });
                 process.on('close', (code) => {
                     if (code !== 0) {
                         nestingOrders.get(orderID).error = true;
-                        log.debug(`Nesting process failed, orderID ${orderID}, exit code ${code}`);
+                        log.debug(`Nesting process [Extreme-Nest] failed, orderID ${orderID}, exit code ${code}`);
                     }
-                    log.debug(`Nesting process finished, orderID ${orderID}`);
+                    log.debug(`Done nesting [Extreme-Nest], orderID = ${orderID}`);
                 });
             }
         });
@@ -72,17 +73,20 @@ module.exports.processNestingRequest = (nestingRequest) => {
                 nestingOrder.ready = true;
             })
             .on('error', (error) => {
-                log.debug('Error in working thread, text = ' + error);
+                log.debug(`Error in nesting thread [Deep-Nest], text = ${error}`);
                 let nestingOrder = nestingOrders.get(orderID);
                 nestingOrder.error = true;
                 nestingOrder.fullResult = {
-                    message : 'An error occurred',
-                    errors : error
+                    message: 'An error occurred',
+                    errors: [
+                        {
+                            error_code: -4000,
+                            message: JSON.stringify(error)
+                        }
+                    ]
                 };
             })
-            .on('exit', () => {
-                log.debug('Nesting thread finished, orderID ' + orderID);
-            });
+            .on('exit', () => {});
     }
 
     return orderID;

@@ -16,12 +16,12 @@ const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
 module.exports = function(nestingRequest, done) {
-    log.debug(`Started nesting, orderID = ${nestingRequest.orderID}`);
+    log.debug(`Started nesting [Deep-Nest], orderID = ${nestingRequest.orderID}`);
 
     let deepNest = new DeepNest(nestingRequest);
     deepNest.nest();
 
-    log.debug(`Done nesting, orderID = ${nestingRequest.orderID}, generation count = ${deepNest.GA.generationNumber}`);
+    log.debug(`Done nesting [Deep-Nest], orderID = ${nestingRequest.orderID}, generation count = ${deepNest.GA.generationNumber}`);
     done(deepNest.fullResult);
 };
 
