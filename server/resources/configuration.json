@@ -1,4 +1,6 @@
 {
   "serverPort" : 80,
-  "serverAddress" : "127.0.0.1"
+  "serverAddress" : "127.0.0.1",
+  "nestingEngine" : "extreme-nest",
+  "nestingEngine_comment": "possible values are 'deep-nest' or 'extreme-nest'"
 }

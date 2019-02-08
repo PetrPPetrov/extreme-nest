@@ -6,8 +6,8 @@
 'use strict';
 
 const log4js = require('log4js');
-const ClipperLib = require('../../dependencies/deepnest/util/clippernode');
-const GeometryUtil = require('../../dependencies/deepnest/util/geometryutil');
+const ClipperLib = require('./util/clippernode');
+const GeometryUtil = require('./util/geometryutil');
 const addon = require('../../build/Release/addon');
 
 const log = log4js.getLogger(__filename);

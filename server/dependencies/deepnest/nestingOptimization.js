@@ -6,10 +6,10 @@
 'use strict';
 
 const log4js = require('log4js');
-const ClipperLib = require('../../dependencies/deepnest/util/clippernode');
-const GeometryUtil = require('../../dependencies/deepnest/util/geometryutil');
-const simplifyLib = require('../../dependencies/deepnest/util/simplify');
-const d3 = require('../../dependencies/deepnest/util/d3-polygon');
+const ClipperLib = require('./util/clippernode');
+const GeometryUtil = require('./util/geometryutil');
+const simplifyLib = require('./util/simplify');
+const d3 = require('./util/d3-polygon');
 const FitnessCalculator = require('./calculateFitness');
 
 const log = log4js.getLogger(__filename);

@@ -4,11 +4,11 @@
   "description": "Provides 2D Nesting Service",
   "main": "./sources/server.js",
   "scripts": {
-    "configure": "cmake-js configure && node-gyp configure --release",
-    "build": "cmake-js compile && node-gyp build",
+    "configure": "cmake-js configure --out ebuild && node-gyp configure --release",
+    "build": "cmake-js compile --out ebuild && node-gyp build",
     "start": "node ./sources/server.js",
     "debug": "node %NODE_DEBUG_OPTION% ./sources/server.js",
-    "install": "cmake-js compile && node-gyp rebuild"
+    "install": "cmake-js compile --out ebuild && node-gyp build"
   },
   "repository": {
     "type": "git",
