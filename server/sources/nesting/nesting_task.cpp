@@ -216,7 +216,7 @@ std::string generateJson(const NestingResult& result, const NestingTask& task)
             nestings->children.push_back(writable_ptr(sheet_json));
 
             sheet_json->children.push_back(Object::item_t("sheet", Integer::make(instantiation.sheet->id)));
-            sheet_json->children.push_back(Object::item_t("length", Number::make(1.0))); // TODO:
+            sheet_json->children.push_back(Object::item_t("length", Number::make(instantiation.sheet_length)));
             sheet_json->children.push_back(Object::item_t("quantity", Integer::make(1)));
 
             Array* nested_parts = new Array();

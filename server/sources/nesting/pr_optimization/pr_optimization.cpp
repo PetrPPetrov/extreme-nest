@@ -470,14 +470,25 @@ namespace Pr
         void fillResult(const GeneticAlgorithm::individual_ptr& best)
         {
             result = boost::make_shared<NestingResult>();
-            size_t index = 0;
             sheet_info_ptr sheet_info = sheets_info.at(0);
             const double base_sheet_x = sheet_info->cell_box.min_corner().x() * POSITION_STEP;
             const double base_sheet_y = sheet_info->cell_box.min_corner().y() * POSITION_STEP;
+
+            double sheet_length = 0.0;
+            size_t index = 0;
             for (auto gene : best->genotype)
             {
-                const double zero_offset_x = parts_info[index]->variations_info[gene.variation]->zero_position_inside_cell_box.x();
-                const double zero_offset_y = parts_info[index]->variations_info[gene.variation]->zero_position_inside_cell_box.y();
+                const auto part_variation = parts_info[index]->variations_info[gene.variation];
+                sheet_length = std::max<double>(sheet_length, part_variation->bounding_box.max_corner().x());
+                index++;
+            }
+
+            index = 0;
+            for (auto gene : best->genotype)
+            {
+                const auto part_variation = parts_info[index]->variations_info[gene.variation];
+                const double zero_offset_x = part_variation->zero_position_inside_cell_box.x();
+                const double zero_offset_y = part_variation->zero_position_inside_cell_box.y();
 
                 PartInstantiation part;
                 part.instantiation_index = gene.variation;
@@ -485,6 +496,7 @@ namespace Pr
                 part.position.x(base_sheet_x + gene.position.x() * POSITION_STEP + zero_offset_x);
                 part.position.y(base_sheet_y + gene.position.y() * POSITION_STEP + zero_offset_y);
                 part.sheet = sheets_info.at(0)->sheet;
+                part.sheet_length = sheet_length;
                 result->instantiations.push_back(part);
                 index++;
             }
