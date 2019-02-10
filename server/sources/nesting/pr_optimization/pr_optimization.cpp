@@ -242,10 +242,12 @@ namespace Pr
     public:
         struct Gene
         {
+            size_t sheet_number;
             cell_t position;
             size_t variation;
+            const size_t max_sheet_number;
             const size_t max_variation;
-            Gene(size_t max_variation_) : max_variation(max_variation_)
+            Gene(size_t max_sheet_number_, size_t max_variation_) : max_sheet_number(max_sheet_number_), max_variation(max_variation_)
             {
             }
         };
@@ -260,7 +262,8 @@ namespace Pr
 
         population_t population;
         std::vector<part_info_ptr> parts_info;
-        sheet_info_ptr sheet_info;
+        std::vector<sheet_info_ptr> sheets_info;
+        const size_t max_sheet_area;
 
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
@@ -271,9 +274,10 @@ namespace Pr
             result->genotype.reserve(parts_info.size());
             for (auto part_info : parts_info)
             {
-                Gene new_gene(part_info->variations_info.size());
-                new_gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
-                new_gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
+                Gene new_gene(sheets_info.size(), part_info->variations_info.size());
+                new_gene.sheet_number = uniform(engine) % new_gene.max_sheet_number;
+                new_gene.position.x(uniform(engine) % sheets_info[new_gene.sheet_number]->cell_space->getSize().x());
+                new_gene.position.y(uniform(engine) % sheets_info[new_gene.sheet_number]->cell_space->getSize().y());
                 new_gene.variation = uniform(engine) % part_info->variations_info.size();
                 result->genotype.push_back(new_gene);
             }
@@ -282,42 +286,53 @@ namespace Pr
         void calculatePenalty(individual_ptr individual) const
         {
             size_t overlapped_cell_count = 0;
-            const CellSpace& original_sheet_mask = *sheet_info->cell_space;
-            CellSpace image = original_sheet_mask; // Perform copy
+            std::vector<CellSpace> sheet_images;
+            sheet_images.reserve(sheets_info.size());
+            for (auto sheet_info : sheets_info)
+            {
+                sheet_images.push_back(*sheet_info->cell_space); // Perform copy
+            }
             size_t part_index = 0;
             for (auto gene : individual->genotype)
             {
+                const size_t sheet_number = gene.sheet_number;
                 const cell_t position = gene.position;
                 const CellSpace& part_variation_mask = *parts_info[part_index]->variations_info[gene.variation]->cell_space;
-                overlapped_cell_count += image.merge(position, part_variation_mask);
+                overlapped_cell_count += sheet_images[sheet_number].merge(position, part_variation_mask);
             }
-            size_t max_point_x = 0;
-            size_t max_point_y = 0;
-            for (int x = 0; x < image.getSize().x(); ++x)
+            size_t total_penalty = 0;
+            for (size_t i = 0; i < sheet_images.size(); ++i)
             {
-                for (int y = 0; y < image.getSize().y(); ++y)
+                const CellSpace& sheet_image = sheet_images[i];
+                const CellSpace& original_sheet_image = *sheets_info[i]->cell_space;
+                size_t max_point_x = 0;
+                size_t max_point_y = 0;
+                for (int x = 0; x < sheet_image.getSize().x(); ++x)
                 {
-                    const cell_t point(x, y);
-                    if (image.getCell(point) && !original_sheet_mask.getCell(point))
+                    for (int y = 0; y < sheet_image.getSize().y(); ++y)
                     {
-                        if (x > max_point_x)
+                        const cell_t point(x, y);
+                        if (sheet_image.getCell(point) && !original_sheet_image.getCell(point))
                         {
-                            max_point_x = x;
-                        }
-                        if (y > max_point_y)
-                        {
-                            max_point_y = y;
+                            if (x > max_point_x)
+                            {
+                                max_point_x = x;
+                            }
+                            if (y > max_point_y)
+                            {
+                                max_point_y = y;
+                            }
                         }
                     }
                 }
+                const size_t size_y = original_sheet_image.getSize().y();
+                const size_t penalty_for_overlap = overlapped_cell_count * max_sheet_area;
+                const size_t penalty_for_used_sheet_length = max_point_x * size_y;
+                const size_t penalty_for_used_sheet_height = max_point_y;
+                const size_t sheet_penalty = penalty_for_overlap + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
+                total_penalty += sheet_penalty;
             }
-            const size_t size_x = original_sheet_mask.getSize().x();
-            const size_t size_y = original_sheet_mask.getSize().y();
-            const size_t sheet_area = size_x * size_y;
-            const size_t penalty_for_overlap = overlapped_cell_count * sheet_area;
-            const size_t penalty_for_used_sheet_length = max_point_x * size_y;
-            const size_t penalty_for_used_sheet_height = max_point_y;
-            individual->penalty = penalty_for_overlap + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
+            individual->penalty = total_penalty;
         }
         std::vector<individual_ptr> getRandomPair() const
         {
@@ -380,11 +395,17 @@ namespace Pr
             {
                 if (uniform(engine) % 100 < MUTATION_RATE)
                 {
-                    gene.position.x(uniform(engine) % sheet_info->cell_space->getSize().x());
+                    gene.sheet_number = uniform(engine) % sheets_info.size();
+                    gene.position.x(gene.position.x() % sheets_info[gene.sheet_number]->cell_space->getSize().x());
+                    gene.position.y(gene.position.y() % sheets_info[gene.sheet_number]->cell_space->getSize().y());
                 }
                 if (uniform(engine) % 100 < MUTATION_RATE)
                 {
-                    gene.position.y(uniform(engine) % sheet_info->cell_space->getSize().y());
+                    gene.position.x(uniform(engine) % sheets_info[gene.sheet_number]->cell_space->getSize().x());
+                }
+                if (uniform(engine) % 100 < MUTATION_RATE)
+                {
+                    gene.position.y(uniform(engine) % sheets_info[gene.sheet_number]->cell_space->getSize().y());
                 }
                 if (uniform(engine) % 100 < MUTATION_RATE)
                 {
@@ -392,9 +413,20 @@ namespace Pr
                 }
             }
         }
+        size_t calculateMaxSheetArea() const
+        {
+            size_t max_sheet_area = 0;
+            for (auto sheet_info : sheets_info)
+            {
+                const size_t sheet_area = sheet_info->cell_space->getSize().x() * sheet_info->cell_space->getSize().y();
+                max_sheet_area = std::max<size_t>(max_sheet_area, sheet_area);
+            }
+            return max_sheet_area;
+        }
     public:
-        GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const sheet_info_ptr& sheet_info_) :
-            parts_info(parts_info_), sheet_info(sheet_info_), engine(std::random_device()())
+        GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const std::vector<sheet_info_ptr>& sheets_info_) :
+            parts_info(parts_info_), sheets_info(sheets_info_),
+            engine(std::random_device()()), max_sheet_area(calculateMaxSheetArea())
         {
             for (size_t i = 0; i < POPULATION_SIZE; ++i)
             {
@@ -470,34 +502,37 @@ namespace Pr
         void fillResult(const GeneticAlgorithm::individual_ptr& best)
         {
             result = boost::make_shared<NestingResult>();
-            sheet_info_ptr sheet_info = sheets_info.at(0);
-            const double base_sheet_x = sheet_info->cell_box.min_corner().x() * POSITION_STEP;
-            const double base_sheet_y = sheet_info->cell_box.min_corner().y() * POSITION_STEP;
 
-            double sheet_length = 0.0;
-            size_t index = 0;
-            for (auto gene : best->genotype)
-            {
-                const auto part_variation = parts_info[index]->variations_info[gene.variation];
-                sheet_length = std::max<double>(sheet_length, part_variation->bounding_box.max_corner().x());
-                index++;
-            }
+            // Contains the length until the straight vertical offcut for each sheet
+            std::vector<double> sheet_lengths(sheets_info.size(), 0.0);
 
-            index = 0;
-            for (auto gene : best->genotype)
+            for (size_t i = 0; i < best->genotype.size(); ++i)
             {
-                const auto part_variation = parts_info[index]->variations_info[gene.variation];
+                const GeneticAlgorithm::Gene& gene = best->genotype[i];
+                const part_info_ptr part_info = parts_info[i];
+                const sheet_info_ptr sheet_info = sheets_info[gene.sheet_number];
+                const double base_sheet_x = sheet_info->cell_box.min_corner().x() * POSITION_STEP;
+                const double base_sheet_y = sheet_info->cell_box.min_corner().y() * POSITION_STEP;
+                const auto part_variation = part_info->variations_info[gene.variation];
                 const double zero_offset_x = part_variation->zero_position_inside_cell_box.x();
                 const double zero_offset_y = part_variation->zero_position_inside_cell_box.y();
 
                 PartInstantiation part;
                 part.instantiation_index = gene.variation;
-                part.part = parts_info[index]->part;
+                part.part = part_info->part;
                 part.position.x(base_sheet_x + gene.position.x() * POSITION_STEP + zero_offset_x);
                 part.position.y(base_sheet_y + gene.position.y() * POSITION_STEP + zero_offset_y);
-                part.sheet = sheets_info.at(0)->sheet;
-                part.sheet_length = sheet_length;
+                part.sheet = sheet_info->sheet;
+                double& sheet_length = sheet_lengths[gene.sheet_number];
+                sheet_length = std::max<double>(sheet_length, part_variation->bounding_box.max_corner().x() + part.position.x());
                 result->instantiations.push_back(part);
+            }
+
+            size_t index = 0;
+            for (auto& part : result->instantiations)
+            {
+                const GeneticAlgorithm::Gene& gene = best->genotype[index];
+                part.sheet_length = sheet_lengths[gene.sheet_number];
                 index++;
             }
         }
@@ -518,7 +553,7 @@ namespace Pr
             size_t generation_count = 0;
             calculatePartsInfo();
             calculateSheetsInfo();
-            GeneticAlgorithm genetic_algorithm(parts_info, sheets_info.at(0));
+            GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);
             GeneticAlgorithm::individual_ptr best;
             while (duration.count() < task->time_in_seconds)
             {

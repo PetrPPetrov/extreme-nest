@@ -19,14 +19,15 @@ TODO for Extreme Nest:
 ======================
 * ~~Add support for orientations~~
 * ~~Add support for flip flag~~
-* Add support of multiple sheets
+* ~~Add support of multiple sheets~~
+* Add support for protection offset
+* Add support for border gap (for sheets)
+* Add support for arcs
 * Add support of infinite sheet length
 * Add support of non-rectangular sheets
 * Add support for pre-nesting
 * Add support for defects on sheet
-* Add support for arcs
-* Add support for protection offset
-* Add support for border gap (for sheets)
+* Add configuration file or command line options
 
 Ideas for Extreme Nest:
 =======================

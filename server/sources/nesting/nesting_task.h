@@ -59,7 +59,7 @@ struct PartInstantiation
     sheet_ptr sheet;
     point_t position;
     size_t instantiation_index = 0;
-    double sheet_length = 0.0;
+    double sheet_length = 0.0; // Contains the length until the straight vertical offcut
 };
 
 struct NestingResult
