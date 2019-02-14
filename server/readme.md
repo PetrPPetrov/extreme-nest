@@ -33,6 +33,7 @@ Ideas for Extreme Nest:
 =======================
 * Add support of automation position tolerance calculation (for instance, minimum distance between points)
 * Use bitwise level for position x and position y during individual mate and mutation
+* Use two gene alleles, simulate dominant and recessive genes
 * Implement NFP algorithm fully in C++, i.e. as part of Extreme Nest
 * Implement neural network algorithm for nesting
 
