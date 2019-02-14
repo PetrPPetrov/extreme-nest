@@ -20,14 +20,14 @@ TODO for Extreme Nest:
 * ~~Add support for orientations~~
 * ~~Add support for flip flag~~
 * ~~Add support of multiple sheets~~
-* Add support for protection offset
-* Add support for border gap (for sheets)
-* Add support for arcs
-* Add support of infinite sheet length
-* Add support of non-rectangular sheets
-* Add support for pre-nesting
-* Add support for defects on sheet
-* Add configuration file or command line options
+* Add support for protection offset (it is hard to estimate the required time for now)
+* Add support for border gap for sheets (it is hard to estimate the required time for now)
+* Add support for arcs (should not take too much time, maybe 1-2 days)
+* Add support of infinite sheet length (should not take too much time, maybe 1-2 days; I think that "infinite" sheet will be finite sheet which it slightly bigger that length of all parts in their maximum orientation)
+* Add support of non-rectangular sheets (should not take too much time, maybe 1-2 days)
+* Add support for pre-nesting (should not take too much time, maybe 1-2 days)
+* Add support for defects on sheet (should not take too much time, maybe 1-2 days)
+* Add configuration file or command line options (should not take too much time, maybe 1-2 days)
 
 Ideas for Extreme Nest:
 =======================
