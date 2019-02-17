@@ -51,20 +51,18 @@ set(SOURCES
   ${EXTREME_NEST_SOURCE_DIR}/main.cpp
 )
 
-include_directories(${EXTREME_NEST_SOURCE_DIR}/nfp_optimization)
 set(NFP_OPTIMIZATION
-  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/genetic_algorithm.cpp
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
-  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nofit_polygon.cpp
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 
-include_directories(${EXTREME_NEST_SOURCE_DIR}/pr_optimization)
 set(PR_OPTIMIZATION
-  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/pr_optimization.cpp
-  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/pr_optimization.h
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/cell_space.h
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/genetic_algorithm.h
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/nest.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/pr_optimization/nest.h
 )
 
 set(CMAKE_CXX_STANDARD 14)

@@ -12,7 +12,7 @@
 #include "nesting_request.h"
 #include "nesting_task.h"
 #include "extreme_error.h"
-#include "pr_optimization.h"
+#include "pr_optimization/nest.h"
 
 int main(int argc, char** argv)
 {

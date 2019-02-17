@@ -86,7 +86,7 @@ class TaskGenerator
             }
             else if (orientation.type == NestingRequest::Orientation::RangeBased)
             {
-                for (double angle = orientation.min_angle; angle <= orientation.max_angle; angle += ROTATION_ANGLE_STEP, ++variation_count);
+                for (double angle = orientation.min_angle; angle <= orientation.max_angle; angle += Generic::ROTATION_ANGLE_STEP, ++variation_count);
             }
         }
         if (variation_count == 0)
@@ -117,7 +117,7 @@ class TaskGenerator
                     }
                     else if (orientation.type == NestingRequest::Orientation::RangeBased)
                     {
-                        for (double angle = orientation.min_angle; angle <= orientation.max_angle; angle += ROTATION_ANGLE_STEP)
+                        for (double angle = orientation.min_angle; angle <= orientation.max_angle; angle += Generic::ROTATION_ANGLE_STEP)
                         {
                             PartVariation new_variation;
                             new_variation.source_geometry = geometry;
