@@ -19,6 +19,7 @@ new Vue({
         nestingOrderID: 0,
         nestingRequest: {},
         nestingResponse: {},
+        openedSheetNumber: 0,
         canvas: {}
     },
     components : {

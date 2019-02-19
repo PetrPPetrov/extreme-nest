@@ -92,6 +92,7 @@
                 const nestingRequest = this.$root.$data.nestingRequest;
                 const nestingResponse = this.$root.$data.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
+                this.$root.$data.openedSheetNumber = sheetID;
                 canvasPainter.draw(this.$root.$data.canvas, sheetID, nestingRequest, nestingResponse)
             }
         }

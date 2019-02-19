@@ -26,7 +26,7 @@
                 :disabled="$root.$data.isEmptyCanvas">-</button>
         <p class="log-message">
             Count sheets: {{ $root.$data.nestingRequest.sheets.length }}
-            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ openedSheetNumber }}
+            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ $root.$data.openedSheetNumber }}
         </p>
     </div>
 
@@ -46,7 +46,6 @@
                 image: image,
                 isSingleSheet: true,
                 openedSheetIndex: 0,
-                openedSheetNumber: 0,
                 baseScale: 1,
                 width: 0,
                 height: 0,
@@ -126,7 +125,7 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
-                    this.openedSheetNumber = sheetId;
+                    this.$root.$data.openedSheetNumber = sheetId;
                     canvasPainter.draw(this.$root.$data.canvas, sheetId, nestingRequest, nestingResponse);
                 }
             },
@@ -137,7 +136,7 @@
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
-                    this.openedSheetNumber = sheetId;
+                    this.$root.$data.openedSheetNumber = sheetId;
                     canvasPainter.draw(this.$root.$data.canvas, sheetId, nestingRequest, nestingResponse);
                 }
             },
