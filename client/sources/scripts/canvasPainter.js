@@ -7,148 +7,72 @@ const functional = require('./functionalUtils');
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
-module.exports.drawNestingOptimizationSheet = (canvas, context, sheetID, jsonNestingRequest, jsonNestingResponse, scaling, alignmentX, alignmentY) => {
+module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse) => {
+    const blockSize = 20;
     const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
-    canvas.height = sheet.height * 30;
-    canvas.width = sheet.length * 30;
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.lineWidth = 0;
-    context.scale(1, 1);
-    context.transform(1, 0, 0, -1, 0, canvas.height);
-    context.translate(alignmentX, alignmentY);
-
-    drawSheetBorder(context, sheet.length * scaling, sheet.height * scaling);
-    responseParser.getNestingBySheetId(jsonNestingResponse, sheetID).nested_parts.forEach((part) => {
+    drawSheetBorder(canvas, sheet.length * blockSize, sheet.height * blockSize);
+    const nesting = responseParser.getNestingBySheetId(jsonNestingResponse, sheetID);
+    nesting.nested_parts.forEach((part) => {
         const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
-        functional.doIf(geometry !== undefined, () => {
-            drawGeometry(context, geometry.geometry, part.angle, {
-                scaling: scaling,
-                xPartPosition: part.position[0],
-                yPartPosition: part.position[1]
-            });
+        functional.doIf(geometry, () => {
+            const color = generateColor(part.position[0], part.position[1]);
+            canvas.add(createLocalCoordinateSystem(part.position, part.angle, blockSize, color));
+            geometry.geometry.forEach((vertices) => {
+                canvas.add(new fabric.Path(createCoordinates(vertices, blockSize), {
+                    top: (part.position[1]) * blockSize,
+                    left: (part.position[0]) * blockSize,
+                    angle: part.angle,
+                    fill: color
+                }));
+            })
         });
 
         const holes = requestParser.getHolesById(jsonNestingRequest, part.id);
-        functional.doIf(holes !== undefined, () =>
-            drawHoles(context, holes.holes, part.angle, {
-                scaling: scaling,
-                xPartPosition: part.position[0],
-                yPartPosition: part.position[1]
+        functional.doIf(holes, () =>
+            holes.holes.forEach((vertices) => {
+                canvas.add(new fabric.Path(createCoordinates(vertices, blockSize), {
+                    top: part.position[1] * blockSize,
+                    left: part.position[0] * blockSize,
+                    angle: part.angle,
+                    fill: '#FFFFFF'
+                }));
             })
         );
     });
-};
-
-module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse) => {
-    const circle = new fabric.Circle({
-        radius: 20, fill: 'green', left: 100, top: 100
-    });
-    const triangle = new fabric.Triangle({
-        width: 20, height: 30, fill: 'blue', left: 50, top: 50
-    });
-
-    canvas.add(circle, triangle);
     canvas.renderAll();
 };
 
-function drawSheetBorder(context, canvasWidth, canvasHeight) {
-    context.strokeStyle = '#000';
-    context.fillStyle = '#000';
-
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(0 , canvasHeight);
-    context.lineTo(canvasWidth, canvasHeight);
-    context.lineTo(canvasWidth, 0);
-    context.lineTo(0, 0);
-    context.stroke();
-    context.closePath();
+function drawSheetBorder(canvas, width, height) {
+    const borderCoordinates = `M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`;
+    const path = new fabric.Path(borderCoordinates);
+    path.set({ fill: 'white', stroke: 'black' });
+    canvas.add(path);
 }
 
-function drawGeometry(context, geometry, angle, dimension) {
-    const color = generateColorByPosition(
-        dimension.xPartPosition,
-        dimension.yPartPosition
-    );
-    context.strokeStyle = color;
-    context.fillStyle = color;
+function createCoordinates(vertices, blockSize){
+    let coordinates = '';
+    coordinates += `M 0 0 L 0 0 M ${vertices[0][0] * blockSize} ${vertices[0][1] * blockSize}`;
+    vertices.forEach((vertex) => {
+        coordinates += ` L ${vertex[0] * blockSize} ${vertex[1] * blockSize}`;
+    });
+    return coordinates + 'z';
+}
 
-    geometry.forEach((vertices) => {
-        context.save();
-        context.translate(
-            dimension.xPartPosition * dimension.scaling,
-            dimension.yPartPosition * dimension.scaling
-        );
-        functional.doIf(angle !== 0, () => context.rotate(angle * Math.PI / 180.0));
-        drawLocalCoordinateSystem(context, dimension.scaling);
-        context.beginPath();
-        context.moveTo(
-            vertices[0][0] * dimension.scaling,
-            vertices[0][1] * dimension.scaling
-        );
-        vertices.forEach((vertex) => {
-            context.lineTo(
-                vertex[0] * dimension.scaling,
-                vertex[1] * dimension.scaling
-            );
-        });
-        context.fill();
-        context.closePath();
-        context.restore();
+function createLocalCoordinateSystem(vertex, angle, blockSize, color) {
+    let coordinates = '';
+    coordinates += ` M 0 0 L ${1 * blockSize} 0`;
+    coordinates += ` M 0 0 L 0 ${1 * blockSize}`;
+    return new fabric.Path(coordinates, {
+        strokeDashArray: [2, 2],
+        stroke: color,
+        top: vertex[1] * blockSize,
+        left: vertex[0] * blockSize,
+        angle: angle
     });
 }
 
-function drawLocalCoordinateSystem(context, scaling) {
-    context.beginPath();
-    context.setLineDash([3, 3]);
-    context.moveTo(0, 0);
-    context.lineTo(scaling , 0);
-    context.moveTo(0, 0);
-    context.lineTo(0, scaling);
-    context.stroke();
-    context.closePath();
-}
-
-function drawHoles(context, holes, angle, dimension){
-    context.strokeStyle = '#FFF';
-    context.fillStyle = '#FFF';
-
-    holes.forEach((vertices) => {
-        context.save();
-        context.translate(
-            dimension.xPartPosition * dimension.scaling,
-            dimension.yPartPosition * dimension.scaling
-        );
-        functional.doIf(angle !== 0, () => context.rotate(angle * Math.PI / 180.0));
-        context.beginPath();
-        context.moveTo(
-            vertices[0][0] * dimension.scaling,
-            vertices[0][1] * dimension.scaling
-        );
-        vertices.forEach((vertex) => {
-            context.lineTo(
-                vertex[0] * dimension.scaling,
-                vertex[1] * dimension.scaling
-            );
-        });
-        context.fill();
-        context.closePath();
-        context.restore();
-    });
-}
-
-function generateColorByPosition(xPos, yPos) {
+function generateColor(xPos, yPos) {
     const x = ((xPos + 17) * 23).toString(16).padStart(3, 0);
     const y = ((yPos + 13) * 31).toString(16).padStart(3, 0);
     return `#${x}${y}`.slice(0, 7);
-}
-
-function generateColor() {
-    const letters = '0123456789ABCDE';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 15)];
-    }
-    return color;
 }
