@@ -107,7 +107,7 @@ namespace Pr
                     {
                         const int cur_x = point.x() + x;
                         const int cur_y = point.y() + y;
-                        if (cur_x < size.x() && cur_y < size.y())
+                        if (cur_x < size.x() && cur_y < size.y() && cur_x >= 0 && cur_y >= 0)
                         {
                             if (getCell(cell_t(cur_x, cur_y)))
                             {

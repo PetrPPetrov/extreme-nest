@@ -103,6 +103,7 @@ namespace Pr
                 const cell_t position = gene.position;
                 const CellSpace& part_variation_mask = *parts_info[part_index]->variations_info[gene.variation]->cell_space;
                 overlapped_cell_count += sheet_images[sheet_number].merge(position, part_variation_mask);
+                part_index++;
             }
             size_t total_penalty = 0;
             for (size_t i = 0; i < sheet_images.size(); ++i)
@@ -148,16 +149,15 @@ namespace Pr
                 size_t index = 0;
                 for (auto individual : population)
                 {
-                    if (!result.empty() && *result.begin() == individual)
+                    if (result.empty() || *result.begin() != individual)
                     {
-                        continue;
-                    }
-                    if (uniform(engine) % max_random < 2 * (POPULATION_SIZE - index))
-                    {
-                        result.push_back(individual);
-                        if (result.size() >= 2)
+                        if (uniform(engine) % max_random < 2 * (POPULATION_SIZE - index))
                         {
-                            return result;
+                            result.push_back(individual);
+                            if (result.size() >= 2)
+                            {
+                                return result;
+                            }
                         }
                     }
                     index++;

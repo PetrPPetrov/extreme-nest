@@ -152,6 +152,7 @@ namespace Pr
             fillResult(best);
 #ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;
+            std::cout << "best penalty " << best->penalty << std::endl;
 #endif
         }
     };
