@@ -9,18 +9,23 @@ const responseParser = require('./nestingResponseParser');
 
 const blockSize = 20;
 
-module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse) => {
-    const sheet = requestParser.getSheetById(jsonNestingRequest, sheetID);
+module.exports.draw = (canvas, storage) => {
+    const openedSheetID = storage.getters.openedSheetNumber;
+    const nestingRequest = storage.getters.nestingRequest;
+    const nestingResponse = storage.getters.nestingResponse;
+    const sheet = requestParser.getSheetById(nestingRequest, openedSheetID);
     drawSheetBorder(canvas, sheet.length * blockSize, sheet.height * blockSize);
-    const nesting = responseParser.getNestingBySheetId(jsonNestingResponse, sheetID);
+
+    const nesting = responseParser.getNestingBySheetId(nestingResponse, openedSheetID);
     nesting.nested_parts.forEach(part => {
+        const instanceID = part.id;
         const rotationAngle = part.angle;
         const position = part.position;
         const xPos = position[0];
         const yPos = position[1];
 
         // Adding figures
-        const geometry = requestParser.getGeometryById(jsonNestingRequest, part.id);
+        const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
         functional.doIf(geometry, () => {
             const color = generateColorByPosition(position);
             canvas.add(createLocalCoordinateSystem(position, rotationAngle, color)); // Adding local coordinate system for figure
@@ -35,7 +40,7 @@ module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse)
         });
 
         // Adding holes of figures
-        const holes = requestParser.getHolesById(jsonNestingRequest, part.id);
+        const holes = requestParser.getHolesById(nestingRequest, instanceID);
         functional.doIf(holes, () =>
             holes.holes.forEach(vertices =>
                 canvas.add(new fabric.Path(createCoordinates(vertices, blockSize), {
@@ -47,6 +52,7 @@ module.exports.draw = (canvas, sheetID, jsonNestingRequest, jsonNestingResponse)
             )
         );
     });
+
     canvas.renderAll();
 };
 

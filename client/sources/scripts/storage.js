@@ -6,6 +6,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import * as nestingRequestParser from "./nestingRequestParser";
+import * as nestingResponseParser from "./nestingResponseParser";
+
 Vue.use(Vuex);
 
 const storage = new Vuex.Store({
@@ -22,21 +25,13 @@ const storage = new Vuex.Store({
         }
     },
     getters: {
-        canvas(state) {
-            return state.canvas;
-        },
-        openedSheetNumber(state) {
-            return state.openedSheetNumber;
-        },
-        nestingOrderID(state) {
-            return state.nestingOrderID;
-        },
-        nestingRequest(state) {
-            return state.nestingRequest;
-        },
-        nestingResponse(state) {
-            return state.nestingResponse;
-        }
+        canvas: state => state.canvas,
+        openedSheetNumber: state => state.openedSheetNumber,
+        sheetByID: state => sheetID => nestingRequestParser.getSheetById(state.nestingRequest, sheetID),
+        nestedPartsBySheetID: state => sheetID => nestingResponseParser.getNestingBySheetId(state.nestingResponse, sheetID),
+        nestingOrderID: state => state.nestingOrderID,
+        nestingRequest: state => state.nestingRequest,
+        nestingResponse: state => state.nestingResponse
     },
     actions: {
         canvas({ commit }, canvas) {

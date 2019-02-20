@@ -44,11 +44,11 @@
 
             onClickGetNestingStats: function() {
                 getNestingStats(this.$root.$data.serverAddress, this.$store.getters.nestingOrderID)
-                    .then((data) => {
+                    .then(data => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
                         this.message = 'Nesting stats have been received';
                         this.fullNestingResult = false;
-                    }).catch((error) => {
+                    }).catch(error => {
                         this.message = 'Error. Can not receive nesting stats';
                         this.nestingOrder = error;
                     });
@@ -67,12 +67,12 @@
 
             onClickGetNestingResult: function () {
                 getFullNestingResult(this.$root.$data.serverAddress, this.$store.getters.nestingOrderID)
-                    .then((data) => {
+                    .then(data => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
                         this.$store.dispatch('nestingResponse', data);
                         this.message = 'Full nesting result has been received';
                         this.fullNestingResult = true;
-                    }).catch((error) => {
+                    }).catch(error => {
                         this.message = 'Error. Can not receive full nesting result';
                         this.nestingOrder = error;
                     });
@@ -87,30 +87,29 @@
                 }));
 
                 const nestingRequest = this.$store.getters.nestingRequest;
-                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
                 this.$store.dispatch('openedSheetNumber', sheetID);
-                canvasPainter.draw(this.$store.getters.canvas, sheetID, nestingRequest, nestingResponse)
+                canvasPainter.draw(this.$store.getters.canvas, this.$store)
             }
         }
     }
 
     function getNestingStats(address, orderID) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) =>
             axios
                 .get(address + '/result/' + orderID + '/stats')
                 .then(response => resolve(response.data))
                 .catch(error => reject(error))
-        });
+        );
     }
 
     function getFullNestingResult(address, orderID) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) =>
             axios
                 .get(address + '/result/' + orderID + '/full')
                 .then(response => resolve(response.data))
-                .catch(error => reject(error));
-        });
+                .catch(error => reject(error))
+        );
     }
 
 </script>

@@ -3,41 +3,13 @@
 // This file is part of Extreme Nest project.
 // This software is intellectual property of GkmSoft.
 
-module.exports.getAllSheetsId = (nestingRequest) => {
-    return nestingRequest.sheets.map((sheet) => {
-        return sheet.id;
-    });
-};
+const functional = require('./functionalUtils');
 
-module.exports.getSheetById = (nestingRequest, id) => {
-    return nestingRequest.sheets.find((sheet) => {
-        if (sheet.id === id) {
-            return sheet;
-        }
-    });
-};
-
-module.exports.getGeometryById = (nestingRequest, id) => {
-    return nestingRequest.parts.find((part) => {
-        if (isExistInstanceInPartWithId(part, id)) {
-            return part.geometry;
-        }
-    });
-};
-
-module.exports.getHolesById = (nestingRequest, id) => {
-    return nestingRequest.parts.find((part) => {
-         if (isExistInstanceInPartWithId(part, id)) {
-             return part.holes;
-         }
-    });
-};
+module.exports.getAllSheetsId = nestingRequest => nestingRequest.sheets.map(sheet => sheet.id);
+module.exports.getSheetById = (nestingRequest, id) => nestingRequest.sheets.find(sheet => functional.doIf(sheet.id === id, () => sheet));
+module.exports.getGeometryById = (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.geometry));
+module.exports.getHolesById = (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.holes));
 
 function isExistInstanceInPartWithId(part, id) {
-    return part.instances.find((instance) => {
-        if (instance.id === id) {
-            return true;
-        }
-    });
+    return part.instances.find(instance => functional.doIf(instance.id === id, () => true));
 }
-

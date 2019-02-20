@@ -23,6 +23,7 @@
 
     import axios from 'axios'
 
+    import * as functional from "../scripts/functionalUtils";
     import configuration from '../resources/data/configuration'
 
     export default {
@@ -59,10 +60,10 @@
                     const address = getServerAddress(this.availableServers, this.selectedAvailableServer);
                     this.$root.$data.serverAddress = address;
                     sendNestingRequest(address, this.nestingRequest)
-                        .then((data) => {
+                        .then(data => {
                             this.isRunningSendingRequest = false;
                             this.handleNestingResponse(data);
-                        }).catch((error) => {
+                        }).catch(error => {
                             this.isRunningSendingRequest = false;
                             this.nestingRequest = error;
                             this.message = 'Error. Can not connect to the selected server';
@@ -94,23 +95,15 @@
     }
 
     function getDefaultServerName(availableServers) {
-        return availableServers.find((server) => {
-            if (server.default) {
-                return server.name;
-            }
-        }).name;
+        return availableServers.find(server => functional.doIf(server.default, () => server.name)).name;
     }
     
     function getServerAddress(availableServers, selectedServer) {
-        return availableServers.find((server) => {
-            if (server.name === selectedServer) {
-                return server.address;
-            }
-        }).address;
+        return availableServers.find(server => functional.doIf(server.name === selectedServer, () => server.address)).address;
     }
 
     function sendNestingRequest(address, nestingRequest) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) =>
             axios({
                 method : 'post',
                 url : address + '/new',
@@ -121,8 +114,8 @@
                 },
             })
                 .then(response => resolve(response.data))
-                .catch(error => reject(error));
-        });
+                .catch(error => reject(error))
+        );
     }
 
 </script>

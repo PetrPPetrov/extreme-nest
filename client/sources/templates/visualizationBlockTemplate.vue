@@ -120,23 +120,21 @@
 
             onClickPrevSheet : function () {
                 const nestingRequest = this.$store.getters.nestingRequest;
-                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
                     this.$store.dispatch('openedSheetNumber', sheetId);
-                    canvasPainter.draw(this.$store.getters.canvas, sheetId, nestingRequest, nestingResponse);
+                    canvasPainter.draw(this.$store.getters.canvas, this.$store);
                 }
             },
 
             onClickNextSheet : function() {
                 const nestingRequest = this.$store.getters.nestingRequest;
-                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
                     this.$store.dispatch('openedSheetNumber', sheetId);
-                    canvasPainter.draw(this.$store.getters.canvas, sheetId, nestingRequest, nestingResponse);
+                    canvasPainter.draw(this.$store.getters.canvas, this.$store);
                 }
             },
 

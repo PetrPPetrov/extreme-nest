@@ -5,20 +5,20 @@
 
 module.exports.doIf = (condition, callback) => {
     if (condition) {
-        callback();
+        return callback();
     }
 };
 
 module.exports.doElse = (condition, callback) => {
     if (!condition) {
-        callback();
+        return callback();
     }
 };
 
 module.exports.doIfElse = (condition, trueCallback, falseCallback) => {
     if (condition) {
-        trueCallback();
+        return trueCallback();
     } else {
-        falseCallback();
+        return falseCallback();
     }
 };
