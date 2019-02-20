@@ -5,6 +5,7 @@
 
 import Vue from 'vue'
 
+import storage from './storage'
 import headerTemplate from '../templates/headerTemplate'
 import importBlockTemplate from '../templates/importBlockTemplate'
 import exportBlockTemplate from '../templates/exportBlockTemplate'
@@ -16,12 +17,8 @@ new Vue({
     data: {
         isOpenedImportForms : true,
         serverAddress: '',
-        nestingOrderID: 0,
-        nestingRequest: {},
-        nestingResponse: {},
-        openedSheetNumber: 0,
-        canvas: {}
     },
+    store: storage,
     components : {
         headerTemplate: headerTemplate,
         importBlockTemplate: importBlockTemplate,

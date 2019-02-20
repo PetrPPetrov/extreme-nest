@@ -21,7 +21,8 @@
         "instances":
         [
           {
-            "id": 42
+            "id": 42,
+            "quantity": 1
           }
         ]
       },

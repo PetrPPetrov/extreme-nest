@@ -1,7 +1,7 @@
 <template>
 
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 export-form" v-show="!$root.$data.isOpenedImportForms">
-        <p class="block-title">Get Full Nesting Result (Order ID {{ $root.$data.nestingOrderID }})</p>
+        <p class="block-title">Get Full Nesting Result (Order ID {{ $store.getters.nestingOrderID }})</p>
         <textarea disabled class="block-textarea"
                   placeholder="Nesting result will be here..."
                   v-model="nestingOrder">
@@ -24,11 +24,8 @@
 
 <script>
 
-
     import axios from 'axios'
     import { saveAs } from 'file-saver';
-
-    import configuration from '../resources/data/configuration'
 
     const fabric = require('fabric').fabric;
     const canvasPainter = require('../scripts/canvasPainter');
@@ -46,7 +43,7 @@
         methods: {
 
             onClickGetNestingStats: function() {
-                getNestingStats(this.$root.$data.serverAddress, this.$root.$data.nestingOrderID)
+                getNestingStats(this.$root.$data.serverAddress, this.$store.getters.nestingOrderID)
                     .then((data) => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
                         this.message = 'Nesting stats have been received';
@@ -61,7 +58,7 @@
                 const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
                 const image = new Image();
-                image.src = this.$root.$data.serverAddress + '/result/' + this.$root.$data.nestingOrderID + '/image';
+                image.src = this.$root.$data.serverAddress + '/result/' + this.$store.getters.nestingOrderID + '/image';
                 image.onload = () => {
                     context.drawImage(image, 0, 0, canvas.width, canvas.height);
                     this.message = 'Preview image has been received';
@@ -69,10 +66,10 @@
             },
 
             onClickGetNestingResult: function () {
-                getFullNestingResult(this.$root.$data.serverAddress, this.$root.$data.nestingOrderID)
+                getFullNestingResult(this.$root.$data.serverAddress, this.$store.getters.nestingOrderID)
                     .then((data) => {
                         this.nestingOrder = JSON.stringify(data, null, 4);
-                        this.$root.$data.nestingResponse = data;
+                        this.$store.dispatch('nestingResponse', data);
                         this.message = 'Full nesting result has been received';
                         this.fullNestingResult = true;
                     }).catch((error) => {
@@ -82,18 +79,18 @@
             },
 
             onClickVisualize: function() {
-                this.$root.$data.canvas = new fabric.StaticCanvas('canvas', {
+                this.$store.dispatch('canvas',new fabric.StaticCanvas('canvas', {
                     scale: 1,
                     width: 600,
                     height: 400,
                     selection: false
-                });
+                }));
 
-                const nestingRequest = this.$root.$data.nestingRequest;
-                const nestingResponse = this.$root.$data.nestingResponse;
+                const nestingRequest = this.$store.getters.nestingRequest;
+                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
-                this.$root.$data.openedSheetNumber = sheetID;
-                canvasPainter.draw(this.$root.$data.canvas, sheetID, nestingRequest, nestingResponse)
+                this.$store.dispatch('openedSheetNumber', sheetID);
+                canvasPainter.draw(this.$store.getters.canvas, sheetID, nestingRequest, nestingResponse)
             }
         }
     }

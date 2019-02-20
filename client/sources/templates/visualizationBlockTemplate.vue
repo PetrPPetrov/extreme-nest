@@ -10,12 +10,12 @@
                 id="canvas"></canvas>
         <button class='block-button'
                 @click="onClickPrevSheet"
-                :class="{'disabled-block-button' : $root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1}"
-                :disabled="$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1"><</button>
+                :class="{'disabled-block-button' : $root.$data.isEmptyCanvas || $store.getters.nestingRequest.sheets.length <= 1}"
+                :disabled="$root.$data.isEmptyCanvas || $store.getters.nestingRequest.sheets.length <= 1"><</button>
         <button class="block-button"
                 @click="onClickNextSheet"
-                :class="{'disabled-block-button' :$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1}"
-                :disabled="$root.$data.isEmptyCanvas || $root.$data.nestingRequest.sheets.length <= 1">></button>
+                :class="{'disabled-block-button' :$root.$data.isEmptyCanvas || $store.getters.nestingRequest.sheets.length <= 1}"
+                :disabled="$root.$data.isEmptyCanvas || $store.getters.nestingRequest.sheets.length <= 1">></button>
         <button class='block-button'
                 @click="onClickDown"
                 :class="{'disabled-block-button' : $root.$data.isEmptyCanvas}"
@@ -25,8 +25,8 @@
                 :class="{'disabled-block-button' : $root.$data.isEmptyCanvas}"
                 :disabled="$root.$data.isEmptyCanvas">-</button>
         <p class="log-message">
-            Count sheets: {{ $root.$data.nestingRequest.sheets.length }}
-            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ $root.$data.openedSheetNumber }}
+            Count sheets: {{ $store.getters.nestingRequest.sheets.length }}
+            Current sheet: {{ openedSheetIndex + 1 }} ID: {{ $store.getters.openedSheetNumber }}
         </p>
     </div>
 
@@ -44,7 +44,6 @@
         data: function () {
             return {
                 image: image,
-                isSingleSheet: true,
                 openedSheetIndex: 0,
                 baseScale: 1,
                 width: 0,
@@ -108,36 +107,36 @@
             },
 
             applyTransform: function () {
-                let group = new fabric.Group(this.$root.$data.canvas.getObjects());
-                group.scaleX = this.scale / this.$root.$data.canvas.scale;
-                group.scaleY = this.scale / this.$root.$data.canvas.scale;
+                let group = new fabric.Group(this.$store.getters.canvas.getObjects());
+                group.scaleX = this.scale / this.$store.getters.canvas.scale;
+                group.scaleY = this.scale / this.$store.getters.canvas.scale;
                 group.left = group.width / 2 + this.transX * this.scale;
                 group.top = group.height / 2 + this.transY * this.scale;
                 group.destroy();
 
-                this.$root.$data.canvas.scale = this.scale;
-                this.$root.$data.canvas.renderAll();
+                this.$store.getters.canvas.scale = this.scale;
+                this.$store.getters.canvas.renderAll();
             },
 
             onClickPrevSheet : function () {
-                const nestingRequest = this.$root.$data.nestingRequest;
-                const nestingResponse = this.$root.$data.nestingResponse;
+                const nestingRequest = this.$store.getters.nestingRequest;
+                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
-                    this.$root.$data.openedSheetNumber = sheetId;
-                    canvasPainter.draw(this.$root.$data.canvas, sheetId, nestingRequest, nestingResponse);
+                    this.$store.dispatch('openedSheetNumber', sheetId);
+                    canvasPainter.draw(this.$store.getters.canvas, sheetId, nestingRequest, nestingResponse);
                 }
             },
 
             onClickNextSheet : function() {
-                const nestingRequest = this.$root.$data.nestingRequest;
-                const nestingResponse = this.$root.$data.nestingResponse;
+                const nestingRequest = this.$store.getters.nestingRequest;
+                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetsId = nestingRequestParser.getAllSheetsId(nestingRequest);
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
-                    this.$root.$data.openedSheetNumber = sheetId;
-                    canvasPainter.draw(this.$root.$data.canvas, sheetId, nestingRequest, nestingResponse);
+                    this.$store.dispatch('openedSheetNumber', sheetId);
+                    canvasPainter.draw(this.$store.getters.canvas, sheetId, nestingRequest, nestingResponse);
                 }
             },
 
