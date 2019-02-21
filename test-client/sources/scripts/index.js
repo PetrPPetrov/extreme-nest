@@ -10,9 +10,9 @@ import Vue from 'vue'
 import router from './router'
 import storage from './storage'
 
-import headerTemplate from '../templates/headerTemplate'
-import generationTemplate from '../templates/generationPage/generationTemplate'
-import testingTemplate from '../templates/testingPage/testingTemplate'
+import headerTemplate from '../templates/headerBlockTemplate'
+import generationTemplate from '../templates/generationPage/generationPageTemplate'
+import testingTemplate from '../templates/testingPage/testingPageTemplate'
 
 new Vue({
     el : '#app',

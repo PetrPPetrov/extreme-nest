@@ -38,13 +38,4 @@
         width: calc(100% + 15px);
     }
 
-    canvas {
-        background-color: white;
-        border-radius: 15px;
-        width: 100%;
-        cursor: move;
-        height: auto;
-        border: 1px solid #A3D4F2;
-    }
-
 </style>

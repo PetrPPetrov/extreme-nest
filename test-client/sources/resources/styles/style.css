@@ -110,3 +110,12 @@ hr {
     margin: 0;
     padding: 0;
 }
+
+canvas {
+    background-color: white;
+    border-radius: 15px;
+    width: 100%;
+    cursor: move;
+    height: auto;
+    border: 1px solid #A3D4F2;
+}

@@ -8,8 +8,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import generationTemplate from '../templates/generationPage/generationTemplate'
-import testingTemplate from '../templates/testingPage/testingTemplate'
+import generationTemplate from '../templates/generationPage/generationPageTemplate'
+import testingTemplate from '../templates/testingPage/testingPageTemplate'
 
 Vue.use(VueRouter);
 
