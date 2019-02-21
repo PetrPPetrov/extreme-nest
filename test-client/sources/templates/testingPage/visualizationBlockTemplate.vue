@@ -26,4 +26,12 @@
         width: calc(100% + 15px);
     }
 
+    @media (max-width: 768px) {
+
+        #visualization-block {
+            width: 100%;
+        }
+
+    }
+
 </style>

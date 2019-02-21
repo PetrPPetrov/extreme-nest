@@ -20,6 +20,14 @@ section {
     margin-top: 10px;
 }
 
+@media (max-width: 768px) {
+
+    .block-wrapper {
+        margin: 0 0 15px 0;
+    }
+
+}
+
 .block {
     padding: 10px 15px 5px 15px;
     margin: 0;

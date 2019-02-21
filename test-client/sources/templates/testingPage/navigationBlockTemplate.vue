@@ -21,4 +21,12 @@
         width: calc(100% + 15px);
     }
 
+    @media (max-width: 768px) {
+
+        #navigation-block {
+            width: 100%;
+        }
+
+    }
+
 </style>
