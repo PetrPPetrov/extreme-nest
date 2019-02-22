@@ -15,9 +15,11 @@ const storage = new Vuex.Store({
         canvasGoldGeneration: {},
         canvasRandomGeneration: {},
         goldNestingRequest: '',
+        goldNestingResponse: '',
         randomNestingRequest: '',
-        visualizationLog: '...',
-        exportLog: '...'
+        randomNestingResponse: '',
+        goldVisualizationLog: '...',
+        randomVisualizationLog: '...'
     },
     mutations: {
         set(state, { key, value}){
@@ -28,9 +30,11 @@ const storage = new Vuex.Store({
         canvasGoldGeneration: state => state.canvasGoldGeneration,
         canvasRandomGeneration: state => state.canvasRandomGeneration,
         goldNestingRequest: state => state.goldNestingRequest,
+        goldNestingResponse: state => state.goldNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
-        visualizationLog: state => state.visualizationLog,
-        exportLog: state => state.exportLog
+        randomNestingResponse: state => state.randomNestingResponse,
+        goldVisualizationLog: state => state.goldVisualizationLog,
+        randomVisualizationLog: state => state.randomVisualizationLog
     },
     actions: {
         canvasGoldGeneration({ commit }, canvas) {
@@ -42,14 +46,20 @@ const storage = new Vuex.Store({
         goldNestingRequest({ commit }, request) {
             commit('set', { key: 'goldNestingRequest', value: request });
         },
+        goldNestingResponse({ commit }, response) {
+            commit('set', { key: 'goldNestingResponse', value: response });
+        },
         randomNestingRequest({ commit }, request) {
             commit('set', { key: 'randomNestingRequest', value: request });
         },
-        visualizationLog({ commit }, message) {
-            commit('set', { key: 'visualizationLog', value: message });
+        randomNestingResponse({ commit }, response) {
+            commit('set', { key: 'randomNestingResponse', value: response });
         },
-        exportLog({ commit }, message) {
-            commit('set', { key: 'exportLog', value: message });
+        goldVisualizationLog({ commit }, message) {
+            commit('set', { key: 'goldVisualizationLog', value: message });
+        },
+        randomVisualizationLog({ commit }, message) {
+            commit('set', { key: 'randomVisualizationLog', value: message });
         }
     }
 });

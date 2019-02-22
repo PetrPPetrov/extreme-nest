@@ -77,17 +77,4 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
     return [ nestingRequest, nestingResponse ];
 }
 
-function calc(sheetWidth, sheetHeight, blockWidth, blockHeight) {
-    return Math.max(pack(sheetWidth, sheetHeight, blockWidth, blockHeight), pack(sheetWidth, sheetHeight, blockHeight, blockWidth));
-    function pack(sheetWidth, sheetHeight, blockWidth, blockHeight) {
-        let count = (sheetWidth / blockWidth | 0) * (sheetHeight / blockHeight | 0);
-        if (sheetWidth % blockWidth >= blockHeight && sheetHeight >= blockWidth) {
-            count += pack(sheetWidth % blockWidth, sheetHeight, blockHeight, blockWidth);
-        } else if (sheetHeight % blockHeight >= blockWidth && sheetWidth >= blockHeight) {
-            count += pack(sheetWidth, sheetHeight % blockHeight, blockHeight, blockWidth);
-        }
-        return count;
-    }
-}
-
 export default generateGoldNestingAsync

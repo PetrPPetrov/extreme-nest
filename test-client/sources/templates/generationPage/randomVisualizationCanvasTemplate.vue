@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <label for="canvas-random-generation">Visualization of random generation:</label>
+        <label for="canvas-random-generation">Visualization of nesting from server:</label>
         <canvas id="canvas-random-generation"
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
@@ -30,15 +30,14 @@
         mounted() {
             this.$store.dispatch('canvasRandomGeneration', new fabric.StaticCanvas('canvas-random-generation', {
                 scale: 1,
-                width: 540,
-                height: 320,
+                width: 445,
+                height: 240,
                 selection: false
             }));
         },
         methods : {
 
             onMouseMoveInCanvas(event) {
-
                 if (this.mouseDown) {
                     this.transX -= (this.oldPageX - event.pageX) / this.scale;
                     this.transY -= (this.oldPageY - event.pageY) / this.scale;

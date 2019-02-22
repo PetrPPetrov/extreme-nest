@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <label for="canvas-gold-generation">Visualization of gold generation:</label>
+        <label for="canvas-gold-generation">Visualization of gold nesting:</label>
         <canvas id="canvas-gold-generation"
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
@@ -30,15 +30,14 @@
         mounted() {
             this.$store.dispatch('canvasGoldGeneration', new fabric.StaticCanvas('canvas-gold-generation', {
                 scale: 1,
-                width: 540,
-                height: 320,
+                width: 445,
+                height: 240,
                 selection: false
             }));
         },
         methods : {
 
             onMouseMoveInCanvas(event) {
-
                 if (this.mouseDown) {
                     this.transX -= (this.oldPageX - event.pageX) / this.scale;
                     this.transY -= (this.oldPageY - event.pageY) / this.scale;

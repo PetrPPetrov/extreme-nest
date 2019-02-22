@@ -4,16 +4,18 @@
         <div class="col-md-2 col-lg-2 block-wrapper">
             <parameters-block-template></parameters-block-template>
         </div>
-        <div class="col-md-6 col-lg-6 block-wrapper">
+        <div class="col-md-5 col-lg-5 block-wrapper">
             <div id="visualization-block" class="block">
                 <p class="block-title">Visualization</p>
                 <gold-visualization-canvas-template></gold-visualization-canvas-template>
+                <hr>
+                <p class="log-message">{{ $store.getters.goldVisualizationLog }}</p>
                 <random-visualization-canvas-template></random-visualization-canvas-template>
                 <hr>
-                <p class="log-message">{{ $store.getters.visualizationLog }}</p>
+                <p class="log-message">{{ $store.getters.randomVisualizationLog }}</p>
             </div>
         </div>
-        <div class="col-md-4 col-lg-4 block-wrapper">
+        <div class="col-md-5 col-lg-5 block-wrapper">
             <export-block-template></export-block-template>
         </div>
     </div>

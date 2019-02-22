@@ -6,6 +6,7 @@
 'use strict'
 
 import Vue from 'vue'
+import VueResource from 'vue-resource'
 
 import router from './router'
 import storage from './storage'
@@ -13,6 +14,8 @@ import storage from './storage'
 import headerTemplate from '../templates/headerBlockTemplate'
 import generationTemplate from '../templates/generationPage/generationPageTemplate'
 import testingTemplate from '../templates/testingPage/testingPageTemplate'
+
+Vue.use(VueResource);
 
 new Vue({
     el : '#app',
