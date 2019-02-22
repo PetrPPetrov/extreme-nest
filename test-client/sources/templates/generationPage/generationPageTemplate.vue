@@ -5,7 +5,13 @@
             <parameters-block-template></parameters-block-template>
         </div>
         <div class="col-md-6 col-lg-6 block-wrapper">
-            <visualization-block-template></visualization-block-template>
+            <div id="visualization-block" class="block">
+                <p class="block-title">Visualization</p>
+                <gold-visualization-canvas-template></gold-visualization-canvas-template>
+                <random-visualization-canvas-template></random-visualization-canvas-template>
+                <hr>
+                <p class="log-message">{{ $store.getters.visualizationLog }}</p>
+            </div>
         </div>
         <div class="col-md-4 col-lg-4 block-wrapper">
             <export-block-template></export-block-template>
@@ -17,14 +23,16 @@
 <script>
 
     import parametersBlockTemplate from './parametersBlockTemplate'
-    import visualizationBlockTemplate from './visualizationBlockTemplate'
+    import goldVisualizationCanvasTemplate from './goldVisualizationCanvasTemplate'
+    import randomVisualizationCanvasTemplate from './randomVisualizationCanvasTemplate'
     import exportBlockTemplate from './exportBlockTemplate'
 
     export default {
         name: "generationTemplate",
         components : {
             parametersBlockTemplate: parametersBlockTemplate,
-            visualizationBlockTemplate: visualizationBlockTemplate,
+            goldVisualizationCanvasTemplate: goldVisualizationCanvasTemplate,
+            randomVisualizationCanvasTemplate: randomVisualizationCanvasTemplate,
             exportBlockTemplate: exportBlockTemplate
         }
     }
@@ -32,5 +40,17 @@
 </script>
 
 <style scoped>
+
+    #visualization-block {
+        width: calc(100% + 15px);
+    }
+
+    @media(max-width: 768px) {
+
+        #visualization-block {
+            width: 80%;
+        }
+
+    }
 
 </style>

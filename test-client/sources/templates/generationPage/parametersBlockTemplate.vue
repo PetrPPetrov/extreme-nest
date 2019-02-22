@@ -8,10 +8,15 @@
         <input id="input-sheet-width" type="number" v-model="sheetWidth" v-bind:class="{'error-input': (sheetWidth <= 0 || sheetWidth === '')}">
         <label for="input-sheet-height" v-bind:class="{'error-label': (sheetHeight <= 0 || sheetHeight === '')}">Sheet height:</label>
         <input id="input-sheet-height" type="number" v-model="sheetHeight" v-bind:class="{'error-input': (sheetHeight <= 0 || sheetHeight === '')}">
+        <label for="input-nesting-time" v-bind:class="{'error-label': (nestingTime <= 0 || nestingTime === '')}">Nesting time in seconds:</label>
+        <input id="input-nesting-time" type="number" v-model="nestingTime" v-bind:class="{'error-input': (nestingTime <= 0 || nestingTime === '')}">
         <hr>
         <button class="button" @click="onClickGenerate"
-            :disabled="(countFigures <= 0 || countFigures === '') || (sheetWidth <= 0 || sheetWidth === '') || (sheetHeight <= 0 || sheetHeight === '')">Generate</button>
-        <button class="button" disabled @click="onClickExport">Export</button>
+            :disabled="(countFigures <= 0 || countFigures === '') ||
+                       (sheetWidth <= 0 || sheetWidth === '') ||
+                       (sheetHeight <= 0 || sheetHeight === '') ||
+                       (nestingTime <= 0 || nestingTime === '')">
+            Generate</button>
         <button class="button" disabled @click="onClickSaveTest">Save test</button>
     </div>
 
@@ -28,23 +33,22 @@
             return {
                 countFigures: 10,
                 sheetWidth: 10,
-                sheetHeight: 10
+                sheetHeight: 10,
+                nestingTime: 5
             }
         },
         methods: {
             onClickGenerate() {
-                this.$store.dispatch('visualizationLog', 'Generating in progress...');
-                const canvasGoldGeneration = this.$store.getters.canvasGoldGeneration;
-                generateGoldNestingAsync(this.countFigures, this.sheetWidth, this.sheetHeight)
-                    .then(nestingRequest => {
-                        drawCanvas(canvasGoldGeneration, nestingRequest)
-                    })
-                    .catch(error => {
-                        this.$store.dispatch('visualizationLog', 'Gold generation was generated incorrectly.');
+                this.$store.dispatch('visualizationLog', 'Generating in progress');
+                generateGoldNestingAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
+                    .then(nesting => {
+                        const nestingRequest = nesting[0];
+                        const nestingResponse = nesting[1];
+                        this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
+                        this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingResponse, null, 4));
+                        drawCanvas(this.$store.getters.canvasGoldGeneration, nestingRequest, nestingResponse);
+                        this.$store.dispatch('visualizationLog', 'Nesting generated successfully');
                     });
-            },
-            onClickExport() {
-
             },
             onClickSaveTest() {
                 
@@ -66,6 +70,13 @@
             width: 100%;
         }
 
+    }
+
+    #input-count-figures,
+    #input-sheet-height,
+    #input-sheet-width,
+    #input-nesting-time {
+        width: 100%;
     }
 
     .error-label {

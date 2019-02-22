@@ -3,9 +3,9 @@
     <div id="export-block" class="block">
         <p class="block-title">Export</p>
         <label for="textarea-gold-generation">Export of gold generation:</label>
-        <textarea id="textarea-gold-generation" disabled v-model="goldGeneration"></textarea>
+        <textarea id="textarea-gold-generation" disabled v-model="$store.getters.goldNestingRequest"></textarea>
         <label for="textarea-random-generation">Export of random generation:</label>
-        <textarea id="textarea-random-generation" disabled v-model="randomGeneration"></textarea>
+        <textarea id="textarea-random-generation" disabled v-model="$store.getters.randomNestingRequest"></textarea>
         <hr>
         <p class="log-message">{{ $store.getters.exportLog }}</p>
     </div>
@@ -15,13 +15,7 @@
 <script>
 
     export default {
-        name: "exportBlockTemplate",
-        data: function () {
-            return {
-                goldGeneration: '',
-                randomGeneration: ''
-            }
-        }
+        name: "exportBlockTemplate"
     }
 
 </script>

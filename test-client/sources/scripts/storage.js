@@ -14,6 +14,8 @@ const storage = new Vuex.Store({
     state: {
         canvasGoldGeneration: {},
         canvasRandomGeneration: {},
+        goldNestingRequest: '',
+        randomNestingRequest: '',
         visualizationLog: '...',
         exportLog: '...'
     },
@@ -25,6 +27,8 @@ const storage = new Vuex.Store({
     getters: {
         canvasGoldGeneration: state => state.canvasGoldGeneration,
         canvasRandomGeneration: state => state.canvasRandomGeneration,
+        goldNestingRequest: state => state.goldNestingRequest,
+        randomNestingRequest: state => state.randomNestingRequest,
         visualizationLog: state => state.visualizationLog,
         exportLog: state => state.exportLog
     },
@@ -34,6 +38,12 @@ const storage = new Vuex.Store({
         },
         canvasRandomGeneration({ commit }, canvas) {
             commit('set', { key: 'canvasRandomGeneration', value: canvas });
+        },
+        goldNestingRequest({ commit }, request) {
+            commit('set', { key: 'goldNestingRequest', value: request });
+        },
+        randomNestingRequest({ commit }, request) {
+            commit('set', { key: 'randomNestingRequest', value: request });
         },
         visualizationLog({ commit }, message) {
             commit('set', { key: 'visualizationLog', value: message });
