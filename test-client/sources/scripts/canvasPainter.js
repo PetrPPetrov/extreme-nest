@@ -9,69 +9,56 @@ const functional = require('./functionalUtils');
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
-const blockSize = 20;
+let blockSize = 0;
 
-const drawCanvas = (canvas, nestingRequest, nestingResponse) => {
-    var rect = new fabric.Rect({
-        left: 100,
-        top: 100,
-        fill: 'red',
-        width: 20,
-        height: 20
+const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) => {
+    blockSize = canvasBlockSize;
+    const openedSheetID = requestParser.getAllSheetsId(nestingRequest)[0];
+    const sheet = requestParser.getSheetById(nestingRequest, openedSheetID);
+    canvas.add(createSheetBorder(canvas, sheet.length * blockSize, sheet.height * blockSize));
+    const nesting = responseParser.getNestingBySheetId(nestingResponse, openedSheetID);
+
+    nesting.nested_parts.forEach(part => {
+        const instanceID = part.id;
+        const rotationAngle = part.angle;
+        const position = part.position;
+        const xPos = position[0];
+        const yPos = position[1];
+
+        const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
+        functional.doIf(geometry, () => {
+            const color = generateColorByPosition(position);
+            canvas.add(createLocalCoordinateSystem(position, rotationAngle, color));
+            geometry.geometry.forEach(vertices =>
+                canvas.add(new fabric.Path(createCoordinates(vertices), {
+                    top: yPos * blockSize,
+                    left: xPos * blockSize,
+                    angle: rotationAngle,
+                    fill: color
+                }))
+            )
+        });
     });
-    canvas.add(rect);
-    canvas.renderAll();
 
-    // const openedSheetID = requestParser.getAllSheetsId(nestingRequest)[0];
-    // const sheet = requestParser.getSheetById(nestingRequest, openedSheetID);
-    //drawSheetBorder(canvas, sheet.length * blockSize, sheet.height * blockSize);
-    // const nesting = responseParser.getNestingBySheetId(nestingResponse, openedSheetID);
-    //
-    // nesting.nested_parts.forEach(part => {
-    //     const instanceID = part.id;
-    //     const rotationAngle = part.angle;
-    //     const position = part.position;
-    //     const xPos = position[0];
-    //     const yPos = position[1];
-    //
-    //     const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
-    //     functional.doIf(geometry, () => {
-    //         const color = generateColorByPosition(position);
-    //         canvas.add(createLocalCoordinateSystem(position, rotationAngle, color)); // Adding local coordinate system for figure
-    //         geometry.geometry.forEach(vertices => {
-    //             console.log(vertices);
-    //             console.log(position);
-    //             canvas.add(new fabric.Path(createCoordinates(vertices), {
-    //                 top: yPos * blockSize,
-    //                 left: xPos * blockSize,
-    //                 angle: rotationAngle,
-    //                 fill: color
-    //             }));
-    //         })
-    //     });
-    // });
-    //
-    // canvas.renderAll();
+    canvas.renderAll();
 };
 
-function drawSheetBorder(canvas, width, height) {
+function createSheetBorder(canvas, width, height) {
     const borderCoordinates = `M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`;
-    const path = new fabric.Path(borderCoordinates);
-    path.set({ fill: 'white', stroke: 'black' });
-    canvas.add(path);
+    return new fabric.Path(borderCoordinates, {
+        fill: 'white',
+        stroke: 'black'
+    });
 }
 
 function createCoordinates(vertices){
-    let coordinates = '';
-    coordinates += `M 0 0 L 0 0 M ${vertices[0][0] * blockSize} ${vertices[0][1] * blockSize}`;
+    let coordinates = `M 0 0 L 0 0 M ${vertices[0][0] * blockSize} ${vertices[0][1] * blockSize}`;
     vertices.forEach(vertex => coordinates += ` L ${vertex[0] * blockSize} ${vertex[1] * blockSize}`);
-    return coordinates + 'z';
+    return coordinates;
 }
 
 function createLocalCoordinateSystem(vertex, angle, color) {
-    let coordinates = '';
-    coordinates += ` M 0 0 L ${blockSize} 0`;
-    coordinates += ` M 0 0 L 0 ${blockSize}`;
+    let coordinates = ` M 0 0 L ${blockSize} 0 M 0 0 L 0 ${blockSize}`;
     return new fabric.Path(coordinates, {
         strokeDashArray: [2, 2],
         stroke: color,

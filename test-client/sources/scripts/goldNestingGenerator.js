@@ -30,8 +30,8 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
     });
 
     const figureID = 11; //TODO: need to generate id
-    const rectangleHeight = sheetHeight / countFigures;
-    const rectangleWidth = sheetWidth / countFigures;
+    const rectangleHeight = (sheetHeight / countFigures) * 2;
+    const rectangleWidth = sheetWidth / 2;
     nestingRequest.parts.push({
         'geometry': [[
             [0, 0],
@@ -58,18 +58,18 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
     nestingRequest.parts.forEach(part => {
         part.instances.forEach(instance => {
             for (let i = 0; i < instance.quantity; i++) {
-                if (currentXPos > sheetWidth) {
-                    currentYPos += rectangleHeight;
-                    currentXPos = 0;
-                } else {
-                    currentXPos += rectangleWidth;
-                }
                 nestingResponse.nestings[0].nested_parts.push({
                     'id': figureID,
                     'angle': 0,
                     'flip': false,
                     'position': [currentXPos, currentYPos]
                 });
+                if (currentXPos + rectangleWidth >= sheetWidth) {
+                    currentYPos += rectangleHeight;
+                    currentXPos = 0;
+                } else {
+                    currentXPos += rectangleWidth;
+                }
             }
         });
     });

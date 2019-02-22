@@ -10,12 +10,15 @@
         <input id="input-sheet-height" type="number" v-model="sheetHeight" v-bind:class="{'error-input': (sheetHeight <= 0 || sheetHeight === '')}">
         <label for="input-nesting-time" v-bind:class="{'error-label': (nestingTime <= 0 || nestingTime === '')}">Nesting time in seconds:</label>
         <input id="input-nesting-time" type="number" v-model="nestingTime" v-bind:class="{'error-input': (nestingTime <= 0 || nestingTime === '')}">
+        <label for="input-canvas-block-size" v-bind:class="{'error-label': (canvasBlockSize <= 0 || canvasBlockSize === '')}">Block size for canvas:</label>
+        <input id="input-canvas-block-size" type="number" v-model="canvasBlockSize" v-bind:class="{'error-input': (canvasBlockSize <= 0 || canvasBlockSize === '')}">
         <hr>
         <button class="button" @click="onClickGenerate"
             :disabled="(countFigures <= 0 || countFigures === '') ||
                        (sheetWidth <= 0 || sheetWidth === '') ||
                        (sheetHeight <= 0 || sheetHeight === '') ||
-                       (nestingTime <= 0 || nestingTime === '')">
+                       (nestingTime <= 0 || nestingTime === '') ||
+                       (canvasBlockSize <= 0 || canvasBlockSize === '')">
             Generate</button>
         <button class="button" disabled @click="onClickSaveTest">Save test</button>
     </div>
@@ -31,10 +34,11 @@
         name: "parametersBlockTemplate",
         data: function () {
             return {
-                countFigures: 10,
-                sheetWidth: 10,
-                sheetHeight: 10,
-                nestingTime: 5
+                countFigures: 8,
+                sheetWidth: 2,
+                sheetHeight: 4,
+                nestingTime: 5,
+                canvasBlockSize: 20
             }
         },
         methods: {
@@ -45,8 +49,9 @@
                         const nestingRequest = nesting[0];
                         const nestingResponse = nesting[1];
                         this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
-                        this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingResponse, null, 4));
-                        drawCanvas(this.$store.getters.canvasGoldGeneration, nestingRequest, nestingResponse);
+                        //this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingResponse, null, 4));
+                        this.$store.getters.canvasGoldGeneration.clear();
+                        drawCanvas(this.$store.getters.canvasGoldGeneration, nestingRequest, nestingResponse, this.canvasBlockSize);
                         this.$store.dispatch('visualizationLog', 'Nesting generated successfully');
                     });
             },
@@ -75,7 +80,8 @@
     #input-count-figures,
     #input-sheet-height,
     #input-sheet-width,
-    #input-nesting-time {
+    #input-nesting-time,
+    #input-canvas-block-size {
         width: 100%;
     }
 
