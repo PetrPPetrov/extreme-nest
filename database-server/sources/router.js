@@ -5,11 +5,14 @@
 
 'use strict';
 
+const creationHandler = require('./handlers/creationHandler');
+const receivingHandler = require('./handlers/receivingHandler');
+
 module.exports.route = server => {
-    server.post('/requests', (request, response) => response.status(201).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Request was saved' }));
-    server.post('/goldResponses', (request, response) => response.status(201).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Gold response was saved' }));
-    server.get('/requests/:id', (request, response) => response.status(200).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Request' }));
-    server.get('/serverResponses/:id', (request, response) => response.status(200).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Server response' }));
-    server.get('/goldResponses/:id', (request, response) => response.status(200).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Gold response' }));
+    server.post('/requests', (request, response) => creationHandler.onRequestCreation(request, response));
+    server.post('/goldResponses', (request, response) => creationHandler.onGoldResponseCreation(request, response));
+    server.get('/requests/:id', (request, response) => receivingHandler.onRequestReceiving(request, response));
+    server.get('/serverResponses/:id', (request, response) => receivingHandler.onServerResponseReceiving(request, response));
+    server.get('/goldResponses/:id', (request, response) => receivingHandler.onGoldResponseReceiving(request, response));
     server.get('*', (request, response) => response.status(404).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Unknown HTTP request' }));
 };
