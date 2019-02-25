@@ -3,8 +3,8 @@
 // This file is part of Extreme Nest project.
 // This software is intellectual property of GkmSoft.
 
-#include "nfp_optimization.h"
-#include "genetic_algorithm.h"
+#include "nfp_optimization/nest.h"
+#include "nfp_optimization/genetic_algorithm.h"
 
 namespace Nfp
 {

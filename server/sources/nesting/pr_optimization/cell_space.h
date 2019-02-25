@@ -16,7 +16,7 @@ namespace Pr
 
     inline int coordinate_to_cell(double coordinate)
     {
-        return static_cast<int>(floor(coordinate / POSITION_STEP));
+        return static_cast<int>(floor(coordinate / Config::Pr::POSITION_STEP));
     }
 
     inline cell_t point_to_cell(const point_t& point)
@@ -62,10 +62,10 @@ namespace Pr
                     const int end_point_y = base_point_y + 1;
 
                     contour_t cell_contour;
-                    cell_contour.push_back(point_t(base_point_x * POSITION_STEP, base_point_y * POSITION_STEP));
-                    cell_contour.push_back(point_t(base_point_x * POSITION_STEP, end_point_y * POSITION_STEP));
-                    cell_contour.push_back(point_t(end_point_x * POSITION_STEP, end_point_y * POSITION_STEP));
-                    cell_contour.push_back(point_t(end_point_x * POSITION_STEP, base_point_y * POSITION_STEP));
+                    cell_contour.push_back(point_t(base_point_x * Config::Pr::POSITION_STEP, base_point_y * Config::Pr::POSITION_STEP));
+                    cell_contour.push_back(point_t(base_point_x * Config::Pr::POSITION_STEP, end_point_y * Config::Pr::POSITION_STEP));
+                    cell_contour.push_back(point_t(end_point_x * Config::Pr::POSITION_STEP, end_point_y * Config::Pr::POSITION_STEP));
+                    cell_contour.push_back(point_t(end_point_x * Config::Pr::POSITION_STEP, base_point_y * Config::Pr::POSITION_STEP));
 
                     polygon_t cell;
                     cell.outer().assign(cell_contour.begin(), cell_contour.end());

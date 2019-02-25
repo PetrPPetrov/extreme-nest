@@ -40,7 +40,6 @@ namespace Pr
     };
     typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
 
-    using namespace GeneticAlgorithm;
     class GeneticAlgorithm
     {
     public:
@@ -141,7 +140,7 @@ namespace Pr
         }
         std::vector<individual_ptr> getRandomPair() const
         {
-            const size_t max_random = POPULATION_SIZE * POPULATION_SIZE;
+            const size_t max_random = Config::GeneticAlgorithm::POPULATION_SIZE * Config::GeneticAlgorithm::POPULATION_SIZE;
             std::vector<individual_ptr> result;
             result.reserve(2);
             while (result.size() < 2)
@@ -151,7 +150,7 @@ namespace Pr
                 {
                     if (result.empty() || *result.begin() != individual)
                     {
-                        if (uniform(engine) % max_random < 2 * (POPULATION_SIZE - index))
+                        if (uniform(engine) % max_random < 2 * (Config::GeneticAlgorithm::POPULATION_SIZE - index))
                         {
                             result.push_back(individual);
                             if (result.size() >= 2)
@@ -197,21 +196,21 @@ namespace Pr
         {
             for (auto& gene : individual->genotype)
             {
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     gene.sheet_number = uniform(engine) % sheets_info.size();
                     gene.position.x(gene.position.x() % sheets_info[gene.sheet_number]->cell_space->getSize().x());
                     gene.position.y(gene.position.y() % sheets_info[gene.sheet_number]->cell_space->getSize().y());
                 }
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     gene.position.x(uniform(engine) % sheets_info[gene.sheet_number]->cell_space->getSize().x());
                 }
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     gene.position.y(uniform(engine) % sheets_info[gene.sheet_number]->cell_space->getSize().y());
                 }
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     gene.variation = uniform(engine) % gene.max_variation;
                 }
@@ -232,7 +231,7 @@ namespace Pr
             parts_info(parts_info_), sheets_info(sheets_info_),
             engine(std::random_device()()), max_sheet_area(calculateMaxSheetArea())
         {
-            for (size_t i = 0; i < POPULATION_SIZE; ++i)
+            for (size_t i = 0; i < Config::GeneticAlgorithm::POPULATION_SIZE; ++i)
             {
                 population.push_back(randomIndividual());
             }
@@ -255,13 +254,13 @@ namespace Pr
         {
             population_t next_population;
             next_population.push_back(getBest());
-            while (next_population.size() < POPULATION_SIZE)
+            while (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
             {
                 auto pair = getRandomPair();
                 population_t children = mate(pair[0], pair[1]);
                 for (auto child : children)
                 {
-                    if (next_population.size() < POPULATION_SIZE)
+                    if (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
                     {
                         mutate(child);
                         next_population.push_back(child);

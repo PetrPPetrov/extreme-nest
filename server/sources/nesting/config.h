@@ -5,18 +5,21 @@
 
 #pragma once
 
-namespace Generic
+namespace Config
 {
-    static double ROTATION_ANGLE_STEP = 0.1;
-}
+    namespace Generic
+    {
+        static double ROTATION_ANGLE_STEP = 0.1;
+    }
 
-namespace GeneticAlgorithm
-{
-    static size_t POPULATION_SIZE = 100;
-    static size_t MUTATION_RATE = 10;
-}
+    namespace GeneticAlgorithm
+    {
+        static size_t POPULATION_SIZE = 100;
+        static size_t MUTATION_RATE = 10;
+    }
 
-namespace Pr
-{
-    static double POSITION_STEP = 0.1;
+    namespace Pr
+    {
+        static double POSITION_STEP = 0.1;
+    }
 }

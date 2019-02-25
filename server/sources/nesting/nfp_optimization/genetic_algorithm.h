@@ -9,24 +9,58 @@
 #include <vector>
 #include <random>
 #include <set>
+#include <boost/geometry/algorithms/area.hpp>
 #include "config.h"
+#include "common.h"
 #include "nesting_task.h"
 
 namespace Nfp
 {
-    using namespace GeneticAlgorithm;
+    struct PartVariationInfo
+    {
+        PartVariation variation;
+        polygons_t polygons;
+    };
+    typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
+    typedef std::vector<part_variation_into_ptr> part_variations_info_t;
+
+    struct PartInfo
+    {
+        part_ptr part;
+        part_variations_info_t variations_info;
+        double area = 0.0;
+        size_t index;
+    };
+    typedef boost::shared_ptr<PartInfo> part_info_ptr;
+
+    inline part_info_ptr calculatePartInfo(const part_ptr& part)
+    {
+        part_info_ptr result = boost::make_shared<PartInfo>();
+        result->part = part;
+        result->variations_info.reserve(part->variations.size());
+        for (auto variation : part->variations)
+        {
+            part_variation_into_ptr variation_info = boost::make_shared<PartVariationInfo>();
+            variation_info->variation = variation;
+            geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
+            toPolygons(*actual_variation_geometry, variation_info->polygons);
+            result->variations_info.push_back(variation_info);
+        }
+        for (auto& polygon : result->variations_info[0]->polygons)
+        {
+            result->area += boost::geometry::area(*polygon);
+        }
+        return result;
+    }
 
     class GeneticAlgorithm
     {
     public:
         struct Gene
         {
-            part_ptr part;
+            size_t part_number;
             size_t variation;
-            const size_t max_variation;
-            Gene(size_t max_variation_) : max_variation(max_variation_)
-            {
-            }
+            size_t max_variation;
         };
         struct Individual
         {
@@ -37,7 +71,9 @@ namespace Nfp
 
     private:
         typedef std::list<individual_ptr> population_t;
+        typedef std::vector<part_info_ptr> parts_info_t;
 
+        parts_info_t parts_info;
         population_t population;
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
@@ -48,7 +84,7 @@ namespace Nfp
         }
         std::vector<individual_ptr> getRandomPair() const
         {
-            const size_t max_random = POPULATION_SIZE * POPULATION_SIZE;
+            const size_t max_random = Config::GeneticAlgorithm::POPULATION_SIZE * Config::GeneticAlgorithm::POPULATION_SIZE;
             std::vector<individual_ptr> result;
             result.reserve(2);
             while (result.size() < 2)
@@ -58,7 +94,7 @@ namespace Nfp
                 {
                     if (result.empty() || *result.begin() != individual)
                     {
-                        if (uniform(engine) % max_random < 2 * (POPULATION_SIZE - index))
+                        if (uniform(engine) % max_random < 2 * (Config::GeneticAlgorithm::POPULATION_SIZE - index))
                         {
                             result.push_back(individual);
                             if (result.size() >= 2)
@@ -83,36 +119,36 @@ namespace Nfp
             individual_ptr female_based_child = boost::make_shared<Individual>();
             male_based_child->genotype.reserve(male->genotype.size());
             female_based_child->genotype.reserve(female->genotype.size());
-            std::set<part_ptr> male_based_parts;
-            std::set<part_ptr> female_based_parts;
+            std::set<size_t> male_based_parts;
+            std::set<size_t> female_based_parts;
 
             for (size_t i = 0; i < cross_point; ++i)
             {
                 const Gene& male_gene = male->genotype[i];
                 male_based_child->genotype.push_back(male_gene);
-                male_based_parts.insert(male_gene.part);
+                male_based_parts.insert(male_gene.part_number);
 
                 const Gene& female_gene = female->genotype[i];
                 female_based_child->genotype.push_back(female_gene);
-                female_based_parts.insert(female_gene.part);
+                female_based_parts.insert(female_gene.part_number);
             }
 
             for (size_t i = 0; i < female->genotype.size(); ++i)
             {
                 const Gene& female_gene = female->genotype[i];
-                if (male_based_parts.find(female_gene.part) == male_based_parts.end())
+                if (male_based_parts.find(female_gene.part_number) == male_based_parts.end())
                 {
                     male_based_child->genotype.push_back(female_gene);
-                    male_based_parts.insert(female_gene.part);
+                    male_based_parts.insert(female_gene.part_number);
                 }
             }
             for (size_t i = 0; i < male->genotype.size(); ++i)
             {
                 const Gene& male_gene = male->genotype[i];
-                if (female_based_parts.find(male_gene.part) == female_based_parts.end())
+                if (female_based_parts.find(male_gene.part_number) == female_based_parts.end())
                 {
                     female_based_child->genotype.push_back(male_gene);
-                    female_based_parts.insert(male_gene.part);
+                    female_based_parts.insert(male_gene.part_number);
                 }
             }
 
@@ -125,12 +161,12 @@ namespace Nfp
         {
             for (size_t i = 0; i < individual->genotype.size(); ++i)
             {
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     Gene& gene = individual->genotype[i];
                     gene.variation = uniform(engine) % gene.max_variation;
                 }
-                if (uniform(engine) % 100 < MUTATION_RATE)
+                if (uniform(engine) % 100 < Config::GeneticAlgorithm::MUTATION_RATE)
                 {
                     size_t j = i + 1;
                     if (j >= individual->genotype.size())
@@ -143,10 +179,40 @@ namespace Nfp
         }
 
     public:
-        GeneticAlgorithm() :
+        GeneticAlgorithm(const nesting_task_ptr& nesting_task) :
             engine(std::random_device()())
         {
-            // TODO: Generate Adam and the initial popolation
+            parts_info.reserve(nesting_task->parts.size());
+            size_t index = 0;
+            for (auto part : nesting_task->parts)
+            {
+                parts_info.push_back(calculatePartInfo(part));
+                parts_info.back()->index = index++;
+            }
+            parts_info_t sorted_parts_info = parts_info; // Perform copy
+            std::sort(sorted_parts_info.begin(), sorted_parts_info.end(), [](const part_info_ptr& element_a, const part_info_ptr& element_b)
+            {
+                return element_a->area > element_b->area;
+            });
+
+            individual_ptr adam = boost::make_shared<Individual>();
+            for (auto& part_info : sorted_parts_info)
+            {
+                Gene new_gene;
+                new_gene.part_number = part_info->index;
+                new_gene.max_variation = part_info->variations_info.size();
+                new_gene.variation = uniform(engine) % new_gene.max_variation;
+                adam->genotype.push_back(new_gene);
+            }
+            population.push_back(adam);
+
+            while (population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
+            {
+                individual_ptr new_child = boost::make_shared<Individual>();
+                *new_child = *adam;
+                mutate(new_child);
+                population.push_back(new_child);
+            }
         }
         void calculatePenalties()
         {
@@ -164,16 +230,15 @@ namespace Nfp
         }
         void nextGeneration()
         {
-            // TODO: Extract to a common part
             population_t next_population;
             next_population.push_back(getBest());
-            while (next_population.size() < POPULATION_SIZE)
+            while (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
             {
                 auto pair = getRandomPair();
                 population_t children = mate(pair[0], pair[1]);
                 for (auto child : children)
                 {
-                    if (next_population.size() < POPULATION_SIZE)
+                    if (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
                     {
                         mutate(child);
                         next_population.push_back(child);

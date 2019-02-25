@@ -53,8 +53,8 @@ set(SOURCES
 
 set(NFP_OPTIMIZATION
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/genetic_algorithm.h
-  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.cpp
-  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nfp_optimization.h
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nest.cpp
+  ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nest.h
   ${EXTREME_NEST_SOURCE_DIR}/nfp_optimization/nofit_polygon.h
 )
 

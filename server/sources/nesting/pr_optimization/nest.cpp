@@ -31,8 +31,8 @@ namespace Pr
             toPolygons(*actual_variation_geometry, variation_info->polygons);
             variation_info->bounding_box = calculateBoundingBox(variation_info->polygons);
             variation_info->cell_box = box_to_cell_box(variation_info->bounding_box);
-            variation_info->zero_position_inside_cell_box.x(0.0 - variation_info->cell_box.min_corner().x() * POSITION_STEP);
-            variation_info->zero_position_inside_cell_box.y(0.0 - variation_info->cell_box.min_corner().y() * POSITION_STEP);
+            variation_info->zero_position_inside_cell_box.x(0.0 - variation_info->cell_box.min_corner().x() * Config::Pr::POSITION_STEP);
+            variation_info->zero_position_inside_cell_box.y(0.0 - variation_info->cell_box.min_corner().y() * Config::Pr::POSITION_STEP);
             variation_info->cell_space = boost::make_shared<CellSpace>(variation_info->polygons, variation_info->cell_box);
 #ifdef _DEBUG
             std::cout << "part image" << std::endl;
@@ -50,8 +50,8 @@ namespace Pr
         toPolygons(*sheet->geometry, result->polygons);
         result->bounding_box = calculateBoundingBox(result->polygons);
         result->cell_box = box_to_cell_box(result->bounding_box);
-        result->zero_position_inside_cell_box.x(0.0 - result->cell_box.min_corner().x() * POSITION_STEP);
-        result->zero_position_inside_cell_box.y(0.0 - result->cell_box.min_corner().y() * POSITION_STEP);
+        result->zero_position_inside_cell_box.x(0.0 - result->cell_box.min_corner().x() * Config::Pr::POSITION_STEP);
+        result->zero_position_inside_cell_box.y(0.0 - result->cell_box.min_corner().y() * Config::Pr::POSITION_STEP);
         result->cell_space = boost::make_shared<CellSpace>(result->polygons, result->cell_box, true);
 #ifdef _DEBUG
         std::cout << "sheet image" << std::endl;
@@ -95,8 +95,8 @@ namespace Pr
                 const GeneticAlgorithm::Gene& gene = best->genotype[i];
                 const part_info_ptr part_info = parts_info[i];
                 const sheet_info_ptr sheet_info = sheets_info[gene.sheet_number];
-                const double base_sheet_x = sheet_info->cell_box.min_corner().x() * POSITION_STEP;
-                const double base_sheet_y = sheet_info->cell_box.min_corner().y() * POSITION_STEP;
+                const double base_sheet_x = sheet_info->cell_box.min_corner().x() * Config::Pr::POSITION_STEP;
+                const double base_sheet_y = sheet_info->cell_box.min_corner().y() * Config::Pr::POSITION_STEP;
                 const auto part_variation = part_info->variations_info[gene.variation];
                 const double zero_offset_x = part_variation->zero_position_inside_cell_box.x();
                 const double zero_offset_y = part_variation->zero_position_inside_cell_box.y();
@@ -104,8 +104,8 @@ namespace Pr
                 PartInstantiation part;
                 part.instantiation_index = gene.variation;
                 part.part = part_info->part;
-                part.position.x(base_sheet_x + gene.position.x() * POSITION_STEP + zero_offset_x);
-                part.position.y(base_sheet_y + gene.position.y() * POSITION_STEP + zero_offset_y);
+                part.position.x(base_sheet_x + gene.position.x() * Config::Pr::POSITION_STEP + zero_offset_x);
+                part.position.y(base_sheet_y + gene.position.y() * Config::Pr::POSITION_STEP + zero_offset_y);
                 part.sheet = sheet_info->sheet;
                 double& sheet_length = sheet_lengths[gene.sheet_number];
                 sheet_length = std::max<double>(sheet_length, part_variation->bounding_box.max_corner().x() + part.position.x());
