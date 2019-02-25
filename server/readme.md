@@ -29,6 +29,12 @@ TODO for Extreme Nest:
 * Add support for defects on sheet (should not take too much time, maybe 1-2 days)
 * Add configuration file or command line options (should not take too much time, maybe 1-2 days)
 
+Ideas for optimization for Extreme Nest:
+========================================
+* Introduce QTree for memory size & bandwidth optimization
+* Optimize part variation mask creation step - use QTree for that
+* Optimize part variation mask creation step - use quantity parameter
+
 Ideas for Extreme Nest:
 =======================
 * Add support of automation position tolerance calculation (for instance, minimum distance between points)
