@@ -1,0 +1,25 @@
+{
+  "name": "extreme-nest-database-server",
+  "version": "0.0.1",
+  "main": "./sources/server.js",
+  "scripts": {
+    "startDatabaseServer": "node ./sources/server.js",
+    "startDatabaseServerWithWatch": "nodemon ./sources/server.js",
+    "startDatabaseServerTests": "mocha ./tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PetrPPetrov/extreme-nest.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "log4js": "^3.0.6",
+    "mongodb": "^3.1.13",
+    "nodemon": "^1.18.10"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.1",
+    "supertest": "^3.4.2"
+  }
+}
