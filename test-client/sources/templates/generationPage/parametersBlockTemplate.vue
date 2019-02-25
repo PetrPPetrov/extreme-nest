@@ -56,10 +56,8 @@
                 let canvas = this.$store.getters.canvasGoldGeneration;
                 this.$store.dispatch('goldVisualizationLog', 'Gold nesting generation in progress');
                 generateGoldNestingAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
-                    .then(nesting => {
+                    .then(([nestingRequest, nestingResponse]) => {
                         canvas.clear();
-                        const nestingRequest = nesting[0];
-                        const nestingResponse = nesting[1];
                         drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
                         this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(nestingResponse, null, 4));

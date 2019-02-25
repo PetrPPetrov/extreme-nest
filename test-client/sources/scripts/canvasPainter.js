@@ -44,17 +44,15 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
 };
 
 function createSheetBorder(canvas, width, height) {
-    const borderCoordinates = `M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`;
-    return new fabric.Path(borderCoordinates, {
+    return new fabric.Path(`M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`, {
         fill: 'white',
         stroke: 'black'
     });
 }
 
 function createCoordinates(vertices){
-    let coordinates = `M 0 0 L 0 0 M ${vertices[0][0] * blockSize} ${vertices[0][1] * blockSize}`;
-    vertices.forEach(vertex => coordinates += ` L ${vertex[0] * blockSize} ${vertex[1] * blockSize}`);
-    return coordinates;
+    let startPosition = [`M 0 0 L 0 0 M ${vertices[0][0] * blockSize} ${vertices[0][1] * blockSize}`];
+    return [startPosition, vertices.map(vertex => ` L ${vertex[0] * blockSize} ${vertex[1] * blockSize}`)].join('');
 }
 
 function createLocalCoordinateSystem(vertex, angle, color) {
@@ -68,9 +66,9 @@ function createLocalCoordinateSystem(vertex, angle, color) {
     });
 }
 
-function generateColorByPosition(position) {
-    const x = ((position[0] + 17) * 23).toString(16).padStart(3, 0);
-    const y = ((position[1] + 13) * 31).toString(16).padStart(3, 0);
+function generateColorByPosition([xPos, yPos]) {
+    const x = ((xPos + 17) * 23).toString(16).padStart(3, 0);
+    const y = ((yPos + 13) * 31).toString(16).padStart(3, 0);
     return `#${x}${y}`.slice(0, 7);
 }
 

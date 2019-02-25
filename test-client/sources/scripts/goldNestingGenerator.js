@@ -6,10 +6,7 @@
 'use strict'
 
 const generateGoldNestingAsync = async (countFigures, sheetWidth, sheetHeight, nestingTime) => {
-    const nesting = generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime);
-    const nestingRequest = nesting[0];
-    const nestingResponse = nesting[1];
-    return [ nestingRequest, nestingResponse ];
+    return generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime);
 };
 
 function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
@@ -37,7 +34,7 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
             [0, 0],
             [rectangleWidth, 0],
             [rectangleWidth, rectangleHeight],
-            [0, rectangleWidth]
+            [0, rectangleHeight]
         ]],
         'instances': [{
             'quantity': countFigures,
