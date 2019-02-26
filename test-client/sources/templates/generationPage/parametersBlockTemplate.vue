@@ -114,7 +114,8 @@
                         const nestingID = response.body.id;
                         this.$store.dispatch('nestingID', nestingID);
                         (async () => {
-                            await this.saveRequestOnServer(nestingID);
+                            await this.saveGoldRequestOnServer(nestingID);
+                            await this.saveRandomRequestOnServer(nestingID);
                             await this.saveGoldNestingResponseOnServer(nestingID);
                             await this.saveRandomNestingResponseOnServer(nestingID);
                             this.wasGeneratedRandomNesting = true;
@@ -127,16 +128,29 @@
                     });
             },
 
-            saveRequestOnServer(nestingID) {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/requests/${nestingID}`)
+            saveGoldRequestOnServer(nestingID) {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/goldRequests/${nestingID}`, this.$store.getters.goldNestingRequest)
                     .then(() => {
-                        this.$store.dispatch('goldVisualizationLog', 'Request was saved successfully');
-                        this.$store.dispatch('randomVisualizationLog', 'Request was saved successfully');
+                        this.$store.dispatch('goldVisualizationLog', 'Gold request was saved successfully');
+                        this.$store.dispatch('randomVisualizationLog', 'Gold request was saved successfully');
                     })
                     .catch(() => {
                         this.wasGeneratedRandomNesting = true;
-                        this.$store.dispatch('goldVisualizationLog', 'Request was not saved');
-                        this.$store.dispatch('randomVisualizationLog', 'Request was not saved');
+                        this.$store.dispatch('goldVisualizationLog', 'Gold request was not saved');
+                        this.$store.dispatch('randomVisualizationLog', 'Gold request was not saved');
+                    });
+            },
+
+            saveRandomRequestOnServer(nestingID) {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/serverRequests/${nestingID}`, this.$store.getters.goldNestingRequest)
+                    .then(() => {
+                        this.$store.dispatch('goldVisualizationLog', 'Random request was saved successfully');
+                        this.$store.dispatch('randomVisualizationLog', 'Random request was saved successfully');
+                    })
+                    .catch(() => {
+                        this.wasGeneratedRandomNesting = true;
+                        this.$store.dispatch('goldVisualizationLog', 'Random request was not saved');
+                        this.$store.dispatch('randomVisualizationLog', 'Random request was not saved');
                     });
             },
 

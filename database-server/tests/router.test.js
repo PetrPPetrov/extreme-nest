@@ -11,6 +11,10 @@ const server = require("../sources/server").server;
 
 describe("Tests for router", () => {
 
+    it("Check query for creating nesting", done => {
+        request(server).post("/nesting").expect(201).end(done)
+    });
+
     it("Check query for saving requests", done => {
         request(server).post("/requests").expect(201).end(done)
     });
