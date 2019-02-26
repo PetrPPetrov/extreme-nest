@@ -4,15 +4,26 @@
         <p class="block-title">Tests</p>
 
         <hr>
-        <button class="button" @click="onClickGenerate">Run tests</button>
+        <button class="button" @click="onClickRunTests">Run tests</button>
     </div>
 
 </template>
 
 <script>
+
+    import networkConfiguration from '../../resources/data/network'
+
     export default {
-        name: "navigationBlockTemplate"
+        name: "navigationBlockTemplate",
+        methods: {
+
+            onClickRunTests() {
+
+            }
+
+        }
     }
+
 </script>
 
 <style scoped>

@@ -7,10 +7,12 @@
 
 const functional = require('./functionalUtils');
 
-module.exports.getAllSheetsId = nestingRequest => nestingRequest.sheets.map(sheet => sheet.id);
-module.exports.getSheetById = (nestingRequest, id) => nestingRequest.sheets.find(sheet => functional.doIf(sheet.id === id, () => sheet));
-module.exports.getGeometryById = (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.geometry));
-module.exports.getHolesById = (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.holes));
+module.exports = {
+    getAllSheetsId : nestingRequest => nestingRequest.sheets.map(sheet => sheet.id),
+    getSheetById : (nestingRequest, id) => nestingRequest.sheets.find(sheet => functional.doIf(sheet.id === id, () => sheet)),
+    getGeometryById : (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.geometry)),
+    getHolesById : (nestingRequest, id) => nestingRequest.parts.find(part => functional.doIf(isExistInstanceInPartWithId(part, id), () => part.holes))
+};
 
 function isExistInstanceInPartWithId(part, id) {
     return part.instances.find(instance => functional.doIf(instance.id === id, () => true));

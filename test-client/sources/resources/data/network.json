@@ -3,6 +3,6 @@
     "address": "http://127.0.0.1:80"
   },
   "databaseServer": {
-    "address": "http://127.0.0.1:32032"
+    "address": "http://127.0.0.1:32023"
   }
 }

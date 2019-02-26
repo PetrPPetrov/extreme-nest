@@ -18,10 +18,7 @@ function insertRecordToDatabaseAndSendResponse(request, response, tableName) {
         functional.doIf(error, () => sendBadRequest(response));
         const collection = databaseConnector.getDatabase(client).collection(tableName);
         collection.insertOne(request.body, error =>
-            functional.doIfElse(error,
-                () => sendBadRequest(response),
-                () => sendCreated(response)
-            )
+            functional.doIfElse(error, () => sendBadRequest(response), () => sendCreated(response))
         );
         client.close();
     })

@@ -20,7 +20,7 @@
                        (nestingTime <= 0 || nestingTime === '') ||
                        (canvasBlockSize <= 0 || canvasBlockSize === '')">
             Generate</button>
-        <button class="button" disabled @click="onClickSaveTest">Save test</button>
+        <button class="button" :disabled="!wasGeneratedRandomNesting" @click="onClickSaveTest">Save test</button>
     </div>
 
 </template>
@@ -42,12 +42,16 @@
                 sheetWidth: 2,
                 sheetHeight: 4,
                 nestingTime: 5,
-                canvasBlockSize: 20
+                canvasBlockSize: 20,
+                wasGeneratedRandomNesting: false
             }
         },
         methods: {
 
             onClickGenerate() {
+                this.wasGeneratedRandomNesting = false;
+                this.$store.getters.canvasGoldGeneration.clear();
+                this.$store.getters.canvasRandomGeneration.clear();
                 this.generateGoldNesting();
                 this.generateRandomNestingOnServer();
             },
@@ -57,7 +61,6 @@
                 this.$store.dispatch('goldVisualizationLog', 'Gold nesting generation in progress');
                 generateGoldNestingAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
                     .then(([nestingRequest, nestingResponse]) => {
-                        canvas.clear();
                         drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
                         this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(nestingResponse, null, 4));
@@ -93,8 +96,8 @@
                                 setTimeout(this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                             },
                             () => {
-                                canvas.clear();
                                 const nestingResponse = response.body;
+                                this.wasGeneratedRandomNesting = true;
                                 drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
                                 this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
                                 this.$store.dispatch('randomNestingResponse', JSON.stringify(nestingResponse, null, 4));
@@ -105,8 +108,63 @@
             },
 
             onClickSaveTest() {
-                
-            }
+                this.wasGeneratedRandomNesting = false;
+                this.$http.post(`${networkConfiguration.databaseServer.address}/nesting`)
+                    .then(response => {
+                        const nestingID = response.body.id;
+                        this.$store.dispatch('nestingID', nestingID);
+                        (async () => {
+                            await this.saveRequestOnServer(nestingID);
+                            await this.saveGoldNestingResponseOnServer(nestingID);
+                            await this.saveRandomNestingResponseOnServer(nestingID);
+                            this.wasGeneratedRandomNesting = true;
+                        })();
+                    })
+                    .catch(() => {
+                        this.wasGeneratedRandomNesting = true;
+                        this.$store.dispatch('goldVisualizationLog', 'Test was not saved: connection is absent');
+                        this.$store.dispatch('randomVisualizationLog', 'Test was not saved: connection is absent');
+                    });
+            },
+
+            saveRequestOnServer(nestingID) {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/requests/${nestingID}`)
+                    .then(() => {
+                        this.$store.dispatch('goldVisualizationLog', 'Request was saved successfully');
+                        this.$store.dispatch('randomVisualizationLog', 'Request was saved successfully');
+                    })
+                    .catch(() => {
+                        this.wasGeneratedRandomNesting = true;
+                        this.$store.dispatch('goldVisualizationLog', 'Request was not saved');
+                        this.$store.dispatch('randomVisualizationLog', 'Request was not saved');
+                    });
+            },
+
+            saveGoldNestingResponseOnServer(nestingID) {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/goldResponses/${nestingID}`)
+                    .then(() => {
+                        this.$store.dispatch('goldVisualizationLog', 'Gold response was saved successfully');
+                        this.$store.dispatch('randomVisualizationLog', 'Gold response was saved successfully');
+                    })
+                    .catch(() => {
+                        this.wasGeneratedRandomNesting = true;
+                        this.$store.dispatch('goldVisualizationLog', 'Gold response was not saved');
+                        this.$store.dispatch('randomVisualizationLog', 'Gold response was not saved');
+                    });
+            },
+
+            saveRandomNestingResponseOnServer(nestingID) {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/serverResponses/${nestingID}`)
+                    .then(() => {
+                        this.$store.dispatch('goldVisualizationLog', 'Server response was saved successfully');
+                        this.$store.dispatch('randomVisualizationLog', 'Server response was saved successfully');
+                    })
+                    .catch(() => {
+                        this.wasGeneratedRandomNesting = true;
+                        this.$store.dispatch('goldVisualizationLog', 'Server response was not saved');
+                        this.$store.dispatch('randomVisualizationLog', 'Server response was not saved');
+                    });
+            },
 
         }
     }

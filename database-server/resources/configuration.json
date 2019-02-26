@@ -1,5 +1,5 @@
 {
-  "serverPort" : 80,
+  "serverPort" : 32023,
   "serverAddress" : "127.0.0.1",
   "databasePort" : 27017,
   "databaseAddress" : "mongodb://localhost",

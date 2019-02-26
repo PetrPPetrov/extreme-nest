@@ -19,10 +19,7 @@ function getRecordFromDatabaseAndSendResponse(request, response, tableName) {
         functional.doIf(error, () => sendBadRequest(response));
         const collection = databaseConnector.getDatabase(client).collection(tableName);
         collection.findOne({ 'id' : request.body.id}, (error, data) =>
-            functional.doIfElse(error,
-                () => sendBadRequest(response),
-                () => sendDataFromDatabase(response, data)
-            )
+            functional.doIfElse(error, () => sendBadRequest(response), () => sendDataFromDatabase(response, data))
         );
         client.close();
     })

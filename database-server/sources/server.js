@@ -9,8 +9,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const log4js = require('log4js');
 
-const configuration = require('../resources/configuration');
 const router = require('./router');
+const configuration = require('../resources/configuration');
 
 const server = express();
 server.use(bodyParser.json());
@@ -28,8 +28,7 @@ log.level = 'info';
 
 server.listen(configuration.serverPort, configuration.serverAddress, () => {
     router.route(server);
-    log.info('Server was started successfully on ' +
-        configuration.serverAddress + ':' + configuration.serverPort);
+    log.info(`Server was started successfully on ${configuration.serverAddress}:${configuration.serverPort}`);
 });
 
 module.exports.server = server;

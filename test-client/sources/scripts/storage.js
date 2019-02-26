@@ -18,6 +18,7 @@ const storage = new Vuex.Store({
         goldNestingResponse: '',
         randomNestingRequest: '',
         randomNestingResponse: '',
+        nestingID: '',
         goldVisualizationLog: '...',
         randomVisualizationLog: '...'
     },
@@ -33,6 +34,7 @@ const storage = new Vuex.Store({
         goldNestingResponse: state => state.goldNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
         randomNestingResponse: state => state.randomNestingResponse,
+        nestingID: state => state.nestingID,
         goldVisualizationLog: state => state.goldVisualizationLog,
         randomVisualizationLog: state => state.randomVisualizationLog
     },
@@ -54,6 +56,9 @@ const storage = new Vuex.Store({
         },
         randomNestingResponse({ commit }, response) {
             commit('set', { key: 'randomNestingResponse', value: response });
+        },
+        nestingID({ commit }, id) {
+            commit('set', { key: 'nestingID', value: id });
         },
         goldVisualizationLog({ commit }, message) {
             commit('set', { key: 'goldVisualizationLog', value: message });
