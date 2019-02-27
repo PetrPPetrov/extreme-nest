@@ -3,9 +3,10 @@
     <header>
         <div class="container">
             <div class="row">
-                <p class="hidden-xs hidden-sm col-md-6 col-lg-6 header-title">{{ title }}</p>
+                <p class="hidden-xs hidden-sm col-md-6 col-lg-6 header-title">extreme-nest-test-client</p>
                 <nav class="col-xs-9 col-sm-7 col-md-6 col-lg-6">
                     <router-link to="/testing" class="nav-button">Testing</router-link>
+                    <router-link to="/tests" class="nav-button">Tests</router-link>
                     <router-link to="/generation" class="nav-button">Generation</router-link>
                 </nav>
             </div>
@@ -13,18 +14,6 @@
     </header>
 
 </template>
-
-<script>
-
-    export default {
-        data() {
-            return {
-                title: 'extreme-nest-test-client'
-            }
-        }
-    }
-
-</script>
 
 <style scoped>
 

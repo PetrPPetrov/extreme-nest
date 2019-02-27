@@ -29,9 +29,8 @@
 
     import savingTestBlock from './savingTestBlock'
 
-    import networkConfiguration from '../../resources/data/network'
-
     import drawCanvas from '../../scripts/canvasPainter'
+    import networkConfiguration from '../../resources/data/network'
     import generateGoldNestingAsync from '../../scripts/goldNestingGenerator'
     import generateRandomNestingRequestForServerAsync from '../../scripts/randomNestingGenerator'
 
@@ -77,7 +76,7 @@
             },
 
             sendRequestOnNestingToServer(nestingRequest) {
-                this.$store.dispatch('randomVisualizationLog', 'Random generating in progress on the server');
+                this.$store.dispatch('randomVisualizationLog', 'Server generation in progress...');
                 this.$http.post(`${networkConfiguration.nestingServer.address}/new`, nestingRequest)
                     .then(response =>
                         setTimeout(() => {
@@ -85,7 +84,7 @@
                             this.receiveNestingResponseFromServer(nestingRequest, nestingID);
                         }, nestingRequest.time * 1000)
                     )
-                    .catch(() => this.$store.dispatch('randomVisualizationLog', 'Random nesting was not generated: connection is absent'));
+                    .catch(() => this.$store.dispatch('randomVisualizationLog', 'Server was not generated nesting'));
             },
 
             receiveNestingResponseFromServer(nestingRequest, nestingID){
@@ -99,10 +98,9 @@
                             drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
                             this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
                             this.$store.dispatch('randomNestingResponse', JSON.stringify(nestingResponse, null, 4));
-                            this.$store.dispatch('randomVisualizationLog', 'Random nesting generated successfully');
+                            this.$store.dispatch('randomVisualizationLog', 'Server generated nesting successfully');
                         }
                     })
-                    .catch(() => self.$store.dispatch('randomVisualizationLog', 'Random nesting was not generated on the server'));
             }
 
         }

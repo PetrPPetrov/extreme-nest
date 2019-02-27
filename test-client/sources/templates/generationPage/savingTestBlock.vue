@@ -1,7 +1,13 @@
 <template>
 
     <div>
-        <button class="button" @click="onClickSaveTest">Save test</button>
+        <button class="button"
+                @click="onClickSaveTest"
+                :disabled="
+                    this.$store.getters.goldNestingRequest === '' ||
+                    this.$store.getters.randomNestingRequest === '' ||
+                    this.$store.getters.goldNestingResponse === ''">
+                Save test</button>
         <hr>
         <p class="log-message">{{ networkLog }}</p>
     </div>
@@ -21,32 +27,33 @@
         methods: {
 
             onClickSaveTest() {
+                this.networkLog = 'Test saving in progress...';
                 this.$http.post(`${networkConfiguration.databaseServer.address}/nesting`)
-                    .then(response => {
+                    .then(async response => {
                         const nestingID = response.body.id;
-                        this.saveRandomRequestOnServer(nestingID);
-                        this.saveGoldNestingResponseOnServer(nestingID);
-                        this.saveGoldRequestOnServer(nestingID);
+                        await Promise.all([
+                            this.saveRandomRequestOnServer(nestingID),
+                            this.saveGoldNestingResponseOnServer(nestingID),
+                            this.saveGoldRequestOnServer(nestingID)
+                        ])
+                            .then(() => this.networkLog = 'Test was saved successfully')
                     })
-                    .catch(() => this.networkLog = 'Test was not saved: connection is absent');
+                    .catch(() => this.networkLog = 'Test was not saved');
             },
 
             saveGoldRequestOnServer(nestingID) {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/goldRequests/${nestingID}`, this.$store.getters.goldNestingRequest)
-                    .then(() => this.networkLog = 'Gold request was saved')
-                    .catch(() => this.networkLog = 'Gold request was not saved');
+                return this.$http.post(`${networkConfiguration.databaseServer.address}/goldRequests/${nestingID}`, this.$store.getters.goldNestingRequest)
+                    .then(() => Promise.resolve())
             },
 
             saveRandomRequestOnServer(nestingID) {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/serverRequests/${nestingID}`, this.$store.getters.randomNestingRequest)
-                    .then(() => this.networkLog = 'Random request was saved')
-                    .catch(() => this.networkLog = 'Random request was not saved');
+                return this.$http.post(`${networkConfiguration.databaseServer.address}/serverRequests/${nestingID}`, this.$store.getters.randomNestingRequest)
+                    .then(() => Promise.resolve())
             },
 
             saveGoldNestingResponseOnServer(nestingID) {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/goldResponses/${nestingID}`, this.$store.getters.goldNestingResponse)
-                    .then(() => this.networkLog = 'Gold response was saved')
-                    .catch(() => this.networkLog = 'Gold response was not saved');
+                return this.$http.post(`${networkConfiguration.databaseServer.address}/goldResponses/${nestingID}`, this.$store.getters.goldNestingResponse)
+                    .then(() => Promise.resolve())
             }
 
         }

@@ -15,16 +15,43 @@ log.level = 'debug';
 
 module.exports = {
 
+    onNestingReceiving: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection('nesting').find({}).toArray()
+                    .then(nesting => sendOkWithData(response, `All the nestings were got`, nesting.map(field => field._id)))
+                    .finally(() => connection.close())
+            })
+            .catch(error => sendBadRequest(response, `All the nestings were not got! Cause: ${error}`));
+    },
+
     onGoldRequestReceiving: (request, response) => {
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('goldRequests').findOne(ObjectId(request.params.id))
-                    .then(() => sendOkWithData(response, `Gold request was got`, request.ops[0]))
-                    .catch(error => sendBadRequest(response, `Gold request was not got. Cause: ${error}`))
+                database.collection('nesting').findOne(ObjectId(request.params.id))
+                    .then(nesting =>
+                        database.collection('goldRequests').findOne(ObjectId(nesting.goldRequestID))
+                            .then(goldRequest => sendOkWithData(response, `Gold request: ${request.params.id} was got`, goldRequest))
+                    )
                     .finally(() => connection.close())
             })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`));
+            .catch(error => sendBadRequest(response, `Gold request: ${request.params.id} was not got. Cause: ${error}`));
+    },
+
+    onGoldResponseReceiving: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection('nesting').findOne(ObjectId(request.params.id))
+                    .then(nesting =>
+                        database.collection('goldResponses').findOne(ObjectId(nesting.goldResponseID))
+                            .then(goldResponse => sendOkWithData(response, `Gold response: ${request.params.id} was got`, goldResponse))
+                    )
+                    .finally(() => connection.close())
+            })
+            .catch(error => sendBadRequest(response, `Gold response: ${request.params.id} was not got. Cause: ${error}`));
     }
 
 };
@@ -33,11 +60,6 @@ module.exports = {
 function sendBadRequest(response, debugMessage){
     functional.doIf(debugMessage, () => log.warn(debugMessage));
     response.status(400).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Bad request' });
-}
-
-function sendInternalServerError(response, debugMessage) {
-    functional.doIf(debugMessage, () => log.warn(debugMessage));
-    response.status(500).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Internal server error' });
 }
 
 function sendOkWithData(response, debugMessage, data) {

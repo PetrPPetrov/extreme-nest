@@ -37,6 +37,17 @@ const storage = new Vuex.Store({
         randomVisualizationLog: state => state.randomVisualizationLog
     },
     actions: {
+        clear({ commit, state }) {
+            state['canvasGoldGeneration'].clear();
+            state['canvasRandomGeneration'].clear();
+            commit('set', { key: 'goldNestingRequest', value: '' });
+            commit('set', { key: 'goldNestingResponse', value: '' });
+            commit('set', { key: 'randomNestingRequest', value: '' });
+            commit('set', { key: 'goldNestingResponse', value: '' });
+            commit('set', { key: 'randomNestingResponse', value: '' });
+            commit('set', { key: 'goldVisualizationLog', value: '...' });
+            commit('set', { key: 'randomVisualizationLog', value: '...' });
+        },
         canvasGoldGeneration({ commit }, canvas) {
             commit('set', { key: 'canvasGoldGeneration', value: canvas });
         },

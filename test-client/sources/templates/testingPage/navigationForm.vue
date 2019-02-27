@@ -1,12 +1,12 @@
 <template>
 
     <div id="navigation-block" class="block">
-        <p class="block-title">Tests</p>
-        <label for="select-tests">Select testing:</label>
-        <select id="select-tests">
+        <p class="block-title">Testings</p>
+        <label for="select-testing">Select testing:</label>
+        <select id="select-testing" v-model="selectedTesting">
             <option v-for="testing in testings">{{ testing }}</option>
         </select>
-        <button class="button" @click="onClickDeleteTest">Show testing</button>
+        <button class="button" @click="onClickShowTesting">Show testing</button>
         <hr>
         <hr>
         <button class="button" @click="onClickRunTests">Run new testing</button>
@@ -25,18 +25,24 @@
             return {
                 networkLog: '...',
                 testings: [],
-                selectedTests: []
+                selectedTesting: '',
+                tests: []
             }
         },
         mounted() {
-            // this.$http.get(`${networkConfiguration.databaseServer.address}/tests`)
-            //     .then(response => {
-            //         this.testings = response.body;
-            //         this.networkLog = 'Testing results was loaded'
-            //     })
-            //     .catch(() => this.networkLog = 'Testing results was not loaded: connection is absent')
+            this.$http.get(`${networkConfiguration.databaseServer.address}/tests`)
+                .then(response => {
+                    console.log(response.body);
+                    this.testings = response.body;
+                    this.networkLog = 'Testing results was loaded'
+                })
+                .catch(() => this.networkLog = 'Testing results was not loaded')
         },
         methods: {
+
+            onClickShowTesting(){
+
+            },
 
             onClickRunTests() {
                 this.$http.post(`${networkConfiguration.databaseServer.address}/tests`)
@@ -64,7 +70,7 @@
         margin-bottom: 0;
     }
 
-    #select-tests {
+    #select-testing {
         width: 100%;
         margin-bottom: 10px;
     }

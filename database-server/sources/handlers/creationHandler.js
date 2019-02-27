@@ -20,11 +20,10 @@ module.exports = {
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
                 database.collection('nesting').insertOne({})
-                    .then((result) => sendCreatedWithData(response, 'Nesting field was created', { id: result.ops[0]._id }))
-                    .catch(error => sendBadRequest(response, `Nesting field was not created. Cause: ${error}`))
+                    .then((result) => sendCreatedWithData(response, 'Nesting was created', { id: result.ops[0]._id }))
                     .finally(() => connection.close())
             })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`));
+            .catch(error => sendBadRequest(response, `Connection with database was not set. Cause: ${error}`));
     },
 
     onGoldRequestCreation: (request, response) => {
@@ -34,13 +33,11 @@ module.exports = {
                 database.collection('goldRequests').insertOne(request.body)
                     .then(result =>
                         database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"goldRequestID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Gold request was added: ${result.ops[0]._id}`))
-                            .catch(error => sendBadRequest(response, `Gold request was not join to nesting. Cause: ${error}`))
+                            .then(() => sendCreated(response, `Gold request was joined to nesting: ${request.params.id}`))
                             .finally(() => connection.close())
                     )
-                    .catch(error => sendInternalServerError(response, `Gold request was not added. Cause: ${error}`))
             })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`))
+            .catch(error => sendBadRequest(response, `Gold request was not joined to nesting: ${request.params.id}. Cause: ${error}`))
     },
 
     onServerRequestCreation: (request, response) => {
@@ -50,13 +47,11 @@ module.exports = {
                 database.collection('serverRequests').insertOne(request.body)
                     .then(result =>
                         database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"serverRequestID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Server request was added: ${result.ops[0]._id}`))
-                            .catch(error => sendBadRequest(response, `Server request was not jon to nesting. Cause: ${error}`))
+                            .then(() => sendCreated(response, `Server request was joined to nesting: ${request.params.id}`))
                             .finally(() => connection.close())
                     )
-                    .catch(error => sendInternalServerError(response, `Server request was not added. Cause: ${error}`))
             })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`))
+            .catch(error => sendBadRequest(response, `Server request was not joined to nesting: ${request.params.id}. Cause: ${error}`))
     },
 
     onGoldResponseCreation: (request, response) => {
@@ -66,13 +61,11 @@ module.exports = {
                 database.collection('goldResponses').insertOne(request.body)
                     .then(result =>
                         database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"goldResponseID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Gold response was added: ${result.ops[0]._id}`))
-                            .catch(error => sendBadRequest(response, `Gold response was not join to nesting. Cause: ${error}`))
+                            .then(() => sendCreated(response, `Gold response  was joined to nesting: ${request.params.id}`))
                             .finally(() => connection.close())
                     )
-                    .catch(error => sendInternalServerError(response, `Gold response was not added. Cause: ${error}`))
             })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`))
+            .catch(error => sendBadRequest(response, `Gold response was not joined to nesting: ${request.params.id}. Cause: ${error}`))
     },
 
 };
