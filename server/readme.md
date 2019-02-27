@@ -48,12 +48,12 @@ TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 * CalculateFitness
 * Implement simplification for contours and holes (for a faster calculation)
 
-Ideas for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
+Ideas for NFP Optimization (NoFitPolygon, Minkowski sum and other parts in C++):
 =================================================================================
 * Use something like optimized QTree instead of simplification
 * Add "insertion place" parameter for genetic optimization (insertion order, variation index, insertion place)
 
-TODO for Deep Nest (NoFitPolygon, Minkowski summ in C++ as Node.js addon, other parts in JavaScript):
+TODO for Deep Nest (NoFitPolygon, Minkowski sum in C++ as Node.js addon, other parts in JavaScript):
 ===================
 * Add support for orientations
 * Add support for flip flag
