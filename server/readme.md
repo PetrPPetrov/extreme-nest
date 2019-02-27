@@ -64,3 +64,8 @@ TODO for Deep Nest (NoFitPolygon, Minkowski summ in C++ as Node.js addon, other 
 * Add support for arcs
 * Add support for protection offset
 * Add support for border gap (for sheets)
+
+Generic TODO:
+=============
+* Run optimization in a thread, wait in the main thread for a specified time, get results and kill the calculation thread
+
