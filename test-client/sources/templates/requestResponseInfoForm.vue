@@ -23,7 +23,6 @@
 <script>
 
     export default {
-        name: "exportBlockTemplate",
         data() {
             return {
                 isOpenedResponses: true

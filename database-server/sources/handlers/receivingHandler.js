@@ -5,30 +5,42 @@
 
 'use strict';
 
+const log4js = require('log4js');
+const ObjectId = require('mongodb').ObjectId;
 const functional = require('../functionalUtils');
 const databaseConnector = require('../databaseConnector');
 
+const log = log4js.getLogger(__filename);
+log.level = 'debug';
+
 module.exports = {
-    onRequestReceiving: (request, response) => getRecordFromDatabaseAndSendResponse(request, response, 'requests'),
-    onServerResponseReceiving: (request, response) => getRecordFromDatabaseAndSendResponse(request, response, 'serverResponses'),
-    onGoldResponseReceiving: (request, response) => getRecordFromDatabaseAndSendResponse(request, response, 'goldResponses')
+
+    onGoldRequestReceiving: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection('goldRequests').findOne(ObjectId(request.params.id))
+                    .then(() => sendOkWithData(response, `Gold request was got`, request.ops[0]))
+                    .catch(error => sendBadRequest(response, `Gold request was not got. Cause: ${error}`))
+                    .finally(() => connection.close())
+            })
+            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`));
+    }
+
 };
 
-function getRecordFromDatabaseAndSendResponse(request, response, tableName) {
-    databaseConnector.connect((error, client) => {
-        functional.doIf(error, () => sendBadRequest(response));
-        const collection = databaseConnector.getDatabase(client).collection(tableName);
-        collection.findOne({ 'id' : request.body.id}, (error, data) =>
-            functional.doIfElse(error, () => sendBadRequest(response), () => sendDataFromDatabase(response, data))
-        );
-        client.close();
-    })
-}
 
-function sendBadRequest(response){
+function sendBadRequest(response, debugMessage){
+    functional.doIf(debugMessage, () => log.warn(debugMessage));
     response.status(400).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Bad request' });
 }
 
-function sendDataFromDatabase(response, data) {
+function sendInternalServerError(response, debugMessage) {
+    functional.doIf(debugMessage, () => log.warn(debugMessage));
+    response.status(500).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Internal server error' });
+}
+
+function sendOkWithData(response, debugMessage, data) {
+    functional.doIf(debugMessage, () => log.debug(debugMessage));
     response.status(200).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
 }

@@ -17,7 +17,6 @@
 <script>
 
     export default {
-        name: 'headerTemplate',
         data() {
             return {
                 title: 'extreme-nest-test-client'

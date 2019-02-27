@@ -8,15 +8,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import generationTemplate from '../templates/generationPage/generationPageTemplate'
-import testingTemplate from '../templates/testingPage/testingPageTemplate'
+import generationPage from '../templates/generationPage/generationPage'
+import testingPage from '../templates/testingPage/testingPage'
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     routes: [
-        { path: `/generation`, component: generationTemplate, },
-        { path: '/testing', component: testingTemplate },
+        { path: `/generation`, component: generationPage, },
+        { path: '/testing', component: testingPage },
         { path: '/', redirect: `/generation` }
     ],
     linkActiveClass: "active-nav-link"

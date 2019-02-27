@@ -11,9 +11,7 @@ import VueResource from 'vue-resource'
 import router from './router'
 import storage from './storage'
 
-import headerTemplate from '../templates/headerBlockTemplate'
-import generationTemplate from '../templates/generationPage/generationPageTemplate'
-import testingTemplate from '../templates/testingPage/testingPageTemplate'
+import headerForm from '../templates/headerForm'
 
 Vue.use(VueResource);
 
@@ -22,8 +20,6 @@ new Vue({
     store: storage,
     router: router,
     components : {
-        headerTemplate: headerTemplate,
-        generationTemplate: generationTemplate,
-        testingTemplate: testingTemplate
+        headerForm: headerForm
     }
 });

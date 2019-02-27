@@ -75,22 +75,6 @@ module.exports = {
             .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`))
     },
 
-    onServerResponseCreation: (request, response) => {
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                database.collection('serverResponses').insertOne(request.body)
-                    .then(result =>
-                        database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"serverResponseID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Server response was added: ${result.ops[0]._id}`))
-                            .catch(error => sendBadRequest(response, `Server response was not join to nesting. Cause: ${error}`))
-                            .finally(() => connection.close())
-                    )
-                    .catch(error => sendInternalServerError(response, `Server response was not added. Cause: ${error}`))
-            })
-            .catch(error => sendInternalServerError(response, `Connection with database was not set. Cause: ${error}`))
-    },
-
 };
 
 function sendBadRequest(response, debugMessage){

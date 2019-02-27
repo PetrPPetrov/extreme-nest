@@ -1,12 +1,14 @@
 <template>
 
     <div>
-        <label for="canvas-gold-generation">Visualization of gold nesting:</label>
-        <canvas id="canvas-gold-generation"
+        <label for="canvas-gold-visualization">Visualization of gold nesting:</label>
+        <canvas id="canvas-gold-visualization"
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
                 @mouseup="omMouseUpInCanvas"
                 @wheel="onMouseWheelInCanvas"></canvas>
+        <hr>
+        <p class="log-message">{{ $store.getters.goldVisualizationLog }}</p>
     </div>
 
 </template>
@@ -16,7 +18,6 @@
     const fabric = require('fabric').fabric;
 
     export default {
-        name: "goldVisualizationCanvasTemplate",
         data() {
             return {
                 transX: 0,
@@ -28,7 +29,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('canvasGoldGeneration', new fabric.StaticCanvas('canvas-gold-generation', {
+            this.$store.dispatch('canvasGoldGeneration', new fabric.StaticCanvas('canvas-gold-visualization', {
                 scale: 1,
                 width: 445,
                 height: 240,
@@ -58,7 +59,7 @@
             },
 
             onMouseWheelInCanvas(event) {
-                const canvas = document.getElementById('canvas-gold-generation');
+                const canvas = document.getElementById('canvas-gold-visualization');
                 const offset = canvas.getBoundingClientRect();
                 const centerX = event.pageX - offset.left;
                 const centerY = event.pageY - offset.top;
@@ -102,7 +103,3 @@
     }
 
 </script>
-
-<style scoped>
-
-</style>

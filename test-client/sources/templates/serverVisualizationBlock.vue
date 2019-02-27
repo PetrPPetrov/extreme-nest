@@ -1,12 +1,14 @@
 <template>
 
     <div>
-        <label for="canvas-random-generation">Visualization of nesting from server:</label>
-        <canvas id="canvas-random-generation"
+        <label for="canvas-server-visualization">Visualization of nesting from server:</label>
+        <canvas id="canvas-server-visualization"
                 @mousemove="onMouseMoveInCanvas"
                 @mousedown="onMouseDownInCanvas"
                 @mouseup="omMouseUpInCanvas"
                 @wheel="onMouseWheelInCanvas"></canvas>
+        <hr>
+        <p class="log-message">{{ $store.getters.randomVisualizationLog }}</p>
     </div>
 
 </template>
@@ -16,7 +18,6 @@
     const fabric = require('fabric').fabric;
 
     export default {
-        name: "randomVisualizationCanvasTemplate",
         data() {
             return {
                 transX: 0,
@@ -28,7 +29,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('canvasRandomGeneration', new fabric.StaticCanvas('canvas-random-generation', {
+            this.$store.dispatch('canvasRandomGeneration', new fabric.StaticCanvas('canvas-server-visualization', {
                 scale: 1,
                 width: 445,
                 height: 240,
@@ -58,7 +59,7 @@
             },
 
             onMouseWheelInCanvas(event) {
-                const canvas = document.getElementById('canvas-random-generation');
+                const canvas = document.getElementById('canvas-server-visualization');
                 const offset = canvas.getBoundingClientRect();
                 const centerX = event.pageX - offset.left;
                 const centerY = event.pageY - offset.top;
@@ -102,7 +103,3 @@
     }
 
 </script>
-
-<style scoped>
-
-</style>

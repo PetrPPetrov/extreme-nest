@@ -50,7 +50,7 @@ label {
     font-size: 15px;
 }
 
-input, textarea {
+input, textarea, select {
     font-size: 14px;
     font-family: 'Open Sans', sans-serif;
     background-color: white;
@@ -139,3 +139,11 @@ canvas {
     border-radius: 15px;
 }
 
+.error-label {
+    color: #FF0000;
+}
+
+.error-input {
+    padding: 6px 15px 6px 15px;
+    border: 1px solid #FF0000;
+}
