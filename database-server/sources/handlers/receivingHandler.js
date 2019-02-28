@@ -10,6 +10,8 @@ const ObjectId = require('mongodb').ObjectId;
 const functional = require('../functionalUtils');
 const databaseConnector = require('../databaseConnector');
 
+const testingDAO = require('../dao/testing');
+
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
@@ -24,6 +26,20 @@ module.exports = {
                     .finally(() => connection.close())
             })
             .catch(error => sendBadRequest(response, `All the nestings were not got! Cause: ${error}`));
+    },
+
+    onAllTestingReceiving: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => testingDAO.getAllTestings(databaseConnector.getDatabase(connection)))
+            .then(testings => response.status(200).set({'Content-Type': 'application/json'}).send(testings))
+            .catch(error => response.status(404).set({'Content-Type': 'application/json'}).send({ message: error }))
+    },
+
+    onTestingReceivingByID: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => testingDAO.getTestingByID(databaseConnector.getDatabase(connection), request.params.id))
+            .then(testing => response.status(200).set({'Content-Type': 'application/json'}).send(testing))
+            .catch(error => response.status(404).set({'Content-Type': 'application/json'}).send({ message: error }))
     },
 
     onGoldRequestReceiving: (request, response) => {

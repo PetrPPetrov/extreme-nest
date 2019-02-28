@@ -10,6 +10,8 @@ const ObjectId = require('mongodb').ObjectId;
 const functional = require('../functionalUtils');
 const databaseConnector = require('../databaseConnector');
 
+const testingDAO = require('../dao/testing');
+
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
@@ -24,6 +26,13 @@ module.exports = {
                     .finally(() => connection.close())
             })
             .catch(error => sendBadRequest(response, `Connection with database was not set. Cause: ${error}`));
+    },
+
+    onTestingCreation: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => testingDAO.createNewTesting(databaseConnector.getDatabase(connection)))
+            .then(newTesting => response.status(201).set({'Content-Type': 'application/json'}).send(newTesting))
+            .catch(error => response.status(400).set({'Content-Type': 'application/json'}).send({ message: error }))
     },
 
     onGoldRequestCreation: (request, response) => {

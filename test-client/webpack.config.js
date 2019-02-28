@@ -13,6 +13,11 @@ module.exports = {
         publicPath: './',
         filename: 'script.js'
     },
+    mode: 'development',
+    watch: true,
+    watchOptions: {
+        aggregateTimeout: 100
+    },
     module: {
         rules: [
             {

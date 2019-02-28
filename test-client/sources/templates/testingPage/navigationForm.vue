@@ -4,9 +4,10 @@
         <p class="block-title">Testings</p>
         <label for="select-testing">Select testing:</label>
         <select id="select-testing" v-model="selectedTesting">
-            <option v-for="testing in testings">{{ testing }}</option>
+            <option v-for="testing in testings">[{{ testing._id }}] - {{ testing.date }} - {{ testing.time }}</option>
         </select>
-        <button class="button" @click="onClickShowTesting">Show testing</button>
+        <button class="button" @click="onClickShowTesting" :disabled="selectedTesting === ''">Show testing</button>
+        <button id="delete-button" class="button" @click="onClickDeleteTesting" :disabled="selectedTesting === ''">Delete testing</button>
         <hr>
         <hr>
         <button class="button" @click="onClickRunTests">Run new testing</button>
@@ -30,9 +31,8 @@
             }
         },
         mounted() {
-            this.$http.get(`${networkConfiguration.databaseServer.address}/tests`)
+            this.$http.get(`${networkConfiguration.databaseServer.address}/testing`)
                 .then(response => {
-                    console.log(response.body);
                     this.testings = response.body;
                     this.networkLog = 'Testing results was loaded'
                 })
@@ -44,15 +44,28 @@
 
             },
 
-            onClickRunTests() {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/tests`)
-                    .then(response => {
-                        const testID = response.body.id;
-                        console.log(testID);
+            onClickDeleteTesting() {
+                let testingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
+                testingID = testingID.substring(1, testingID.length - 1);
+                this.$http.delete(`${networkConfiguration.databaseServer.address}/testing/${testingID}`)
+                    .then(() => {
+                        this.testings = this.testings.filter((testing) => testing._id !== testingID);
+                        const firstTesting = this.testings[0];
+                        if (firstTesting) {
+                            this.selectedTesting = `[${firstTesting._id}] - ${firstTesting.date} - ${firstTesting.time}`;
+                        }
+                        this.networkLog = 'Testing was deleted'
                     })
-                    .catch(() => {
+                    .catch(() => this.networkLog = 'Testing was not deleted');
+            },
 
-                    });
+            onClickRunTests() {
+                this.$http.post(`${networkConfiguration.databaseServer.address}/testing`)
+                    .then(response => {
+                        this.testings.push(response.body);
+                        this.networkLog = 'New testing was ran'
+                    })
+                    .catch(() => this.networkLog = 'New testing was not ran');
             }
 
         }
@@ -67,7 +80,11 @@
     }
 
     button {
-        margin-bottom: 0;
+        margin: 0;
+    }
+
+    #delete-button {
+        margin-top: 10px;
     }
 
     #select-testing {

@@ -10,6 +10,8 @@ const ObjectId = require('mongodb').ObjectId;
 const functional = require('../functionalUtils');
 const databaseConnector = require('../databaseConnector');
 
+const testingDAO = require('../dao/testing');
+
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
@@ -30,6 +32,13 @@ module.exports = {
                 .finally(() => connection.close())
             })
             .catch(error => sendBadRequest(response, `Nesting: ${request.params.id} was not deleted. Cause: ${error}`));
+    },
+
+    onDeletingTesting: (request, response) => {
+        databaseConnector.connect()
+            .then(connection => testingDAO.removeTestingByID(databaseConnector.getDatabase(connection), request.params.id))
+            .then(() => response.status(200).set({'Content-Type': 'application/json'}).send({ result: true }))
+            .catch(error => response.status(400).set({'Content-Type': 'application/json'}).send({ message: error }))
     }
 
 };
