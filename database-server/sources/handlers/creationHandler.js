@@ -5,96 +5,76 @@
 
 'use strict';
 
-const log4js = require('log4js');
-const ObjectId = require('mongodb').ObjectId;
-const functional = require('../functionalUtils');
+const nestingDAO = require('../dao/nesting');
+const testingDAO = require('../dao/testing');
+const goldRequestsDAO = require('../dao/goldRequests');
+const goldResponsesDAO = require('../dao/goldResponses');
+const serverRequestsDAO = require('../dao/serverRequests');
 const databaseConnector = require('../databaseConnector');
 
-const testingDAO = require('../dao/testing');
+const ResponseSender = require('../responseSender');
 
+const log4js = require('log4js');
 const log = log4js.getLogger(__filename);
-log.level = 'debug';
+log.level = 'trace';
 
 module.exports = {
 
     onNestingCreation: (request, response) => {
+        log.trace('Request on: nesting creation');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                database.collection('nesting').insertOne({})
-                    .then((result) => sendCreatedWithData(response, 'Nesting was created', { id: result.ops[0]._id }))
-                    .finally(() => connection.close())
-            })
-            .catch(error => sendBadRequest(response, `Connection with database was not set. Cause: ${error}`));
+            .then(connection => nestingDAO.create(databaseConnector.getDatabase(connection)))
+            .then(id => sender.sendCreated({ id: id }))
+            .catch(errorID => sender.sendBadRequest({ id: errorID }))
     },
 
     onTestingCreation: (request, response) => {
+        log.trace('Request on: testing creation');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
-            .then(connection => testingDAO.createNewTesting(databaseConnector.getDatabase(connection)))
-            .then(newTesting => response.status(201).set({'Content-Type': 'application/json'}).send(newTesting))
-            .catch(error => response.status(400).set({'Content-Type': 'application/json'}).send({ message: error }))
+            .then(connection => testingDAO.create(databaseConnector.getDatabase(connection)))
+            .then(id => sender.sendCreated(id))
+            .catch(errorID => sender.sendBadRequest({ id: errorID }))
     },
 
     onGoldRequestCreation: (request, response) => {
+        log.trace('Request on: gold request creation');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('goldRequests').insertOne(request.body)
-                    .then(result =>
-                        database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"goldRequestID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Gold request was joined to nesting: ${request.params.id}`))
-                            .finally(() => connection.close())
-                    )
+                goldRequestsDAO.create(database, request.body)
+                    .then(id => nestingDAO.updateByID(database, request.params.id, {"goldRequestID": id}))
+                    .then(() => sender.sendCreated({ result: true }))
             })
-            .catch(error => sendBadRequest(response, `Gold request was not joined to nesting: ${request.params.id}. Cause: ${error}`))
+            .catch(() => sender.sendBadRequest({ result: false }))
     },
 
     onServerRequestCreation: (request, response) => {
+        log.trace('Request on: server request creation');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('serverRequests').insertOne(request.body)
-                    .then(result =>
-                        database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"serverRequestID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Server request was joined to nesting: ${request.params.id}`))
-                            .finally(() => connection.close())
-                    )
+                serverRequestsDAO.create(database, request.body)
+                    .then(id => nestingDAO.updateByID(database, request.params.id, {"serverRequestID": id}))
+                    .then(() => sender.sendCreated({ result: true }))
             })
-            .catch(error => sendBadRequest(response, `Server request was not joined to nesting: ${request.params.id}. Cause: ${error}`))
+            .catch(() => sender.sendBadRequest({ result: false }))
     },
 
     onGoldResponseCreation: (request, response) => {
+        log.trace('Request on: gold response creation');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('goldResponses').insertOne(request.body)
-                    .then(result =>
-                        database.collection('nesting').updateOne({"_id": ObjectId(request.params.id)}, {"$set": {"goldResponseID": result.ops[0]._id}})
-                            .then(() => sendCreated(response, `Gold response  was joined to nesting: ${request.params.id}`))
-                            .finally(() => connection.close())
-                    )
+                goldResponsesDAO.create(database, request.body)
+                    .then(id => nestingDAO.updateByID(database, request.params.id, {"goldResponseID": id}))
+                    .then(() => sender.sendCreated({ result: true }))
             })
-            .catch(error => sendBadRequest(response, `Gold response was not joined to nesting: ${request.params.id}. Cause: ${error}`))
+            .catch(() => sender.sendBadRequest({ result: false }))
     },
 
 };
-
-function sendBadRequest(response, debugMessage){
-    functional.doIf(debugMessage, () => log.warn(debugMessage));
-    response.status(400).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Bad request' });
-}
-
-function sendInternalServerError(response, debugMessage) {
-    functional.doIf(debugMessage, () => log.warn(debugMessage));
-    response.status(500).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Internal server error' });
-}
-
-function sendCreated(response, debugMessage) {
-    functional.doIf(debugMessage, () => log.debug(debugMessage));
-    response.status(201).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Created' });
-}
-
-function sendCreatedWithData(response, debugMessage, data) {
-    functional.doIf(debugMessage, () => log.debug(debugMessage));
-    response.status(201).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
-}

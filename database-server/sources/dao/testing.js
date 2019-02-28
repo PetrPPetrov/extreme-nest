@@ -11,31 +11,31 @@ const ObjectId = require('mongodb').ObjectId;
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-const testingTableName = 'testing';
+const incorrectID = 0;
+const tableName = 'testing';
 
 module.exports = {
 
-    createNewTesting: (database) => {
+    create: (database) => {
         const today = new Date();
         const date = `${today.getDate()}.${(today.getMonth()+1)}.${today.getFullYear()}`;
         const time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
         return new Promise((resolve, reject) => {
-            database.collection(testingTableName).insertOne({ date: date, time: time })
-                .then(result => {
-                    const newTesting = result.ops[0];
-                    log.debug(`New testing was created. ID: ${newTesting._id}`);
-                    resolve(newTesting);
+            database.collection(tableName).insertOne({ date: date, time: time })
+                .then(testing => {
+                    log.debug(`New testing was created. ID: ${testing.ops[0]._id}`);
+                    resolve(testing.ops[0]);
                 })
                 .catch(error => {
                     log.warn(`New testing was not created. Cause: ${error}`);
-                    reject('New testing was not creating')
+                    reject(incorrectID)
                 });
         });
     },
 
-    getAllTestings: (database) => {
+    getAll: (database) => {
         return new Promise((resolve, reject) => {
-            database.collection(testingTableName).find({}).toArray()
+            database.collection(tableName).find({}).toArray()
                 .then(testings => {
                     log.debug(`All the testings were found.`);
                     resolve(testings);
@@ -47,29 +47,29 @@ module.exports = {
         });
     },
 
-    getTestingByID: (database, testingID) => {
+    getByID: (database, id) => {
         return new Promise((resolve, reject) => {
-            database.collection(testingTableName).findOne(ObjectId(testingID))
+            database.collection(tableName).findOne(ObjectId(id))
                 .then(testing => {
-                    log.debug(`Testing was found by ID: ${testingID}`);
+                    log.debug(`Testing was found by ID: ${id}`);
                     resolve(testing);
                 })
                 .catch(error => {
-                    log.warn(`Testing was not found by ID: ${testingID}. Cause: ${error}`);
+                    log.warn(`Testing was not found by ID: ${id}. Cause: ${error}`);
                     reject(`Testing was not found`)
                 });
         });
     },
 
-    removeTestingByID: (database, testID) => {
+    removeByID: (database, id) => {
         return new Promise((resolve, reject) => {
-            database.collection(testingTableName).deleteOne({"_id": ObjectId(testID)})
+            database.collection(tableName).deleteOne({"_id": ObjectId(id)})
                 .then(() => {
-                    log.debug(`Testing was deleted by ID: ${testID}`);
+                    log.debug(`Testing was deleted by ID: ${id}`);
                     resolve();
                 })
                 .catch(error => {
-                    log.warn(`Testing was not deleted by ID: ${testID}. Cause: ${error}`);
+                    log.warn(`Testing was not deleted by ID: ${id}. Cause: ${error}`);
                     reject(`Testing was not deleted`)
                 });
         });

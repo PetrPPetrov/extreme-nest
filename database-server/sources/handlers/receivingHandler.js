@@ -5,80 +5,71 @@
 
 'use strict';
 
-const log4js = require('log4js');
-const ObjectId = require('mongodb').ObjectId;
-const functional = require('../functionalUtils');
+const nestingDAO = require('../dao/nesting');
+const testingDAO = require('../dao/testing');
+const goldRequestsDAO = require('../dao/goldRequests');
+const goldResponsesDAO = require('../dao/goldResponses');
 const databaseConnector = require('../databaseConnector');
 
-const testingDAO = require('../dao/testing');
+const ResponseSender = require('../responseSender');
 
+const log4js = require('log4js');
 const log = log4js.getLogger(__filename);
-log.level = 'debug';
+log.level = 'trace';
 
 module.exports = {
 
     onNestingReceiving: (request, response) => {
+        log.trace('Request on: getting nesting');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                database.collection('nesting').find({}).toArray()
-                    .then(nesting => sendOkWithData(response, `All the nestings were got`, nesting.map(field => field._id)))
-                    .finally(() => connection.close())
-            })
-            .catch(error => sendBadRequest(response, `All the nestings were not got! Cause: ${error}`));
+            .then(connection => nestingDAO.getAll(databaseConnector.getDatabase(connection)))
+            .then(nestings => sender.sendOK(nestings))
+            .catch(error => sender.sendNotFound(error))
     },
 
     onAllTestingReceiving: (request, response) => {
+        log.trace('Request on: getting all the testings');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
-            .then(connection => testingDAO.getAllTestings(databaseConnector.getDatabase(connection)))
-            .then(testings => response.status(200).set({'Content-Type': 'application/json'}).send(testings))
-            .catch(error => response.status(404).set({'Content-Type': 'application/json'}).send({ message: error }))
+            .then(connection => testingDAO.getAll(databaseConnector.getDatabase(connection)))
+            .then(testings => sender.sendOK(testings))
+            .catch(error => sender.sendNotFound(error))
     },
 
     onTestingReceivingByID: (request, response) => {
+        log.trace('Request on: getting testing');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
-            .then(connection => testingDAO.getTestingByID(databaseConnector.getDatabase(connection), request.params.id))
-            .then(testing => response.status(200).set({'Content-Type': 'application/json'}).send(testing))
-            .catch(error => response.status(404).set({'Content-Type': 'application/json'}).send({ message: error }))
+            .then(connection => testingDAO.getByID(databaseConnector.getDatabase(connection), request.params.id))
+            .then(testing => sender.sendOK(testing))
+            .catch(error => sender.sendNotFound(error))
     },
 
     onGoldRequestReceiving: (request, response) => {
+        log.trace('Request on: getting gold request');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('nesting').findOne(ObjectId(request.params.id))
-                    .then(nesting =>
-                        database.collection('goldRequests').findOne(ObjectId(nesting.goldRequestID))
-                            .then(goldRequest => sendOkWithData(response, `Gold request: ${request.params.id} was got`, goldRequest))
-                    )
-                    .finally(() => connection.close())
+                nestingDAO.getByID(database, request.params.id)
+                    .then(nesting => goldRequestsDAO.getByID(database, nesting.goldRequestID))
+                    .then(goldRequest => sender.sendOK(goldRequest))
             })
-            .catch(error => sendBadRequest(response, `Gold request: ${request.params.id} was not got. Cause: ${error}`));
+            .catch(error => sender.sendNotFound(error));
     },
 
     onGoldResponseReceiving: (request, response) => {
+        log.trace('Request on: getting gold response');
+        const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection('nesting').findOne(ObjectId(request.params.id))
-                    .then(nesting =>
-                        database.collection('goldResponses').findOne(ObjectId(nesting.goldResponseID))
-                            .then(goldResponse => sendOkWithData(response, `Gold response: ${request.params.id} was got`, goldResponse))
-                    )
-                    .finally(() => connection.close())
+                nestingDAO.getByID(database, request.params.id)
+                    .then(nesting => goldResponsesDAO.getByID(database, nesting.goldResponseID))
+                    .then(goldResponse => sender.sendOK(goldResponse))
             })
-            .catch(error => sendBadRequest(response, `Gold response: ${request.params.id} was not got. Cause: ${error}`));
+            .catch(error => sender.sendNotFound(error));
     }
 
 };
-
-
-function sendBadRequest(response, debugMessage){
-    functional.doIf(debugMessage, () => log.warn(debugMessage));
-    response.status(400).set({'Content-Type': 'application/json; charset=utf-8'}).send({ message: 'Bad request' });
-}
-
-function sendOkWithData(response, debugMessage, data) {
-    functional.doIf(debugMessage, () => log.debug(debugMessage));
-    response.status(200).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
-}
