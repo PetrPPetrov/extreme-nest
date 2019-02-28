@@ -9,7 +9,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import generationPage from '../templates/generationPage/generationPage'
-import testsPage from '../templates/testsPage/testsPage'
 import testingPage from '../templates/testingPage/testingPage'
 
 Vue.use(VueRouter);
@@ -19,10 +18,6 @@ const router = new VueRouter({
         {
             path: `/generation`,
             component: generationPage,
-        },
-        {
-            path: '/tests',
-            component: testsPage
         },
         {
             path: '/testing',

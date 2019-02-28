@@ -6,10 +6,9 @@
                 :disabled="
                     this.$store.getters.goldNestingRequest === '' ||
                     this.$store.getters.randomNestingRequest === '' ||
-                    this.$store.getters.goldNestingResponse === ''">
+                    this.$store.getters.goldNestingResponse === '' ||
+                    this.$store.getters.generationInProgress">
                 Save test</button>
-        <hr>
-        <p class="log-message">{{ networkLog }}</p>
     </div>
 
 </template>
@@ -27,7 +26,7 @@
         methods: {
 
             onClickSaveTest() {
-                this.networkLog = 'Test saving in progress...';
+                this.$store.dispatch('networkLog', 'Saving in progress...');
                 this.$http.post(`${networkConfiguration.databaseServer.address}/nesting`)
                     .then(async response => {
                         const nestingID = response.body.id;
@@ -36,9 +35,9 @@
                             this.saveGoldNestingResponseOnServer(nestingID),
                             this.saveGoldRequestOnServer(nestingID)
                         ])
-                            .then(() => this.networkLog = 'Test was saved successfully')
+                            .then(() => this.$store.dispatch('networkLog', 'Test was saved'))
                     })
-                    .catch(() => this.networkLog = 'Test was not saved');
+                    .catch(() => this.$store.dispatch('networkLog', 'Test wasn\'t saved'));
             },
 
             saveGoldRequestOnServer(nestingID) {

@@ -2,8 +2,8 @@
 
     <div id="navigation-block" class="block">
         <p class="block-title">Testings</p>
-        <label for="select-testing">Select testing:</label>
-        <select id="select-testing" v-model="selectedTesting">
+        <label for="select-testing" v-bind:class="{'error-label': selectedTesting === ''}">Select testing:</label>
+        <select id="select-testing" v-model="selectedTesting" v-bind:class="{'error-input': selectedTesting === ''}">
             <option v-for="testing in testings">[{{ testing._id }}] - {{ testing.date }} - {{ testing.time }}</option>
         </select>
         <button class="button" @click="onClickShowTesting" :disabled="selectedTesting === ''">Show testing</button>
@@ -34,6 +34,10 @@
             this.$http.get(`${networkConfiguration.databaseServer.address}/testing`)
                 .then(response => {
                     this.testings = response.body;
+                    const firstTesting = this.testings[0];
+                    if (firstTesting) {
+                        this.selectedTesting = `[${firstTesting._id}] - ${firstTesting.date} - ${firstTesting.time}`;
+                    }
                     this.networkLog = 'Testing results was loaded'
                 })
                 .catch(() => this.networkLog = 'Testing results was not loaded')

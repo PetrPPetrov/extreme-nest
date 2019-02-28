@@ -1,14 +1,14 @@
 <template>
 
-    <div id="navigation-tests-form" class="block">
-        <p class="block-title">Tests</p>
-        <label for="select-tests">Select test:</label>
-        <select id="select-tests" v-model="selectedTest" @change="onChangeSelectedTest">
+    <div>
+        <label for="select-tests" v-bind:class="{'error-label': this.selectedTest === ''}">Select test:</label>
+        <select id="select-tests" v-model="selectedTest" v-bind:class="{'error-input': this.selectedTest === ''}">
             <option v-for="test in tests">{{ test }}</option>
         </select>
-        <button class="button" :disabled="isDeletingInProgress" @click="onClickDeleteTest">Delete test</button>
-        <hr>
-        <p class="log-message">{{ networkLog }}</p>
+        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' || this.$store.getters.generationInProgress"
+                @click="onClickDeleteTest">Delete test</button>
+        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' || this.$store.getters.generationInProgress"
+                @click="onClickVisualizeTest">Visualize test</button>
     </div>
 
 </template>
@@ -31,44 +31,39 @@
             this.$http.get(`${networkConfiguration.databaseServer.address}/nesting`)
                 .then(response => {
                     this.tests = response.body;
-                    this.networkLog = 'Testing results was loaded'
+                    if (this.tests[0]){
+                        this.selectedTest = this.tests[0];
+                    }
+                    this.$store.dispatch('networkLog', 'Tests were loaded')
                 })
-                .catch(() => this.networkLog = 'Testing results was not loaded');
+                .catch(() => this.$store.dispatch('networkLog', 'Tests weren\'t loaded'));
         },
         methods: {
 
             onClickDeleteTest(){
-                if (this.selectedTest === '') {
-                    this.networkLog = `Test not selected.`;
-                    return;
-                }
-
                 this.isDeletingInProgress = true;
-                this.networkLog = `Deleting in progress...`;
+                this.$store.dispatch('networkLog', `Deleting in progress...`);
                 this.$http.delete(`${networkConfiguration.databaseServer.address}/nesting/${this.selectedTest}`)
                     .then(() => {
-                        this.networkLog = `Test: ${this.selectedTest} was deleted`;
+                        this.$store.dispatch('networkLog', `Test was deleted`);
                         this.tests.splice(this.tests.indexOf(this.selectedTest), 1);
                         this.selectedTest = this.tests[0];
                     })
-                    .catch(() => this.networkLog = `Test: ${this.selectedTest} was not deleted`)
+                    .catch(() => this.$store.dispatch('networkLog', `Test wasn't deleted`))
                     .finally(() => this.isDeletingInProgress = false)
             },
 
-            async onChangeSelectedTest() {
-                if (this.selectedTest === '') {
-                    return;
-                }
-
+            async onClickVisualizeTest() {
                 const canvasBlockSize = 20;
+                this.$store.dispatch('clear');
                 const canvas = this.$store.getters.canvasGoldGeneration;
+                this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} visualization in progress...`);
                 await Promise.all([this.receiveGoldRequestFromServer(), this.receiveGoldResponseFromServer()])
                     .then(([goldRequest, goldResponse]) => {
-                        canvas.clear();
                         drawCanvas(canvas, goldRequest, goldResponse, canvasBlockSize);
                         this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} was visualized`)
                     })
-                    .catch(() => this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} was not visualized`));
+                    .catch(() => this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} wasn't visualized`));
             },
 
             receiveGoldRequestFromServer() {
@@ -93,16 +88,13 @@
         margin-bottom: 10px;
     }
 
-    #navigation-tests-form {
-        width: calc(100% + 15px);
+    label[for="select-tests"] {
+        margin-top: 0;
+        padding-top: 0;
     }
 
-    @media (max-width: 768px) {
-
-        #navigation-tests-form {
-            width: 100%;
-        }
-
+    #visualization-button {
+        margin-bottom: 0;
     }
 
 </style>

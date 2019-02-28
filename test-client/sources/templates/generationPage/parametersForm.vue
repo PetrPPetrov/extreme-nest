@@ -12,15 +12,19 @@
         <input id="input-nesting-time" type="number" v-model="nestingTime" v-bind:class="{'error-input': (nestingTime <= 0 || nestingTime === '')}">
         <label for="input-canvas-block-size" v-bind:class="{'error-label': (canvasBlockSize <= 0 || canvasBlockSize === '')}">Block size for canvas:</label>
         <input id="input-canvas-block-size" type="number" v-model="canvasBlockSize" v-bind:class="{'error-input': (canvasBlockSize <= 0 || canvasBlockSize === '')}">
-        <hr>
-        <button class="button" @click="onClickGenerate"
+        <button id="generation-button" class="button" @click="onClickGenerate"
             :disabled="(countFigures <= 0 || countFigures === '') ||
                        (sheetWidth <= 0 || sheetWidth === '') ||
                        (sheetHeight <= 0 || sheetHeight === '') ||
                        (nestingTime <= 0 || nestingTime === '') ||
-                       (canvasBlockSize <= 0 || canvasBlockSize === '')">
+                       (canvasBlockSize <= 0 || canvasBlockSize === '') ||
+                        this.$store.getters.generationInProgress">
             Generate</button>
         <saving-test-block></saving-test-block>
+        <hr>
+        <deleting-test-block></deleting-test-block>
+        <hr>
+        <p class="log-message">{{ $store.getters.networkLog }}</p>
     </div>
 
 </template>
@@ -28,6 +32,7 @@
 <script>
 
     import savingTestBlock from './savingTestBlock'
+    import deletingTestBlock from './deletingTestsBlock'
 
     import drawCanvas from '../../scripts/canvasPainter'
     import networkConfiguration from '../../resources/data/network'
@@ -45,11 +50,13 @@
             }
         },
         components: {
-            savingTestBlock: savingTestBlock
+            savingTestBlock: savingTestBlock,
+            deletingTestBlock: deletingTestBlock
         },
         methods: {
 
-            onClickGenerate() {
+             onClickGenerate() {
+                this.$store.dispatch('generationInProgress', true);
                 this.$store.getters.canvasGoldGeneration.clear();
                 this.$store.getters.canvasRandomGeneration.clear();
                 this.generateGoldNesting();
@@ -58,7 +65,7 @@
 
             generateGoldNesting(){
                 let canvas = this.$store.getters.canvasGoldGeneration;
-                this.$store.dispatch('goldVisualizationLog', 'Gold nesting generation in progress');
+                this.$store.dispatch('goldVisualizationLog', 'Gold nesting generation in progress...');
                 generateGoldNestingAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
                     .then(([nestingRequest, nestingResponse]) => {
                         drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
@@ -70,7 +77,7 @@
             },
 
             generateRandomNestingOnServer(){
-                generateRandomNestingRequestForServerAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
+                return generateRandomNestingRequestForServerAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
                     .then(nestingRequest => this.sendRequestOnNestingToServer(nestingRequest))
                     .catch(() => this.$store.dispatch('randomVisualizationLog', 'Random nesting was not generated: inner error'))
             },
@@ -84,7 +91,10 @@
                             this.receiveNestingResponseFromServer(nestingRequest, nestingID);
                         }, nestingRequest.time * 1000)
                     )
-                    .catch(() => this.$store.dispatch('randomVisualizationLog', 'Server was not generated nesting'));
+                    .catch(() => {
+                        this.$store.dispatch('generationInProgress', false);
+                        this.$store.dispatch('randomVisualizationLog', 'Server was not generated nesting')
+                    });
             },
 
             receiveNestingResponseFromServer(nestingRequest, nestingID){
@@ -92,6 +102,7 @@
                 this.$http.get(`${networkConfiguration.nestingServer.address}/result/${nestingID}/full`)
                     .then(response => {
                         if (!response.body.nestings) {
+                            this.$store.dispatch('generationInProgress', false);
                             setTimeout(this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                         } else {
                             const nestingResponse = response.body;
@@ -99,6 +110,7 @@
                             this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
                             this.$store.dispatch('randomNestingResponse', JSON.stringify(nestingResponse, null, 4));
                             this.$store.dispatch('randomVisualizationLog', 'Server generated nesting successfully');
+                            this.$store.dispatch('generationInProgress', false);
                         }
                     })
             }
@@ -112,6 +124,10 @@
 
     #parameters-block {
         width: calc(100% + 15px);
+    }
+
+    #generation-button {
+        margin-top: 10px;
     }
 
     @media (max-width: 768px) {

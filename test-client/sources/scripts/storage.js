@@ -18,8 +18,10 @@ const storage = new Vuex.Store({
         goldNestingResponse: '',
         randomNestingRequest: '',
         randomNestingResponse: '',
+        networkLog: '...',
         goldVisualizationLog: '...',
-        randomVisualizationLog: '...'
+        randomVisualizationLog: '...',
+        generationInProgress : false,
     },
     mutations: {
         set(state, { key, value}){
@@ -33,8 +35,10 @@ const storage = new Vuex.Store({
         goldNestingResponse: state => state.goldNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
         randomNestingResponse: state => state.randomNestingResponse,
+        networkLog: state => state.networkLog,
         goldVisualizationLog: state => state.goldVisualizationLog,
-        randomVisualizationLog: state => state.randomVisualizationLog
+        randomVisualizationLog: state => state.randomVisualizationLog,
+        generationInProgress: state => state.generationInProgress
     },
     actions: {
         clear({ commit, state }) {
@@ -45,6 +49,7 @@ const storage = new Vuex.Store({
             commit('set', { key: 'randomNestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingResponse', value: '' });
+            commit('set', { key: 'networkLog', value: '...' });
             commit('set', { key: 'goldVisualizationLog', value: '...' });
             commit('set', { key: 'randomVisualizationLog', value: '...' });
         },
@@ -66,11 +71,17 @@ const storage = new Vuex.Store({
         randomNestingResponse({ commit }, response) {
             commit('set', { key: 'randomNestingResponse', value: response });
         },
+        networkLog({ commit }, message) {
+            commit('set', { key: 'networkLog', value: message });
+        },
         goldVisualizationLog({ commit }, message) {
             commit('set', { key: 'goldVisualizationLog', value: message });
         },
         randomVisualizationLog({ commit }, message) {
             commit('set', { key: 'randomVisualizationLog', value: message });
+        },
+        generationInProgress({ commit }, status) {
+            commit('set', { key: 'generationInProgress', value: status });
         }
     }
 });
