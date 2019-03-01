@@ -16,12 +16,9 @@ const tableName = 'testing';
 
 module.exports = {
 
-    create: (database) => {
-        const today = new Date();
-        const date = `${today.getDate()}.${(today.getMonth()+1)}.${today.getFullYear()}`;
-        const time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    create: (database, newTesting) => {
         return new Promise((resolve, reject) => {
-            database.collection(tableName).insertOne({ date: date, time: time })
+            database.collection(tableName).insertOne(newTesting)
                 .then(testing => {
                     log.debug(`New testing was created. ID: ${testing.ops[0]._id}`);
                     resolve(testing.ops[0]);

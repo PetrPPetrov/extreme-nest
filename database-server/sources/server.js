@@ -7,7 +7,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const log4js = require('log4js');
 
 const router = require('./router');
 const configuration = require('../resources/configuration');
@@ -23,6 +22,7 @@ server.use((request, response, next) => {
     next();
 });
 
+const log4js = require('log4js');
 const log = log4js.getLogger(__filename);
 log.level = 'info';
 

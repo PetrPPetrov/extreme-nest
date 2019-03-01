@@ -3,7 +3,7 @@
 // This file is part of Extreme Nest project.
 // This software is intellectual property of GkmSoft.
 
-'use strict'
+'use strict';
 
 import Vue from 'vue'
 import Vuex from 'vuex'

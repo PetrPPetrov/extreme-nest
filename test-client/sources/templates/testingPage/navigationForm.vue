@@ -3,12 +3,12 @@
     <div id="navigation-block" class="block">
         <p class="block-title">Testings</p>
         <label for="select-testing" v-bind:class="{'error-label': selectedTesting === ''}">Select testing:</label>
-        <select id="select-testing" v-model="selectedTesting" v-bind:class="{'error-input': selectedTesting === ''}">
+        <select id="select-testing" v-model="selectedTesting" v-bind:class="{'error-input': selectedTesting === ''}" @change="onChangeSelect">
             <option v-for="testing in testings">[{{ testing._id }}] - {{ testing.date }} - {{ testing.time }}</option>
         </select>
-        <button class="button" @click="onClickShowTesting" :disabled="selectedTesting === ''">Show testing</button>
         <button id="delete-button" class="button" @click="onClickDeleteTesting" :disabled="selectedTesting === ''">Delete testing</button>
         <hr>
+        <p class="tests-nav-button" v-for="test in tests" @click="onTestClick($event)">{{ test }}</p>
         <hr>
         <button class="button" @click="onClickRunTests">Run new testing</button>
         <hr>
@@ -19,7 +19,9 @@
 
 <script>
 
-    import networkConfiguration from '../../resources/data/network'
+    import * as _ from 'underscore';
+    import HttpClient from '../../scripts/network'
+    import drawCanvas from '../../scripts/canvasPainter'
 
     export default {
         data() {
@@ -31,45 +33,91 @@
             }
         },
         mounted() {
-            this.$http.get(`${networkConfiguration.databaseServer.address}/testing`)
-                .then(response => {
-                    this.testings = response.body;
-                    const firstTesting = this.testings[0];
-                    if (firstTesting) {
-                        this.selectedTesting = `[${firstTesting._id}] - ${firstTesting.date} - ${firstTesting.time}`;
-                    }
-                    this.networkLog = 'Testing results was loaded'
+            const http = new HttpClient(this.$http);
+            http.getAllTestingResults()
+                .then(testingResults => {
+                    this.testings = testingResults;
+                    this.showTestings();
+                    this.networkLog = 'Testing results were loaded'
                 })
-                .catch(() => this.networkLog = 'Testing results was not loaded')
+                .catch(() => {
+                    this.networkLog = 'Testing results weren\'t loaded'
+                });
         },
         methods: {
 
-            onClickShowTesting(){
+            getSelectedTestID(){
+                let selectedTestingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
+                return selectedTestingID.substring(1, selectedTestingID.length - 1);
+            },
 
+            onChangeSelect(){
+                this.showTestsForSelectedTesting();
+            },
+
+            onTestClick(event) {
+                const testID = event.srcElement.textContent;
+                this.$store.dispatch('clear');
+                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
+                const http = new HttpClient(this.$http);
+                http.getTestByTestID(testID)
+                    .then((test) => {
+                        const canvasBlockSize = 20;
+                        const canvas = this.$store.getters.canvasGoldGeneration;
+                        drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${testID} was visualized`)
+                    })
+                    .catch(() => {
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
+                    });
+            },
+
+            showTestings() {
+                const firstTesting = _.first(this.testings);
+                if (!_.isUndefined(firstTesting) && !_.isNull(firstTesting)) {
+                    this.selectedTesting = `[${firstTesting._id}] - ${firstTesting.date} - ${firstTesting.time}`;
+                    this.showTestsForSelectedTesting();
+                } else {
+                    this.selectedTesting = '';
+                    this.tests = [];
+                }
+            },
+
+            showTestsForSelectedTesting() {
+                const selectedTestingID = this.getSelectedTestID();
+                const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
+                    this.tests = filteredTesting.nestings.map(nesting => nesting._id);
+                } else {
+                    this.tests = [];
+                }
             },
 
             onClickDeleteTesting() {
-                let testingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
-                testingID = testingID.substring(1, testingID.length - 1);
-                this.$http.delete(`${networkConfiguration.databaseServer.address}/testing/${testingID}`)
+                const selectedTestingID = this.getSelectedTestID();
+                const http = new HttpClient(this.$http);
+                http.removeTestingResultByID(selectedTestingID)
                     .then(() => {
-                        this.testings = this.testings.filter((testing) => testing._id !== testingID);
-                        const firstTesting = this.testings[0];
-                        if (firstTesting) {
-                            this.selectedTesting = `[${firstTesting._id}] - ${firstTesting.date} - ${firstTesting.time}`;
-                        }
+                        this.testings = this.testings.filter((testing) => testing._id !== selectedTestingID);
+                        this.showTestings();
                         this.networkLog = 'Testing was deleted'
                     })
-                    .catch(() => this.networkLog = 'Testing was not deleted');
+                    .catch(() => {
+                        this.networkLog = 'Testing was not deleted'
+                    });
             },
 
             onClickRunTests() {
-                this.$http.post(`${networkConfiguration.databaseServer.address}/testing`)
-                    .then(response => {
-                        this.testings.push(response.body);
+                const http = new HttpClient(this.$http);
+                http.runNewTesting()
+                    .then((newTesting) => {
+                        this.testings.push(newTesting);
+                        this.showTestings();
                         this.networkLog = 'New testing was ran'
                     })
-                    .catch(() => this.networkLog = 'New testing was not ran');
+                    .catch(() => {
+                        this.networkLog = 'New testing was not ran'
+                    });
             }
 
         }
@@ -98,6 +146,22 @@
 
     #navigation-block {
         width: calc(100% + 15px);
+    }
+
+    .tests-nav-button {
+        border-radius: 15px;
+        padding: 7px 15px 7px 15px;
+        color: #14171A;
+        font-size: 12px;
+        margin: 0;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        transition: .5s;
+    }
+
+    .tests-nav-button:hover {
+        color: #48AAE6;
+        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);
     }
 
     @media (max-width: 768px) {

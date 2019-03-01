@@ -3,7 +3,7 @@
 // This file is part of Extreme Nest project.
 // This software is intellectual property of GkmSoft.
 
-'use strict'
+'use strict';
 
 const generateGoldNestingAsync = async (countFigures, sheetWidth, sheetHeight, nestingTime) => {
     return generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime);

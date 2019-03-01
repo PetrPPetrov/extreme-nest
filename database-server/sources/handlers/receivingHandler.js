@@ -24,7 +24,7 @@ module.exports = {
         const sender = new ResponseSender(response);
         databaseConnector.connect()
             .then(connection => nestingDAO.getAll(databaseConnector.getDatabase(connection)))
-            .then(nestings => sender.sendOK(nestings))
+            .then(nestings => sender.sendOK(nestings.map(nesting => nesting._id)))
             .catch(error => sender.sendNotFound(error))
     },
 

@@ -1,13 +1,13 @@
 <template>
 
     <div>
-        <label for="select-tests" v-bind:class="{'error-label': this.selectedTest === ''}">Select test:</label>
-        <select id="select-tests" v-model="selectedTest" v-bind:class="{'error-input': this.selectedTest === ''}">
+        <label for="select-tests" v-bind:class="{'error-label': this.selectedTestID === ''}">Select test:</label>
+        <select id="select-tests" v-model="selectedTestID" v-bind:class="{'error-input': this.selectedTestID === ''}">
             <option v-for="test in tests">{{ test }}</option>
         </select>
-        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' || this.$store.getters.generationInProgress"
+        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' || this.$store.getters.generationInProgress"
                 @click="onClickDeleteTest">Delete test</button>
-        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' || this.$store.getters.generationInProgress"
+        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' || this.$store.getters.generationInProgress"
                 @click="onClickVisualizeTest">Visualize test</button>
     </div>
 
@@ -15,65 +15,75 @@
 
 <script>
 
+    import * as _ from 'underscore';
+    import HttpClient from '../../scripts/network'
     import drawCanvas from '../../scripts/canvasPainter'
-    import networkConfiguration from '../../resources/data/network'
 
     export default {
         data() {
             return {
                 networkLog: '...',
                 tests: [],
-                selectedTest: '',
+                selectedTestID: '',
                 isDeletingInProgress: false
             }
         },
         beforeCreate() {
-            this.$http.get(`${networkConfiguration.databaseServer.address}/nesting`)
-                .then(response => {
-                    this.tests = response.body;
-                    if (this.tests[0]){
-                        this.selectedTest = this.tests[0];
+            const http = new HttpClient(this.$http);
+            http.getAllTestsID()
+                .then(tests => {
+                    this.tests = tests;
+                    this.$store.dispatch('networkLog', 'Tests were loaded');
+                    if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
+                        this.selectedTestID = _.first(this.tests);
                     }
-                    this.$store.dispatch('networkLog', 'Tests were loaded')
                 })
-                .catch(() => this.$store.dispatch('networkLog', 'Tests weren\'t loaded'));
+                .catch(() => {
+                    this.$store.dispatch('networkLog', 'Tests weren\'t loaded')
+                });
         },
         methods: {
 
             onClickDeleteTest(){
                 this.isDeletingInProgress = true;
                 this.$store.dispatch('networkLog', `Deleting in progress...`);
-                this.$http.delete(`${networkConfiguration.databaseServer.address}/nesting/${this.selectedTest}`)
-                    .then(() => {
-                        this.$store.dispatch('networkLog', `Test was deleted`);
-                        this.tests.splice(this.tests.indexOf(this.selectedTest), 1);
-                        this.selectedTest = this.tests[0];
+                const http = new HttpClient(this.$http);
+                http.removeTestByID(this.selectedTestID)
+                    .then((result) => {
+                        if (result) {
+                            this.$store.dispatch('networkLog', `Test was deleted`);
+                            this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
+                            this.selectedTestID = _.first(this.tests);
+                        } else {
+                            this.$store.dispatch('networkLog', `Test wasn't deleted`)
+                        }
                     })
-                    .catch(() => this.$store.dispatch('networkLog', `Test wasn't deleted`))
-                    .finally(() => this.isDeletingInProgress = false)
+                    .catch(() => {
+                        this.$store.dispatch('networkLog', `Test wasn't deleted`)
+                    })
+                    .finally(() => {
+                        this.isDeletingInProgress = false
+                    });
             },
 
-            async onClickVisualizeTest() {
-                const canvasBlockSize = 20;
+            onClickVisualizeTest() {
                 this.$store.dispatch('clear');
-                const canvas = this.$store.getters.canvasGoldGeneration;
-                this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} visualization in progress...`);
-                await Promise.all([this.receiveGoldRequestFromServer(), this.receiveGoldResponseFromServer()])
-                    .then(([goldRequest, goldResponse]) => {
-                        drawCanvas(canvas, goldRequest, goldResponse, canvasBlockSize);
-                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} was visualized`)
+                this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} visualization in progress...`);
+                const http = new HttpClient(this.$http);
+                http.getTestByTestID(this.selectedTestID)
+                    .then(test => {
+                        if (!_.isEmpty(test)) {
+                            const canvasBlockSize = 20;
+                            const canvas = this.$store.getters.canvasGoldGeneration;
+                            drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
+                            this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
+                        } else {
+                            this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
+                        }
                     })
-                    .catch(() => this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} wasn't visualized`));
-            },
-
-            receiveGoldRequestFromServer() {
-                return this.$http.get(`${networkConfiguration.databaseServer.address}/goldRequests/${this.selectedTest}`)
-                    .then(goldRequest => Promise.resolve(goldRequest.body))
-            },
-
-            receiveGoldResponseFromServer() {
-                return this.$http.get(`${networkConfiguration.databaseServer.address}/goldResponses/${this.selectedTest}`)
-                    .then(goldResponse => Promise.resolve(goldResponse.body))
+                    .catch(() => {
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
+                    });
             }
 
         }

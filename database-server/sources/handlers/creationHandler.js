@@ -12,6 +12,8 @@ const goldResponsesDAO = require('../dao/goldResponses');
 const serverRequestsDAO = require('../dao/serverRequests');
 const databaseConnector = require('../databaseConnector');
 
+const testingService = require('../services/testing');
+
 const ResponseSender = require('../responseSender');
 
 const log4js = require('log4js');
@@ -23,6 +25,7 @@ module.exports = {
     onNestingCreation: (request, response) => {
         log.trace('Request on: nesting creation');
         const sender = new ResponseSender(response);
+
         databaseConnector.connect()
             .then(connection => nestingDAO.create(databaseConnector.getDatabase(connection)))
             .then(id => sender.sendCreated({ id: id }))
@@ -32,10 +35,9 @@ module.exports = {
     onTestingCreation: (request, response) => {
         log.trace('Request on: testing creation');
         const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => testingDAO.create(databaseConnector.getDatabase(connection)))
-            .then(id => sender.sendCreated(id))
-            .catch(errorID => sender.sendBadRequest({ id: errorID }))
+        testingService.createNewTesting()
+            .then(testing => sender.sendCreated(testing))
+            .catch(error => sender.sendBadRequest(error))
     },
 
     onGoldRequestCreation: (request, response) => {

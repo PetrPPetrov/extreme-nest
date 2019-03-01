@@ -28,12 +28,7 @@ module.exports = {
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
                 nestingDAO.getByID(database, request.params.id)
-                    .then(nesting => Promise.all([
-                        goldRequestDAO.removeByID(database, nesting.goldRequestID),
-                        goldResponsesDAO.removeByID(database, nesting.goldResponseID),
-                        serverRequestsDAO.removeByID(database, nesting.serverRequestID),
-                        nestingDAO.removeByID(database, request.params.id)
-                    ]))
+                    .then(nesting => nestingDAO.removeByID(database, request.params.id))
                     .then(() => sender.sendOK({ result : true}))
             })
             .catch(() => sender.sendBadRequest({ result: false }));

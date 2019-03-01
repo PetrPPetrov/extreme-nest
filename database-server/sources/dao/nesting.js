@@ -35,7 +35,7 @@ module.exports = {
             database.collection(tableName).find({}).toArray()
                 .then(nestings => {
                     log.debug(`All the nestings were found.`);
-                    resolve(nestings.map(field => field._id));
+                    resolve(nestings);
                 })
                 .catch(error => {
                     log.warn(`All the nestings were found. Cause: ${error}`);

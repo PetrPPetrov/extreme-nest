@@ -8,8 +8,20 @@
 const MongoClient = require("mongodb").MongoClient;
 const configuration = require('../resources/configuration');
 
-const connect = (onConnection) => MongoClient.connect(`${configuration.databaseAddress}:${configuration.databasePort}`, { useNewUrlParser: true }, onConnection);
-const getDatabase = (client) => client.db(configuration.databaseName);
+const databaseAddress = `${configuration.databaseAddress}:${configuration.databasePort}`;
 
-module.exports.connect = connect;
-module.exports.getDatabase = getDatabase;
+const log4js = require('log4js');
+const log = log4js.getLogger(__filename);
+log.level = 'debug';
+
+module.exports = {
+
+    connect : (onConnection) => MongoClient.connect(databaseAddress, { useNewUrlParser: true }, onConnection)
+        .catch(error => {
+            log.fatal(`Connection with database was not set. Cause: ${error}`);
+            process.exit(2);
+        }),
+
+    getDatabase : (connection) => connection.db(configuration.databaseName)
+
+};
