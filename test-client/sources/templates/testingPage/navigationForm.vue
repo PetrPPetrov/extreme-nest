@@ -6,11 +6,12 @@
         <select id="select-testing" v-model="selectedTesting" v-bind:class="{'error-input': selectedTesting === ''}" @change="onChangeSelect">
             <option v-for="testing in testings">[{{ testing._id }}] - {{ testing.date }} - {{ testing.time }}</option>
         </select>
-        <button id="delete-button" class="button" @click="onClickDeleteTesting" :disabled="selectedTesting === ''">Delete testing</button>
+        <button id="delete-button" class="button" @click="onClickDeleteTesting"
+                :disabled="selectedTesting === '' || isDeletingInProgress">Delete testing</button>
         <hr>
         <p class="tests-nav-button" v-for="test in tests" @click="onTestClick($event)">{{ test }}</p>
         <hr>
-        <button class="button" @click="onClickRunTests">Run new testing</button>
+        <button class="button" @click="onClickRunTests" :disabled="isDeletingInProgress">Run new testing</button>
         <hr>
         <p class="log-message">{{ networkLog }}</p>
     </div>
@@ -29,7 +30,8 @@
                 networkLog: '...',
                 testings: [],
                 selectedTesting: '',
-                tests: []
+                tests: [],
+                isDeletingInProgress: false
             }
         },
         mounted() {
@@ -58,6 +60,7 @@
             onTestClick(event) {
                 const testID = event.srcElement.textContent;
                 this.$store.dispatch('clear');
+                this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
                 const http = new HttpClient(this.$http);
                 http.getTestByTestID(testID)
@@ -94,6 +97,7 @@
             },
 
             onClickDeleteTesting() {
+                this.isDeletingInProgress = true;
                 const selectedTestingID = this.getSelectedTestID();
                 const http = new HttpClient(this.$http);
                 http.removeTestingResultByID(selectedTestingID)
@@ -104,7 +108,8 @@
                     })
                     .catch(() => {
                         this.networkLog = 'Testing was not deleted'
-                    });
+                    })
+                    .finally(() => this.isDeletingInProgress = false);
             },
 
             onClickRunTests() {

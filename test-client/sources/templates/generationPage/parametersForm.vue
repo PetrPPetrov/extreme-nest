@@ -52,8 +52,7 @@
 
              onClickGenerate() {
                 this.$store.dispatch('generationInProgress', true);
-                this.$store.getters.canvasGoldGeneration.clear();
-                this.$store.getters.canvasRandomGeneration.clear();
+                this.$store.dispatch('clearCanvases');
                 this.generateGoldNesting();
                 this.generateRandomNestingOnServer();
             },

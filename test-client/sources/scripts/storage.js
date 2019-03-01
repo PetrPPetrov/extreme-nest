@@ -41,9 +41,7 @@ const storage = new Vuex.Store({
         generationInProgress: state => state.generationInProgress
     },
     actions: {
-        clear({ commit, state }) {
-            state['canvasGoldGeneration'].clear();
-            state['canvasRandomGeneration'].clear();
+        clear({ commit }) {
             commit('set', { key: 'goldNestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingRequest', value: '' });
@@ -52,6 +50,10 @@ const storage = new Vuex.Store({
             commit('set', { key: 'networkLog', value: '...' });
             commit('set', { key: 'goldVisualizationLog', value: '...' });
             commit('set', { key: 'randomVisualizationLog', value: '...' });
+        },
+        clearCanvases({ commit, state }) {
+            state['canvasGoldGeneration'].clear();
+            state['canvasRandomGeneration'].clear();
         },
         canvasGoldGeneration({ commit }, canvas) {
             commit('set', { key: 'canvasGoldGeneration', value: canvas });

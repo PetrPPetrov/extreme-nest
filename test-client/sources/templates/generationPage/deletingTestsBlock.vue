@@ -54,6 +54,8 @@
 
             onClickDeleteTest(){
                 this.isDeletingInProgress = true;
+                this.$store.dispatch('clear');
+                this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('networkLog', `Deleting in progress...`);
                 const http = new HttpClient(this.$http);
                 http.removeTestByID(this.selectedTestID)
@@ -77,6 +79,7 @@
 
             onClickVisualizeTest() {
                 this.$store.dispatch('clear');
+                this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} visualization in progress...`);
                 const http = new HttpClient(this.$http);
                 http.getTestByTestID(this.selectedTestID)

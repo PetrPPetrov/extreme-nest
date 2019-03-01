@@ -8,6 +8,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import storage from '../scripts/storage'
 import generationPage from '../templates/generationPage/generationPage'
 import testingPage from '../templates/testingPage/testingPage'
 
@@ -18,14 +19,25 @@ const router = new VueRouter({
         {
             path: `/generation`,
             component: generationPage,
+            beforeEnter: (to, from, next) => {
+                storage.dispatch('clear');
+                next();
+            }
         },
         {
             path: '/testing',
-            component: testingPage
+            component: testingPage,
+            beforeEnter: (to, from, next) => {
+                storage.dispatch('clear');
+                next();
+            }
         },
         {
             path: '/',
-            redirect: `/generation`
+            redirect: `/generation`,
+            beforeEnter: (to, from, next) => {
+                next();
+            }
         }
     ],
     linkActiveClass: "active-nav-link"
