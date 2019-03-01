@@ -5,10 +5,10 @@
         <select id="select-tests" v-model="selectedTestID" v-bind:class="{'error-input': this.selectedTestID === ''}">
             <option v-for="test in tests">{{ test }}</option>
         </select>
-        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' || this.$store.getters.generationInProgress"
-                @click="onClickDeleteTest">Delete test</button>
-        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' || this.$store.getters.generationInProgress"
-                @click="onClickVisualizeTest">Visualize test</button>
+        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+            this.$store.getters.generationInProgress" @click="onClickDeleteTest">Delete test</button>
+        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+            this.$store.getters.generationInProgress" @click="onClickVisualizeTest">Visualize test</button>
     </div>
 
 </template>
@@ -44,6 +44,12 @@
                     this.$store.dispatch('networkLog', 'Tests weren\'t loaded')
                 });
         },
+        mounted() {
+            this.$root.$on('add', (testID) => {
+                this.tests.push(testID);
+                this.selectedTestID = _.first(this.tests);
+            });
+        },
         methods: {
 
             onClickDeleteTest(){
@@ -52,6 +58,7 @@
                 const http = new HttpClient(this.$http);
                 http.removeTestByID(this.selectedTestID)
                     .then(() => {
+
                         this.$store.dispatch('networkLog', `Test was deleted`);
                         this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
                         if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){

@@ -12,14 +12,9 @@
         <input id="input-nesting-time" type="number" v-model="nestingTime" v-bind:class="{'error-input': (nestingTime <= 0 || nestingTime === '')}">
         <label for="input-canvas-block-size" v-bind:class="{'error-label': (canvasBlockSize <= 0 || canvasBlockSize === '')}">Block size for canvas:</label>
         <input id="input-canvas-block-size" type="number" v-model="canvasBlockSize" v-bind:class="{'error-input': (canvasBlockSize <= 0 || canvasBlockSize === '')}">
-        <button id="generation-button" class="button" @click="onClickGenerate"
-            :disabled="(countFigures <= 0 || countFigures === '') ||
-                       (sheetWidth <= 0 || sheetWidth === '') ||
-                       (sheetHeight <= 0 || sheetHeight === '') ||
-                       (nestingTime <= 0 || nestingTime === '') ||
-                       (canvasBlockSize <= 0 || canvasBlockSize === '') ||
-                        this.$store.getters.generationInProgress">
-            Generate</button>
+        <button id="generation-button" class="button" @click="onClickGenerate" :disabled="(countFigures <= 0 || countFigures === '') ||
+            (sheetWidth <= 0 || sheetWidth === '') || (sheetHeight <= 0 || sheetHeight === '') || (nestingTime <= 0 || nestingTime === '') ||
+            (canvasBlockSize <= 0 || canvasBlockSize === '') || this.$store.getters.generationInProgress">Generate</button>
         <saving-test-block></saving-test-block>
         <hr>
         <deleting-test-block></deleting-test-block>
