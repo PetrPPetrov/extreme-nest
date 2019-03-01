@@ -5,36 +5,23 @@
 
 'use strict';
 
-import * as _ from 'underscore';
 import networkConfiguration from '../resources/data/network'
+import {Http} from "vue-resource";
 
 function HttpClient(http) {
     this.http = http;
 }
 
-HttpClient.prototype.runNewTesting = function() {
-    return this.http.post(`${networkConfiguration.databaseServer.address}/testing`)
-        .then(response => response.body)
-};
 
-HttpClient.prototype.getAllTestsID = function() {
-    return this.http.get(`${networkConfiguration.databaseServer.address}/nesting`)
-        .then(response => response.body)
-};
-
+// Testing results
 HttpClient.prototype.getAllTestingResults = function() {
     return this.http.get(`${networkConfiguration.databaseServer.address}/testing`)
         .then(response => response.body)
 };
 
-HttpClient.prototype.getTestByTestID = function(testID) {
-    return Promise.all([this.getGoldRequestByTestID(testID), this.getGoldResponseByTestID(testID)])
-        .then(([goldRequest, goldResponse]) => ({ goldRequest: goldRequest, goldResponse: goldResponse }))
-};
-
-HttpClient.prototype.removeTestByID = function(testID) {
-    return this.http.delete(`${networkConfiguration.databaseServer.address}/nesting/${testID}`)
-        .then(response => response.body.result)
+HttpClient.prototype.runNewTesting = function() {
+    return this.http.post(`${networkConfiguration.databaseServer.address}/testing`)
+        .then(response => response.body)
 };
 
 HttpClient.prototype.removeTestingResultByID = function(testingResultID) {
@@ -42,14 +29,58 @@ HttpClient.prototype.removeTestingResultByID = function(testingResultID) {
         .then(response => response.body.result)
 };
 
+
+// Tests
+HttpClient.prototype.getTestByTestID = function(testID) {
+    return Promise.all([this.getGoldRequestByTestID(testID), this.getGoldResponseByTestID(testID)])
+        .then(([goldRequest, goldResponse]) => ({ goldRequest: goldRequest, goldResponse: goldResponse }))
+};
+
+HttpClient.prototype.getAllTestsID = function() {
+    return this.http.get(`${networkConfiguration.databaseServer.address}/nesting`)
+        .then(response => response.body)
+};
+
+HttpClient.prototype.createNewTest = function() {
+    return this.http.post(`${networkConfiguration.databaseServer.address}/nesting`)
+        .then(response => response.body)
+};
+
+HttpClient.prototype.removeTestByID = function(testID) {
+    return this.http.delete(`${networkConfiguration.databaseServer.address}/nesting/${testID}`)
+        .then(response => response.body.result)
+};
+
+
+// Gold requests
 HttpClient.prototype.getGoldRequestByTestID = function(testID) {
     return this.http.get(`${networkConfiguration.databaseServer.address}/goldRequests/${testID}`)
         .then(response => response.body)
 };
 
+HttpClient.prototype.joinGoldRequestToTest = function(goldRequest, testID) {
+    return this.http.post(`${networkConfiguration.databaseServer.address}/goldRequests/${testID}`, goldRequest)
+        .then(response => response.body)
+};
+
+
+// Server requests
+HttpClient.prototype.joinServerRequestToTest = function(serverRequest, testID) {
+    return this.http.post(`${networkConfiguration.databaseServer.address}/serverRequests/${testID}`, serverRequest)
+        .then(response => response.body)
+};
+
+
+// Gold responses
 HttpClient.prototype.getGoldResponseByTestID = function(testID) {
     return this.http.get(`${networkConfiguration.databaseServer.address}/goldResponses/${testID}`)
         .then(response => response.body)
 };
+
+HttpClient.prototype.joinGoldResponseToTest = function(goldResponse, testID) {
+    return this.http.post(`${networkConfiguration.databaseServer.address}/goldResponses/${testID}`, goldResponse)
+        .then(response => response.body)
+};
+
 
 export default HttpClient;

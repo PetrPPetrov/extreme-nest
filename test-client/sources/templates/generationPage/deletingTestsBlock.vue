@@ -49,14 +49,10 @@
                 this.$store.dispatch('networkLog', `Deleting in progress...`);
                 const http = new HttpClient(this.$http);
                 http.removeTestByID(this.selectedTestID)
-                    .then((result) => {
-                        if (result) {
-                            this.$store.dispatch('networkLog', `Test was deleted`);
-                            this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
-                            this.selectedTestID = _.first(this.tests);
-                        } else {
-                            this.$store.dispatch('networkLog', `Test wasn't deleted`)
-                        }
+                    .then(() => {
+                        this.$store.dispatch('networkLog', `Test was deleted`);
+                        this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
+                        this.selectedTestID = _.first(this.tests);
                     })
                     .catch(() => {
                         this.$store.dispatch('networkLog', `Test wasn't deleted`)
@@ -72,14 +68,10 @@
                 const http = new HttpClient(this.$http);
                 http.getTestByTestID(this.selectedTestID)
                     .then(test => {
-                        if (!_.isEmpty(test)) {
-                            const canvasBlockSize = 20;
-                            const canvas = this.$store.getters.canvasGoldGeneration;
-                            drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
-                            this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
-                        } else {
-                            this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
-                        }
+                        const canvasBlockSize = 20;
+                        const canvas = this.$store.getters.canvasGoldGeneration;
+                        drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
                     })
                     .catch(() => {
                         this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
