@@ -36,6 +36,8 @@
                     this.$store.dispatch('networkLog', 'Tests were loaded');
                     if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
                         this.selectedTestID = _.first(this.tests);
+                    } else {
+                        this.selectedTestID = '';
                     }
                 })
                 .catch(() => {
@@ -52,7 +54,11 @@
                     .then(() => {
                         this.$store.dispatch('networkLog', `Test was deleted`);
                         this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
-                        this.selectedTestID = _.first(this.tests);
+                        if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
+                            this.selectedTestID = _.first(this.tests);
+                        } else {
+                            this.selectedTestID = '';
+                        }
                     })
                     .catch(() => {
                         this.$store.dispatch('networkLog', `Test wasn't deleted`)

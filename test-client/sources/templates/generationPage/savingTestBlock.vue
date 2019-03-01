@@ -1,14 +1,8 @@
 <template>
 
     <div>
-        <button class="button"
-                @click="onClickSaveTest"
-                :disabled="
-                    this.$store.getters.goldNestingRequest === '' ||
-                    this.$store.getters.randomNestingRequest === '' ||
-                    this.$store.getters.goldNestingResponse === '' ||
-                    this.$store.getters.generationInProgress">
-                Save test</button>
+        <button class="button" @click="onClickSaveTest" :disabled="$store.getters.goldNestingRequest === '' || $store.getters.randomNestingRequest === '' ||
+            $store.getters.goldNestingResponse === '' || $store.getters.generationInProgress || isSavingInProgress">Save test</button>
     </div>
 
 </template>
@@ -21,11 +15,13 @@
         data() {
             return {
                 networkLog: '...',
+                isSavingInProgress: false
             }
         },
         methods: {
 
             onClickSaveTest() {
+                this.isSavingInProgress = true;
                 this.$store.dispatch('networkLog', 'Saving in progress...');
                 const http = new HttpClient(this.$http);
                 http.createNewTest()
@@ -36,7 +32,8 @@
                         ])
                         .then(() => this.$store.dispatch('networkLog', 'Test was saved'))
                     )
-                    .catch(() => this.$store.dispatch('networkLog', 'Test wasn\'t saved'));
+                    .catch(() => this.$store.dispatch('networkLog', 'Test wasn\'t saved'))
+                    .finally(() => this.isSavingInProgress = false);
             }
 
         }
