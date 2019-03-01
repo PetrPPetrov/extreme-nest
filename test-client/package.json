@@ -5,7 +5,7 @@
   "main": "./scripts/index.js",
   "scripts": {
     "devTestClient": "webpack-dev-server --hot --open",
-    "buildTestClient": "webpack --watch"
+    "buildTestClient": "webpack"
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "fabric": "^2.6.0",
+    "log4js": "^4.0.2",
     "underscore": "^1.9.1",
     "vue": "^2.6.6",
     "vue-resource": "^1.5.1",
