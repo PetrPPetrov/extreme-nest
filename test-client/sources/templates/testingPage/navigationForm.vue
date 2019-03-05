@@ -48,7 +48,7 @@
         },
         methods: {
 
-            getSelectedTestID(){
+            getSelectedTestingID(){
                 let selectedTestingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
                 return selectedTestingID.substring(1, selectedTestingID.length - 1);
             },
@@ -62,19 +62,25 @@
                 this.$store.dispatch('clear');
                 this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
-                const http = new HttpClient(this.$http);
-                http.getTestByTestID(testID)
-                    .then((test) => {
-                        const canvasBlockSize = 20;
-                        const canvas = this.$store.getters.canvasGoldGeneration;
-                        this.$store.dispatch('goldNestingRequest', JSON.stringify(test.goldRequest, null, 4));
-                        this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
-                        drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
-                        this.$store.dispatch('goldVisualizationLog', `Test: ${testID} was visualized`)
-                    })
-                    .catch(() => {
-                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
-                    });
+                this.$store.dispatch('randomVisualizationLog', `Test: ${testID} visualization in progress...`);
+
+                const selectedTestingID = this.getSelectedTestingID();
+                const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                const test = _.first(filteredTesting.nestings.filter(nesting => nesting.id === testID));
+
+                const canvasBlockSize = 20;
+                this.$store.dispatch('goldNestingRequest', JSON.stringify(test.goldRequest, null, 4));
+                this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
+                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
+                drawCanvas(this.$store.getters.canvasGoldGeneration, test.goldRequest, test.goldResponse, canvasBlockSize);
+                if (!_.isNull(test.serverResponse) && !_.isUndefined(test.serverResponse)) {
+                    this.$store.dispatch('randomNestingRequest', JSON.stringify(test.serverRequest, null, 4));
+                    this.$store.dispatch('randomNestingResponse', JSON.stringify(test.serverResponse, null, 4));
+                    this.$store.dispatch('randomVisualizationLog', `Gold nesting was visualized`);
+                    drawCanvas(this.$store.getters.canvasRandomGeneration, test.serverRequest, test.serverResponse, canvasBlockSize);
+                } else {
+                    this.$store.dispatch('randomVisualizationLog', `Nesting from server was not visualized`);
+                }
             },
 
             showTestings() {
@@ -89,10 +95,10 @@
             },
 
             showTestsForSelectedTesting() {
-                const selectedTestingID = this.getSelectedTestID();
+                const selectedTestingID = this.getSelectedTestingID();
                 const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
                 if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
-                    this.tests = filteredTesting.nestings.map(nesting => nesting._id);
+                    this.tests = filteredTesting.nestings.map(nesting => nesting.id);
                 } else {
                     this.tests = [];
                 }
@@ -100,7 +106,7 @@
 
             onClickDeleteTesting() {
                 this.isDeletingInProgress = true;
-                const selectedTestingID = this.getSelectedTestID();
+                const selectedTestingID = this.getSelectedTestingID();
                 const http = new HttpClient(this.$http);
                 http.removeTestingResultByID(selectedTestingID)
                     .then(() => {
