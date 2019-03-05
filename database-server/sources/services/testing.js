@@ -73,15 +73,12 @@ async function startTesting(testing) {
         if (nestingOrderID) {
             const delayInSeconds = nesting.serverRequest.time * 1000;
             const nestingResponse = await getNestingResponse(nestingOrderID, delayInSeconds);
-            if (_.isEmpty(nestingResponse)) {
-                nesting.status = 'rejected';
-            } else {
-                nesting.serverResponse = nestingResponse;
-                nesting.status = 'success';
-            }
+            nesting.status = checkTest(nesting.goldResponse, nestingResponse);
+            nesting.serverResponse = nestingResponse;
         } else {
-            nesting.status = 'rejected';
+            nesting.status = 'failed';
         }
+        await testingDAO.updateByQuery(db, {"_id" : testing._id, "nestings.id" : nesting.id}, {"nestings.$" : nesting})
     });
 }
 
@@ -119,4 +116,23 @@ function getNestingResponse(nestingOrderID, delay) {
                 })
         , delay)
     );
+}
+
+function checkTest(goldResponse, serverResponse) {
+    if (_.isEmpty(serverResponse)) {
+        return 'failed';
+    }
+
+    const goldResponseHeight = _.first(goldResponse.nestings).height;
+    const goldResponseLength = _.first(goldResponse.nestings).length;
+    const serverResponseHeight = _.first(serverResponse.nestings).height;
+    const serverResponseLength = _.first(serverResponse.nestings).length;
+    const availableHeightDifference = goldResponseHeight / 100 * 5;
+    const availableLengthDifference = goldResponseLength / 100 * 5;
+    if ( (goldResponseHeight + availableHeightDifference < serverResponseHeight) ||
+         (goldResponseLength + availableLengthDifference < serverResponseLength) ) {
+        return 'failed';
+    } else {
+        return 'success';
+    }
 }

@@ -94,10 +94,11 @@
                 this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
                 drawCanvas(this.$store.getters.canvasGoldGeneration, test.goldRequest, test.goldResponse, canvasBlockSize);
+                this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
                 if (!_.isNull(test.serverResponse) && !_.isUndefined(test.serverResponse)) {
                     this.$store.dispatch('randomNestingRequest', JSON.stringify(test.serverRequest, null, 4));
                     this.$store.dispatch('randomNestingResponse', JSON.stringify(test.serverResponse, null, 4));
-                    this.$store.dispatch('randomVisualizationLog', `Gold nesting was visualized`);
+                    this.$store.dispatch('randomVisualizationLog', `Nesting from server was visualized`);
                     drawCanvas(this.$store.getters.canvasRandomGeneration, test.serverRequest, test.serverResponse, canvasBlockSize);
                 } else {
                     this.$store.dispatch('randomVisualizationLog', `Nesting from server was not visualized`);
