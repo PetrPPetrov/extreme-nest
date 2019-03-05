@@ -22,4 +22,9 @@ namespace Config
     {
         static double POSITION_STEP = 0.1;
     }
+
+    namespace Nfp
+    {
+        static double INPUT_SCALE = 100.0;
+    }
 }

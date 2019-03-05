@@ -11,15 +11,15 @@
 #include <set>
 #include <boost/geometry/algorithms/area.hpp>
 #include "config.h"
-#include "common.h"
 #include "nesting_task.h"
+#include "nofit_polygon.h"
 
 namespace Nfp
 {
     struct PartVariationInfo
     {
         PartVariation variation;
-        polygons_t polygons;
+        polygon_set_t polygons;
     };
     typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
     typedef std::vector<part_variation_into_ptr> part_variations_info_t;
@@ -46,10 +46,8 @@ namespace Nfp
             toPolygons(*actual_variation_geometry, variation_info->polygons);
             result->variations_info.push_back(variation_info);
         }
-        for (auto& polygon : result->variations_info[0]->polygons)
-        {
-            result->area += boost::geometry::area(*polygon);
-        }
+        // Use the first variation, because area of all variations should be the same
+        result->area += boost::polygon::area(result->variations_info[0]->polygons);
         return result;
     }
 
