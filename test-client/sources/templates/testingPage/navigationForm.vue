@@ -9,7 +9,11 @@
         <button id="delete-button" class="button" @click="onClickDeleteTesting"
                 :disabled="selectedTesting === '' || isDeletingInProgress">Delete testing</button>
         <hr>
-        <p class="tests-nav-button" v-for="test in tests" @click="onTestClick($event)">{{ test }}</p>
+        <div class="wrapper-test-nav-button" v-for="test in tests">
+            <img class="test-status-icon" :src="test.icon">
+            <p class="tests-nav-button" @click="onTestClick($event)">{{ test.id }}</p>
+        </div>
+
         <hr>
         <button class="button" @click="onClickRunTests" :disabled="isDeletingInProgress">Run new testing</button>
         <hr>
@@ -19,6 +23,10 @@
 </template>
 
 <script>
+
+    import failedIcon from '../../resources/images/failed.png'
+    import successIcon from '../../resources/images/success.png'
+    import progressIcon from '../../resources/images/progress.png'
 
     import * as _ from 'underscore';
     import HttpClient from '../../scripts/network'
@@ -31,7 +39,7 @@
                 testings: [],
                 selectedTesting: '',
                 tests: [],
-                isDeletingInProgress: false
+                isDeletingInProgress: false,
             }
         },
         mounted() {
@@ -51,6 +59,19 @@
             getSelectedTestingID(){
                 let selectedTestingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
                 return selectedTestingID.substring(1, selectedTestingID.length - 1);
+            },
+
+            getTestStatusImage(status) {
+                switch (status) {
+                    case 'progress':
+                        return progressIcon;
+                    case 'success':
+                        return successIcon;
+                    case 'failed':
+                        return failedIcon;
+                    default:
+                        return progressIcon;
+                }
             },
 
             onChangeSelect(){
@@ -98,7 +119,7 @@
                 const selectedTestingID = this.getSelectedTestingID();
                 const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
                 if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
-                    this.tests = filteredTesting.nestings.map(nesting => nesting.id);
+                    this.tests = filteredTesting.nestings.map(nesting => ({id: nesting.id, icon: this.getTestStatusImage(nesting.status)}));
                 } else {
                     this.tests = [];
                 }
@@ -161,20 +182,33 @@
         width: calc(100% + 15px);
     }
 
-    .tests-nav-button {
+    .wrapper-test-nav-button {
         border-radius: 15px;
         padding: 7px 15px 7px 15px;
-        color: #14171A;
-        font-size: 12px;
         margin: 0;
         cursor: pointer;
         font-family: 'Open Sans', sans-serif;
         transition: .5s;
+        color: #14171A;
+        font-size: 12px;
     }
 
-    .tests-nav-button:hover {
+    .wrapper-test-nav-button:hover {
         color: #48AAE6;
         box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);
+    }
+
+    .tests-nav-button {
+        padding: 0;
+        margin: 0;
+    }
+
+    .test-status-icon {
+        padding: 0;
+        margin: 1px 5px 0 0;
+        float: left;
+        width: 15px;
+        height: auto;
     }
 
     @media (max-width: 768px) {
