@@ -1,6 +1,7 @@
 {
   "serverPort" : 32023,
   "serverAddress" : "127.0.0.1",
+  "nestingServerAddress" : "127.0.0.1:80",
   "databasePort" : 27017,
   "databaseAddress" : "mongodb://localhost",
   "databaseName": "testingsystem"

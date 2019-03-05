@@ -17,7 +17,7 @@ const ResponseSender = require('../responseSender');
 
 const log4js = require('log4js');
 const log = log4js.getLogger(__filename);
-log.level = 'debug';
+log.level = 'trace';
 
 module.exports = {
 

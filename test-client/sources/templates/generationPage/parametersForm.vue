@@ -97,7 +97,7 @@
                     .then(response => {
                         if (!response.body.nestings) {
                             this.$store.dispatch('generationInProgress', false);
-                            setTimeout(this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
+                            setTimeout(() => this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                         } else {
                             const nestingResponse = response.body;
                             drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);

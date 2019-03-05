@@ -30,6 +30,20 @@ module.exports = {
         });
     },
 
+    getByID: (database, id) => {
+        return new Promise((resolve, reject) => {
+            database.collection(tableName).findOne(ObjectId(id))
+                .then(serverRequest => {
+                    log.debug(`Server request with ID: ${id} was found`);
+                    resolve(serverRequest);
+                })
+                .catch(error => {
+                    log.warn(`Server request with ID: ${id} was not found. Cause: ${error}`);
+                    reject({})
+                });
+        });
+    },
+
     removeByID: (database, id) => {
         return new Promise((resolve, reject) => {
             database.collection(tableName).deleteOne({"_id": ObjectId(id)})

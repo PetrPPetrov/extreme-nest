@@ -58,6 +58,20 @@ module.exports = {
         });
     },
 
+    updateByID: (database, id, properties) => {
+        return new Promise((resolve, reject) =>
+            database.collection(tableName).updateOne({"_id": ObjectId(id)}, {"$set": properties})
+                .then(() => {
+                    log.debug(`Testing with ID: ${id} was changed`);
+                    resolve({});
+                })
+                .catch(error => {
+                    log.warn(`Testing with ID: ${id} was not changed. Cause: ${error}`);
+                    reject({});
+                })
+        );
+    },
+
     removeByID: (database, id) => {
         return new Promise((resolve, reject) => {
             database.collection(tableName).deleteOne({"_id": ObjectId(id)})

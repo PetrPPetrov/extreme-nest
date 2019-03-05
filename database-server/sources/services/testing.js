@@ -5,6 +5,7 @@
 
 'use strict';
 
+const _ = require('underscore');
 const nestingDAO = require('../dao/nesting');
 const testingDAO = require('../dao/testing');
 const goldRequestsDAO = require('../dao/goldRequests');
@@ -24,13 +25,98 @@ module.exports = {
         const currentTime = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
         const connection = await databaseConnector.connect();
         const database = databaseConnector.getDatabase(connection);
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, reject) =>
             nestingDAO.getAll(database)
-                .then(nestings => testingDAO.create(database, { date: currentDate, time: currentTime, nestings: nestings }))
-                .then(newTesting => resolve(newTesting))
+                .then(async nestings => {
+                    const promisesArray = nestings.map(nesting =>
+                        Promise.all([
+                            nesting._id,
+                            goldRequestsDAO.getByID(database, nesting.goldRequestID),
+                            serverRequestsDAO.getByID(database, nesting.serverRequestID),
+                            goldResponsesDAO.getByID(database, nesting.goldResponseID)
+                        ])
+                    );
+                    const promisesNestings = await Promise.all(promisesArray);
+                    return testingDAO.create(database, { date: currentDate, time: currentTime, nestings: composeNestings(promisesNestings) })
+                })
+                .then(newTesting => {
+                    setTimeout(() => startTesting(newTesting), 0); // For async running
+                    resolve(newTesting)
+                })
                 .catch(() => reject({}))
                 .finally(() => connection.close())
-        });
+        );
     }
 
 };
+
+function composeNestings(promisesNestings) {
+    return promisesNestings.map(
+        ([id, goldRequest, serverRequest, goldResponse]) => ({
+            id: id,
+            status: 'progress',
+            goldRequest: goldRequest,
+            serverRequest: serverRequest,
+            goldResponse: goldResponse
+        })
+    );
+}
+
+const requestify = require('requestify');
+const configuration = require('../../resources/configuration');
+
+async function startTesting(testing) {
+    const connection = await databaseConnector.connect();
+    const db = databaseConnector.getDatabase(connection);
+    testing.nestings.forEach(async (nesting) => {
+        const nestingOrderID = await sendNestingRequest(nesting.serverRequest);
+        if (nestingOrderID) {
+            const delayInSeconds = nesting.serverRequest.time * 1000;
+            const nestingResponse = await getNestingResponse(nestingOrderID, delayInSeconds);
+            if (_.isEmpty(nestingResponse)) {
+                nesting.status = 'rejected';
+            } else {
+                nesting.serverResponse = nestingResponse;
+                nesting.status = 'success';
+            }
+        } else {
+            nesting.status = 'rejected';
+        }
+    });
+}
+
+function sendNestingRequest(nestingRequest) {
+    delete nestingRequest['_id'];
+    return requestify.post(`http://${configuration.nestingServerAddress}/new`, nestingRequest)
+        .then(response => {
+            const nestingID = response.getBody().nesting_order_id;
+            log.debug(`Request was accepted for nesting. Nesting ID: ${nestingID}`);
+            return nestingID;
+        })
+        .catch(error => {
+            log.warn(`Request was not request was not accepted for nesting. Cause: ${error}`);
+            return false;
+        });
+}
+
+function getNestingResponse(nestingOrderID, delay) {
+    return new Promise((resolve,reject) =>
+        setTimeout( () =>
+            requestify.get(`http://${configuration.nestingServerAddress}/result/${nestingOrderID}/full`)
+                .then(async response => {
+                    const responseBody = response.getBody();
+                    if (_.isUndefined(responseBody.nestings) || _.isNull(responseBody.nestings)){
+                        log.trace('Re-receive nesting response');
+                        resolve(await getNestingResponse(nestingOrderID, delay));
+                    } else {
+                        log.debug(`Nesting response was get successfully.`);
+                        resolve(responseBody);
+                    }
+                })
+                .catch(error => {
+                    log.warn(`Nesting response was not get. Cause: ${error}`);
+                    reject({});
+                })
+        , delay)
+    );
+}
