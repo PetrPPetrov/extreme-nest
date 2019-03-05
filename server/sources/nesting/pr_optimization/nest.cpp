@@ -8,10 +8,11 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <thread>
+#include <mutex>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include "config.h"
-#include "common.h"
 #include "pr_optimization/cell_space.h"
 #include "pr_optimization/genetic_algorithm.h"
 #include "pr_optimization/nest.h"
@@ -63,9 +64,12 @@ namespace Pr
     class Nesting
     {
         const nesting_task_ptr& task;
-        nesting_result_ptr result;
         std::vector<part_info_ptr> parts_info;
         std::vector<sheet_info_ptr> sheets_info;
+        nesting_result_ptr result;
+        size_t generation_count = 0;
+        GeneticAlgorithm::individual_ptr best;
+        std::mutex mutex_for_best;
 
         void calculatePartsInfo()
         {
@@ -129,30 +133,45 @@ namespace Pr
         {
             return result;
         }
-        void run()
+        void runInThread()
         {
-            auto start = std::chrono::steady_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
-
-            size_t generation_count = 0;
             calculatePartsInfo();
             calculateSheetsInfo();
             GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);
-            GeneticAlgorithm::individual_ptr best;
-            while (duration.count() < task->time_in_seconds)
+
+            while (true)
             {
                 genetic_algorithm.calculatePenalties();
                 genetic_algorithm.sort();
-                best = genetic_algorithm.getBest();
+                {
+                    std::lock_guard<std::mutex> guard(mutex_for_best);
+                    best = genetic_algorithm.getBest();
+                }
                 genetic_algorithm.nextGeneration();
-                generation_count++;
-
-                duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start);
+                ++generation_count;
             }
-            fillResult(best);
+        }
+        void run()
+        {
+            std::thread calculation_thread(&Nesting::runInThread, this);
+            calculation_thread.detach();
+            std::this_thread::sleep_for(std::chrono::seconds(static_cast<int>(task->time_in_seconds)));
+            GeneticAlgorithm::individual_ptr current_best;
+            {
+                std::lock_guard<std::mutex> guard(mutex_for_best);
+                current_best = best;
+            }
+            if (!current_best)
+            {
+#ifdef _DEBUG
+                std::cout << "best is null" << std::endl;
+#endif
+                throw std::runtime_error("not enough time to calculate nesting");
+            }
+            fillResult(current_best);
 #ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;
-            std::cout << "best penalty " << best->penalty << std::endl;
+            std::cout << "best penalty " << current_best->penalty << std::endl;
 #endif
         }
     };

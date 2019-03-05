@@ -38,7 +38,6 @@ endif()
 set(EXTREME_NEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/sources/nesting)
 include_directories(${EXTREME_NEST_SOURCE_DIR})
 set(HEADERS
-  ${EXTREME_NEST_SOURCE_DIR}/common.h
   ${EXTREME_NEST_SOURCE_DIR}/config.h
   ${EXTREME_NEST_SOURCE_DIR}/extreme_error.h
   ${EXTREME_NEST_SOURCE_DIR}/extreme_json.h

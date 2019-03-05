@@ -57,7 +57,7 @@ namespace Pr
         struct Individual
         {
             std::vector<Gene> genotype;
-            size_t penalty;
+            size_t penalty = 0;
         };
         typedef boost::shared_ptr<Individual> individual_ptr;
     private:
@@ -88,6 +88,14 @@ namespace Pr
         }
         void calculatePenalty(individual_ptr individual) const
         {
+            if (individual->penalty)
+            {
+                // If this individual already contains some calculated
+                // penalty then use the calculated penalty.
+                // This happens for best individual who goes
+                // to the next generation without any mutations.
+                return;
+            }
             size_t overlapped_cell_count = 0;
             std::vector<CellSpace> sheet_images;
             sheet_images.reserve(sheets_info.size());

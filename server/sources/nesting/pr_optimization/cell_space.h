@@ -6,11 +6,60 @@
 #pragma once
 
 #include <iostream>
+#include "nesting_task.h"
 #include "config.h"
-#include "common.h"
 
 namespace Pr
 {
+    typedef boost::geometry::model::box<point_t> box_t;
+    typedef boost::geometry::model::polygon<point_t> polygon_t;
+    typedef boost::shared_ptr<polygon_t> polygon_ptr;
+    typedef std::list<polygon_ptr> polygons_t;
+
+    inline void toPolygons(const Geometry& geometry, polygons_t& polygons)
+    {
+        polygons.clear();
+        for (auto outer_contour : geometry.outer_contours)
+        {
+            polygon_ptr new_polygon = boost::make_shared<polygon_t>();
+            new_polygon->outer().assign(outer_contour.begin(), outer_contour.end());
+            for (auto inner_contour : geometry.holes)
+            {
+                polygon_t inner_polygon;
+                inner_polygon.outer().assign(inner_contour.begin(), inner_contour.end());
+                // Check if the current hole is completely inside the current outer contour
+                if (boost::geometry::within(inner_polygon, *new_polygon))
+                {
+                    // Add inner contour to the resulting polygon
+                    new_polygon->inners().push_back(inner_polygon.outer());
+                }
+            }
+            boost::geometry::correct(*new_polygon);
+            polygons.push_back(new_polygon);
+        }
+    }
+
+    inline box_t calculateBoundingBox(const polygons_t& polygons)
+    {
+        bool first_iteration = true;
+        box_t result;
+        for (auto polygon : polygons)
+        {
+            box_t local_result;
+            boost::geometry::envelope(*polygon, local_result);
+            if (first_iteration)
+            {
+                result = local_result;
+                first_iteration = false;
+            }
+            else
+            {
+                boost::geometry::expand(result, local_result);
+            }
+        }
+        return result;
+    }
+
     typedef boost::geometry::model::d2::point_xy<int> cell_t;
     typedef boost::geometry::model::box<cell_t> cell_box_t;
 
