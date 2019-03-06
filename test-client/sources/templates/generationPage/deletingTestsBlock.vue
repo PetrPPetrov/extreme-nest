@@ -46,7 +46,7 @@
         },
         mounted() {
             this.$root.$on('add', (testID) => {
-                this.tests.push(testID);
+                this.tests.unshift(testID);
                 this.selectedTestID = _.first(this.tests);
             });
         },

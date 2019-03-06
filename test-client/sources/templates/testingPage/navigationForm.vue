@@ -146,12 +146,35 @@
                 const http = new HttpClient(this.$http);
                 http.runNewTesting()
                     .then((newTesting) => {
-                        this.testings.push(newTesting);
+                        this.testings.unshift(newTesting);
                         this.showTestings();
+                        setTimeout(() => this.reloadTestingResults(), 1000);
                         this.networkLog = 'New testing was ran'
                     })
                     .catch(() => {
                         this.networkLog = 'New testing was not ran'
+                    });
+            },
+
+            reloadTestingResults() {
+                const http = new HttpClient(this.$http);
+                http.getAllTestingResults()
+                    .then(testingResults => {
+                        this.testings = testingResults;
+                        const selectedTestingID = this.getSelectedTestingID();
+                        const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                        if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
+                            this.tests = filteredTesting.nestings.map(nesting => ({id: nesting.id, icon: this.getTestStatusImage(nesting.status), status: nesting.status}));
+                            const uncheckedTests = this.tests.filter(test => test.status === 'progress');
+                            if (!_.isEmpty(uncheckedTests)) {
+                                setTimeout(() => this.reloadTestingResults(), 1000);
+                            }
+                        } else {
+                            this.tests = [];
+                        }
+                    })
+                    .catch(() => {
+                        this.tests = [];
                     });
             }
 
