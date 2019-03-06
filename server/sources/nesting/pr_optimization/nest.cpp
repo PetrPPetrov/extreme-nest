@@ -70,6 +70,7 @@ namespace Pr
         size_t generation_count = 0;
         GeneticAlgorithm::individual_ptr best;
         std::mutex mutex_for_best;
+        bool calculating = true;
 
         void calculatePartsInfo()
         {
@@ -139,7 +140,7 @@ namespace Pr
             calculateSheetsInfo();
             GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);
 
-            while (true)
+            while (calculating)
             {
                 genetic_algorithm.calculatePenalties();
                 genetic_algorithm.sort();
@@ -160,6 +161,7 @@ namespace Pr
             {
                 std::lock_guard<std::mutex> guard(mutex_for_best);
                 current_best = best;
+                calculating = false;
             }
             if (!current_best)
             {

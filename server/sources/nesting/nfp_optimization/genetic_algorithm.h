@@ -51,6 +51,21 @@ namespace Nfp
         return result;
     }
 
+    struct SheetInfo
+    {
+        sheet_ptr sheet;
+        polygon_set_t polygons;
+    };
+    typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
+
+    inline sheet_info_ptr calculateSheetInfo(const sheet_ptr& sheet)
+    {
+        sheet_info_ptr result = boost::make_shared<SheetInfo>();
+        result->sheet = sheet;
+        toPolygons(*sheet->geometry, result->polygons);
+        return result;
+    }
+
     class GeneticAlgorithm
     {
     public:
@@ -59,19 +74,23 @@ namespace Nfp
             size_t part_number;
             size_t variation;
             size_t max_variation;
+            nfp_point_t placement;
+            size_t sheet_number;
         };
         struct Individual
         {
             std::vector<Gene> genotype;
-            size_t penalty;
+            size_t penalty = 0;
         };
         typedef boost::shared_ptr<Individual> individual_ptr;
 
     private:
         typedef std::list<individual_ptr> population_t;
         typedef std::vector<part_info_ptr> parts_info_t;
+        typedef std::vector<sheet_info_ptr> sheets_info_t;
 
         parts_info_t parts_info;
+        sheets_info_t sheets_info;
         population_t population;
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
@@ -180,6 +199,12 @@ namespace Nfp
         GeneticAlgorithm(const nesting_task_ptr& nesting_task) :
             engine(std::random_device()())
         {
+            sheets_info.reserve(nesting_task->sheets.size());
+            for (auto sheet : nesting_task->sheets)
+            {
+                sheets_info.push_back(calculateSheetInfo(sheet));
+            }
+
             parts_info.reserve(nesting_task->parts.size());
             size_t index = 0;
             for (auto part : nesting_task->parts)
