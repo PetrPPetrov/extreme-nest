@@ -23,6 +23,9 @@ module.exports.checkTest = (test) => {
     if (!isValidDimensions(test.goldResponse, test.serverResponse)) {
         log.debug(`Test with ID: ${test.id} was failed. Cause: invalid dimensions.`);
         return FAILED_RESULT;
+    } else if (!isEqualInstances(test.serverRequest, test.serverResponse)){
+        log.debug(`Test with ID: ${test.id} was failed. Cause: instances are not equal.`);
+        return FAILED_RESULT;
     } else if (!isEqualSheets(test.goldResponse, test.serverResponse)){
         log.debug(`Test with ID: ${test.id} was failed. Cause: sheets are not equal.`);
         return FAILED_RESULT;
@@ -41,6 +44,23 @@ function isValidDimensions(goldResponse, serverResponse) {
     const availableLengthDifference = goldResponseLength / 100 * 5;
     return !( (goldResponseHeight + availableHeightDifference < serverResponseHeight) ||
               (goldResponseLength + availableLengthDifference < serverResponseLength) );
+}
+
+function isEqualInstances(serverRequest, serverResponse) {
+    let serverRequestInstancesID = [];
+    serverRequest.parts.forEach(part => {
+        serverRequestInstancesID = part.instances.map(instance => instance.id);
+    });
+
+    for (let nesting of serverResponse.nestings) {
+        for (let part of nesting.nested_parts) {
+            if (_.isUndefined(serverRequestInstancesID.find(id => id === part.id))) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 function isEqualSheets(goldResponse, serverResponse) {
