@@ -12,6 +12,7 @@ const goldRequestsDAO = require('../dao/goldRequests');
 const goldResponsesDAO = require('../dao/goldResponses');
 const serverRequestsDAO = require('../dao/serverRequests');
 const databaseConnector = require('../databaseConnector');
+const testingChecker = require('./testingChecker');
 
 const log4js = require('log4js');
 const log = log4js.getLogger(__filename);
@@ -72,9 +73,8 @@ async function startTesting(testing) {
         const nestingOrderID = await sendNestingRequest(nesting.serverRequest);
         if (nestingOrderID) {
             const delayInSeconds = nesting.serverRequest.time * 1000;
-            const nestingResponse = await getNestingResponse(nestingOrderID, delayInSeconds);
-            nesting.status = checkTest(nesting.goldResponse, nestingResponse);
-            nesting.serverResponse = nestingResponse;
+            nesting.serverResponse = await getNestingResponse(nestingOrderID, delayInSeconds);
+            nesting.status = testingChecker.checkTest(nesting);
         } else {
             nesting.status = 'failed';
         }
@@ -116,23 +116,4 @@ function getNestingResponse(nestingOrderID, delay) {
                 })
         , delay)
     );
-}
-
-function checkTest(goldResponse, serverResponse) {
-    if (_.isEmpty(serverResponse)) {
-        return 'failed';
-    }
-
-    const goldResponseHeight = _.first(goldResponse.nestings).height;
-    const goldResponseLength = _.first(goldResponse.nestings).length;
-    const serverResponseHeight = _.first(serverResponse.nestings).height;
-    const serverResponseLength = _.first(serverResponse.nestings).length;
-    const availableHeightDifference = goldResponseHeight / 100 * 5;
-    const availableLengthDifference = goldResponseLength / 100 * 5;
-    if ( (goldResponseHeight + availableHeightDifference < serverResponseHeight) ||
-         (goldResponseLength + availableLengthDifference < serverResponseLength) ) {
-        return 'failed';
-    } else {
-        return 'success';
-    }
 }
