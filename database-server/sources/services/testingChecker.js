@@ -26,6 +26,9 @@ module.exports.checkTest = (test) => {
     } else if (!isEqualInstances(test.serverRequest, test.serverResponse)){
         log.debug(`Test with ID: ${test.id} was failed. Cause: instances are not equal.`);
         return FAILED_RESULT;
+    } else if (!isEqualCountInstances(test.serverRequest, test.serverResponse)){
+        log.debug(`Test with ID: ${test.id} was failed. Cause: count instances is not equal.`);
+        return FAILED_RESULT;
     } else if (!isEqualSheets(test.goldResponse, test.serverResponse)){
         log.debug(`Test with ID: ${test.id} was failed. Cause: sheets are not equal.`);
         return FAILED_RESULT;
@@ -57,6 +60,30 @@ function isEqualInstances(serverRequest, serverResponse) {
             if (_.isUndefined(serverRequestInstancesID.find(id => id === part.id))) {
                 return false;
             }
+        }
+    }
+
+    return true;
+}
+
+function isEqualCountInstances(serverRequest, serverResponse){
+    let requestInstances = [];
+    serverRequest.parts.forEach(part => {
+        requestInstances = part.instances.map(instance => ({id: instance.id, quantity: instance.quantity}));
+    });
+
+    serverResponse.nestings.forEach(nesting => nesting.nested_parts.forEach(part => {
+        for (let instance of requestInstances) {
+            if (instance.id === part.id) {
+                instance.quantity--;
+                return;
+            }
+        }
+    }));
+
+    for (let instance of requestInstances) {
+        if (instance.quantity !== 0) {
+            return false;
         }
     }
 
