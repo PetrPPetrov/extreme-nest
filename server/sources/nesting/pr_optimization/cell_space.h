@@ -208,6 +208,10 @@ namespace Pr
         {
             return size;
         }
+        size_t getArea() const
+        {
+            return size.x() * size.y();
+        }
     };
     typedef boost::shared_ptr<CellSpace> cell_space_ptr;
 }

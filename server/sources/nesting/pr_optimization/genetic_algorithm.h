@@ -66,7 +66,7 @@ namespace Pr
         population_t population;
         std::vector<part_info_ptr> parts_info;
         std::vector<sheet_info_ptr> sheets_info;
-        const size_t max_sheet_area;
+        const size_t sum_sheet_area;
 
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
@@ -138,10 +138,21 @@ namespace Pr
                     }
                 }
                 const size_t size_y = original_sheet_image.getSize().y();
-                const size_t penalty_for_overlap = overlapped_cell_count * max_sheet_area;
+                // We need that penalty for overlapping should be bigger than any other penalties
+                // As we use the sheet area for the used sheet count penalty
+                // It could be so big as the sum of all sheets area
+                // So, we should use 2 coefficient to guarantee that overlapping penalty is always bigger
+                const size_t penalty_for_overlap = overlapped_cell_count * 5 * sum_sheet_area;
+                const size_t penalty_for_used_sheet = sheet_image.getArea();
                 const size_t penalty_for_used_sheet_length = max_point_x * size_y;
                 const size_t penalty_for_used_sheet_height = max_point_y;
-                const size_t sheet_penalty = penalty_for_overlap + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
+
+                const size_t sheet_penalty =
+                    penalty_for_overlap + // This penalty is just to avoid part overlapping
+                    penalty_for_used_sheet + // This penalty is to minimize the used sheet count (weighted according the area of each sheet)
+                    penalty_for_used_sheet_length + // This penalty is to minimize the used area on each sheet
+                    penalty_for_used_sheet_height; // This penalty (minimal contribution) is to minimize maximum vertical offset on the used part of the sheet
+
                 total_penalty += sheet_penalty;
             }
             individual->penalty = total_penalty;
@@ -224,20 +235,20 @@ namespace Pr
                 }
             }
         }
-        size_t calculateMaxSheetArea() const
+        size_t calculateSumSheetArea() const
         {
-            size_t max_sheet_area = 0;
+            size_t sum_sheet_area = 0;
             for (auto sheet_info : sheets_info)
             {
                 const size_t sheet_area = sheet_info->cell_space->getSize().x() * sheet_info->cell_space->getSize().y();
-                max_sheet_area = std::max<size_t>(max_sheet_area, sheet_area);
+                sum_sheet_area += sheet_area;
             }
-            return max_sheet_area;
+            return sum_sheet_area;
         }
     public:
         GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const std::vector<sheet_info_ptr>& sheets_info_) :
             parts_info(parts_info_), sheets_info(sheets_info_),
-            engine(std::random_device()()), max_sheet_area(calculateMaxSheetArea())
+            engine(std::random_device()()), sum_sheet_area(calculateSumSheetArea())
         {
             for (size_t i = 0; i < Config::GeneticAlgorithm::POPULATION_SIZE; ++i)
             {

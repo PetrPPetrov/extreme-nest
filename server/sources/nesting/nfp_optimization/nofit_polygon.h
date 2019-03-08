@@ -6,15 +6,84 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <boost/polygon/polygon.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 #include "config.h"
+#include "nesting_task.h"
 
 namespace Nfp
 {
     typedef boost::polygon::point_data<int> nfp_point_t;
+    typedef boost::polygon::rectangle_data<int> rectangle_t;
     typedef boost::polygon::polygon_set_data<int> polygon_set_t;
     typedef boost::polygon::polygon_with_holes_data<int> polygon_t;
     typedef std::pair<nfp_point_t, nfp_point_t> edge_t;
+    typedef boost::shared_ptr<polygon_set_t> polygon_set_ptr;
+
+    template<typename ProcessPointFunc>
+    void iterateAllPoints(const polygon_t& polygon, ProcessPointFunc process_point)
+    {
+        using namespace boost::polygon;
+        for (auto& point_it = begin_points(polygon); point_it != end_points(polygon); ++point_it)
+        {
+            process_point(*point_it);
+        }
+        for (polygon_with_holes_traits<polygon_t>::iterator_holes_type it = begin_holes(polygon);
+            it != end_holes(polygon); ++it)
+        {
+            for (auto& point_it = begin_points(*it); point_it != end_points(*it); ++point_it)
+            {
+                process_point(*point_it);
+            }
+        }
+    }
+
+    template<typename ProcessPointFunc>
+    void iterateAllPoints(const polygon_set_t& polygon_set, ProcessPointFunc process_point)
+    {
+        std::vector<polygon_t> polygons;
+        polygon_set.get(polygons);
+        for (auto& polygon : polygons)
+        {
+            iterateAllPoints(polygon, process_point);
+        }
+    }
+
+    inline void dump(const polygon_t& polygon)
+    {
+        using namespace boost::polygon;
+        std::cout << "outer contour" << std::endl;
+        for (auto& point_it = begin_points(polygon); point_it != end_points(polygon); ++point_it)
+        {
+            //std::cout << "point* " << x(*point_it) << " : " << y(*point_it) << std::endl;
+            std::cout << "point " << x(*point_it) / Config::Nfp::INPUT_SCALE << " : " << y(*point_it) / Config::Nfp::INPUT_SCALE << std::endl;
+        }
+        for (polygon_with_holes_traits<polygon_t>::iterator_holes_type it = begin_holes(polygon);
+            it != end_holes(polygon); ++it)
+        {
+            std::cout << "hole" << std::endl;
+            for (auto& point_it = begin_points(*it); point_it != end_points(*it); ++point_it)
+            {
+                //std::cout << "point* " << x(*point_it) << " : " << y(*point_it) << std::endl;
+                std::cout << "point " << x(*point_it) / Config::Nfp::INPUT_SCALE << " : " << y(*point_it) / Config::Nfp::INPUT_SCALE << std::endl;
+            }
+        }
+        std::cout << "===" << std::endl;
+    }
+
+    inline void dump(const polygon_set_t& polygon_set)
+    {
+        std::vector<polygon_t> polygons;
+        polygon_set.get(polygons);
+        std::cout << "polygon set" << std::endl;
+        for (auto& polygon : polygons)
+        {
+            dump(polygon);
+        }
+        std::cout << "***" << std::endl;
+    }
 
     inline void accumulateMax(point_t& result, const point_t& point)
     {
@@ -114,7 +183,7 @@ namespace Nfp
         }
     }
 
-    inline void convolve_two_segments(std::vector<nfp_point_t>& figure, const edge_t& a, const edge_t& b)
+    inline void convolveTwoSegments(std::vector<nfp_point_t>& figure, const edge_t& a, const edge_t& b)
     {
         using namespace boost::polygon;
         figure.clear();
@@ -130,7 +199,7 @@ namespace Nfp
     }
 
     template <typename itrT1, typename itrT2>
-    inline void convolve_two_point_sequences(polygon_set_t& result, itrT1 ab, itrT1 ae, itrT2 bb, itrT2 be)
+    inline void convolveTwoPointSequences(polygon_set_t& result, itrT1 ab, itrT1 ae, itrT2 bb, itrT2 be)
     {
         if (ab == ae || bb == be)
             return;
@@ -147,7 +216,7 @@ namespace Nfp
             ++tmpb;
             for (; tmpb != be; ++tmpb)
             {
-                convolve_two_segments(vec, std::make_pair(prev_b, *tmpb), std::make_pair(prev_a, *ab));
+                convolveTwoSegments(vec, std::make_pair(prev_b, *tmpb), std::make_pair(prev_a, *ab));
                 set_points(poly, vec.begin(), vec.end());
                 result.insert(poly);
                 prev_b = *tmpb;
@@ -157,41 +226,45 @@ namespace Nfp
     }
 
     template <typename itrT>
-    inline void convolve_point_sequence_with_polygons(polygon_set_t& result, itrT b, itrT e, const std::vector<polygon_t>& polygons)
+    inline void convolvePointSequenceWithPolygons(polygon_set_t& result, itrT b, itrT e, const std::vector<polygon_t>& polygons)
     {
         using namespace boost::polygon;
-        for (std::size_t i = 0; i < polygons.size(); ++i)
+        for (size_t i = 0; i < polygons.size(); ++i)
         {
-            convolve_two_point_sequences(result, b, e, begin_points(polygons[i]), end_points(polygons[i]));
+            convolveTwoPointSequences(result, b, e, begin_points(polygons[i]), end_points(polygons[i]));
             for (polygon_with_holes_traits<polygon_t>::iterator_holes_type itrh = begin_holes(polygons[i]);
                 itrh != end_holes(polygons[i]); ++itrh)
             {
-                convolve_two_point_sequences(result, b, e, begin_points(*itrh), end_points(*itrh));
+                convolveTwoPointSequences(result, b, e, begin_points(*itrh), end_points(*itrh));
             }
         }
     }
 
-    inline void convolve_two_polygon_sets(polygon_set_t& result, const polygon_set_t& a, const polygon_set_t& b)
+    inline void convolveTwoPolygonSets(polygon_set_t& result, const polygon_set_t& a, const polygon_set_t& b)
     {
         using namespace boost::polygon;
         result.clear();
         std::vector<polygon_t> a_polygons;
         std::vector<polygon_t> b_polygons;
-        a_polygons.reserve(a.size());
-        b_polygons.reserve(b.size());
         a.get(a_polygons);
         b.get(b_polygons);
-        for (std::size_t ai = 0; ai < a_polygons.size(); ++ai)
+
+        for (size_t i = 0; i < b_polygons.size(); ++i)
         {
-            convolve_point_sequence_with_polygons(result, begin_points(a_polygons[ai]),
+            scale(b_polygons[i], -1.0); // To detect NFP we need negative coordinates of polygon b
+        }
+
+        for (size_t ai = 0; ai < a_polygons.size(); ++ai)
+        {
+            convolvePointSequenceWithPolygons(result, begin_points(a_polygons[ai]),
                 end_points(a_polygons[ai]), b_polygons);
             for (polygon_with_holes_traits<polygon_t>::iterator_holes_type itrh = begin_holes(a_polygons[ai]);
                 itrh != end_holes(a_polygons[ai]); ++itrh)
             {
-                convolve_point_sequence_with_polygons(result, begin_points(*itrh),
+                convolvePointSequenceWithPolygons(result, begin_points(*itrh),
                     end_points(*itrh), b_polygons);
             }
-            for (std::size_t bi = 0; bi < b_polygons.size(); ++bi)
+            for (size_t bi = 0; bi < b_polygons.size(); ++bi)
             {
                 polygon_t tmp_poly = a_polygons[ai];
                 result.insert(convolve(tmp_poly, *(begin_points(b_polygons[bi]))));
@@ -199,5 +272,66 @@ namespace Nfp
                 result.insert(convolve(tmp_poly, *(begin_points(a_polygons[ai]))));
             }
         }
+    }
+
+    inline const polygon_set_t& cachedInnerNfp(const polygon_set_ptr& a, const polygon_set_ptr& b)
+    {
+        // TODO: switch to std::unordered_map
+        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, polygon_set_ptr> inner_nfp_cache_t;
+        static inner_nfp_cache_t inner_nfp_cache;
+
+        inner_nfp_cache_t::key_type key(a.get(), b.get());
+        inner_nfp_cache_t::iterator fit = inner_nfp_cache.find(key);
+        if (fit == inner_nfp_cache.end())
+        {
+            using namespace boost::polygon;
+            using namespace boost::polygon::operators;
+            rectangle_t bounding_box;
+            extents(bounding_box, *a);
+            bloat(bounding_box, 10); // Some value which is bigger than 1 is OK, bounding box should just cover all sheet plus some small border
+
+            polygon_set_t inverted_sheet;
+            inverted_sheet += bounding_box;
+            inverted_sheet -= *a;
+
+            polygon_set_t negative_inner_nfp;
+            convolveTwoPolygonSets(negative_inner_nfp, inverted_sheet, *b);
+
+            polygon_set_ptr new_inner_nfp = boost::make_shared<polygon_set_t>();
+            std::vector<polygon_t> negative_nfp_polygons;
+            negative_inner_nfp.get(negative_nfp_polygons);
+
+            for (auto& negative_nfp_polygon : negative_nfp_polygons)
+            {
+                for (polygon_with_holes_traits<polygon_t>::iterator_holes_type it = begin_holes(negative_nfp_polygon);
+                    it != end_holes(negative_nfp_polygon); ++it)
+                {
+                    polygon_t polygon;
+                    set_points(polygon, begin_points(*it), end_points(*it));
+                    *new_inner_nfp += polygon;
+                }
+            }
+
+            fit = inner_nfp_cache.insert(inner_nfp_cache_t::value_type(key, new_inner_nfp)).first;
+        }
+        return *fit->second;
+    }
+
+    inline const polygon_set_t& cachedOuterNfp(const polygon_set_ptr& a, const polygon_set_ptr& b)
+    {
+        // TODO: switch to std::unordered_map
+        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, polygon_set_ptr> outer_nfp_cache_t;
+        static outer_nfp_cache_t outer_nfp_cache;
+
+        outer_nfp_cache_t::key_type key(a.get(), b.get());
+        outer_nfp_cache_t::iterator fit = outer_nfp_cache.find(key);
+        if (fit == outer_nfp_cache.end())
+        {
+            polygon_set_ptr outer_nfp = boost::make_shared<polygon_set_t>();
+            convolveTwoPolygonSets(*outer_nfp, *a, *b);
+
+            fit = outer_nfp_cache.insert(outer_nfp_cache_t::value_type(key, outer_nfp)).first;
+        }
+        return *fit->second;
     }
 }

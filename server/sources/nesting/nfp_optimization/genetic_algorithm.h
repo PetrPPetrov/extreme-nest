@@ -19,7 +19,8 @@ namespace Nfp
     struct PartVariationInfo
     {
         PartVariation variation;
-        polygon_set_t polygons;
+        polygon_set_ptr polygons;
+        rectangle_t bounding_box;
     };
     typedef boost::shared_ptr<PartVariationInfo> part_variation_into_ptr;
     typedef std::vector<part_variation_into_ptr> part_variations_info_t;
@@ -28,7 +29,7 @@ namespace Nfp
     {
         part_ptr part;
         part_variations_info_t variations_info;
-        double area = 0.0;
+        long double area = 0.0;
         size_t index;
     };
     typedef boost::shared_ptr<PartInfo> part_info_ptr;
@@ -40,21 +41,26 @@ namespace Nfp
         result->variations_info.reserve(part->variations.size());
         for (auto variation : part->variations)
         {
+            using namespace boost::polygon;
             part_variation_into_ptr variation_info = boost::make_shared<PartVariationInfo>();
             variation_info->variation = variation;
+            variation_info->polygons = boost::make_shared<polygon_set_t>();
             geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
-            toPolygons(*actual_variation_geometry, variation_info->polygons);
+            toPolygons(*actual_variation_geometry, *variation_info->polygons);
+            extents(variation_info->bounding_box, *variation_info->polygons);
             result->variations_info.push_back(variation_info);
         }
         // Use the first variation, because area of all variations should be the same
-        result->area += boost::polygon::area(result->variations_info[0]->polygons);
+        result->area += boost::polygon::area(*result->variations_info[0]->polygons);
         return result;
     }
 
     struct SheetInfo
     {
         sheet_ptr sheet;
-        polygon_set_t polygons;
+        polygon_set_ptr polygons;
+        long double area = 0.0;
+        rectangle_t bounding_box;
     };
     typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
 
@@ -62,7 +68,10 @@ namespace Nfp
     {
         sheet_info_ptr result = boost::make_shared<SheetInfo>();
         result->sheet = sheet;
-        toPolygons(*sheet->geometry, result->polygons);
+        result->polygons = boost::make_shared<polygon_set_t>();
+        toPolygons(*sheet->geometry, *result->polygons);
+        extents(result->bounding_box, *result->polygons);
+        result->area += boost::polygon::area(*result->polygons);
         return result;
     }
 
@@ -76,6 +85,7 @@ namespace Nfp
             size_t max_variation;
             nfp_point_t placement;
             size_t sheet_number;
+            bool placed = false;
         };
         struct Individual
         {
@@ -91,13 +101,100 @@ namespace Nfp
 
         parts_info_t parts_info;
         sheets_info_t sheets_info;
+        long double sum_sheet_area = 0.0;
         population_t population;
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
 
         void calculatePenalty(individual_ptr individual) const
         {
-            // TODO:
+            if (individual->penalty)
+            {
+                // If this individual already contains some calculated
+                // penalty then use the calculated penalty.
+                // This happens for best individual who goes
+                // to the next generation without any mutations.
+                return;
+            }
+
+            for (size_t gene_index = 0; gene_index < individual->genotype.size(); ++gene_index)
+            {
+                Gene& gene = individual->genotype[gene_index];
+                gene.placed = false;
+                part_info_ptr part_info = parts_info[gene.part_number];
+                // Make initial placement of part
+                size_t min_local_penalty = 0;
+                for (size_t sheet_number = 0; sheet_number < sheets_info.size(); ++sheet_number)
+                {
+                    const sheet_info_ptr sheet_info = sheets_info[sheet_number];
+                    // Very basic check: the selected sheet must have the same
+                    // or bigger area than the specified part
+                    if (sheet_info->area >= part_info->area)
+                    {
+                        using namespace boost::polygon;
+                        using namespace boost::polygon::operators;
+
+                        const polygon_set_ptr& current_part_geometry = part_info->variations_info[gene.variation]->polygons;
+                        const polygon_set_t& inner_nfp = cachedInnerNfp(sheet_info->polygons, current_part_geometry);
+
+                        if (!inner_nfp.empty())
+                        {
+                            polygon_set_t combined_outer_nfp;
+
+                            for (size_t prev_gene_index = 0; prev_gene_index < gene_index; ++prev_gene_index)
+                            {
+                                const Gene& prev_gene = individual->genotype[prev_gene_index];
+                                if (prev_gene.placed && prev_gene.sheet_number == sheet_number)
+                                {
+                                    const polygon_set_ptr& variation_geometry = parts_info[prev_gene.part_number]->variations_info[prev_gene.variation]->polygons;
+                                    const polygon_set_t& outer_nfp = cachedOuterNfp(variation_geometry, current_part_geometry);
+
+                                    std::vector<polygon_t> outer_nfp_polygons;
+                                    outer_nfp.get(outer_nfp_polygons);
+                                    for (auto& outer_nfp_polygon : outer_nfp_polygons)
+                                    {
+                                        // Move outer NFP according the current part placement
+                                        move(outer_nfp_polygon, HORIZONTAL, x(prev_gene.placement));
+                                        move(outer_nfp_polygon, VERTICAL, y(prev_gene.placement));
+                                        combined_outer_nfp += outer_nfp_polygon; // Union of all part NFP
+                                    }
+                                }
+                            }
+                            const polygon_set_t final_nfp = inner_nfp - combined_outer_nfp;
+
+                            iterateAllPoints(final_nfp, [this, &min_local_penalty, &gene, sheet_number, sheet_info](const nfp_point_t& point)
+                            {
+                                size_t penalty_for_used_sheet = static_cast<size_t>(sheet_info->area);
+                                const rectangle_t& bounding_box = this->parts_info[gene.part_number]->variations_info[gene.variation]->bounding_box;
+                                const int max_point_x = x(point) + xh(bounding_box);
+                                const int size_y = yh(sheet_info->bounding_box);
+                                const size_t penalty_for_used_sheet_length = max_point_x * size_y;
+                                const size_t penalty_for_used_sheet_height = y(point) + yh(bounding_box);
+                                const size_t local_penalty = penalty_for_used_sheet + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
+
+                                if (!gene.placed || local_penalty < min_local_penalty)
+                                {
+                                    gene.placement = point;
+                                    gene.sheet_number = sheet_number;
+                                    gene.placed = true;
+                                    min_local_penalty = local_penalty;
+                                }
+                            });
+                        }
+                    }
+                }
+                if (!gene.placed)
+                {
+                    // Could not insert this part, add increase penalty
+                    individual->penalty += 5 * static_cast<size_t>(sum_sheet_area);
+                    gene.placement = nfp_point_t(0, 0);
+                    gene.sheet_number = 0;
+                }
+                else
+                {
+                    individual->penalty += min_local_penalty;
+                }
+            }
         }
         std::vector<individual_ptr> getRandomPair() const
         {
@@ -203,6 +300,7 @@ namespace Nfp
             for (auto sheet : nesting_task->sheets)
             {
                 sheets_info.push_back(calculateSheetInfo(sheet));
+                sum_sheet_area += sheets_info.back()->area;
             }
 
             parts_info.reserve(nesting_task->parts.size());

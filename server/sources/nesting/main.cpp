@@ -13,6 +13,7 @@
 #include "nesting_task.h"
 #include "extreme_error.h"
 #include "pr_optimization/nest.h"
+#include "nfp_optimization/nest.h"
 
 int main(int argc, char** argv)
 {
@@ -32,7 +33,7 @@ int main(int argc, char** argv)
     {
         NestingRequest::Order nesting_order(argv[1]);
         nesting_task_ptr nesting_task = generateTask(nesting_order);
-        nesting_result_ptr nesting_result = Pr::Optimization().nest(nesting_task);
+        nesting_result_ptr nesting_result = Nfp::Optimization().nest(nesting_task);
         std::string result_json = generateJson(*nesting_result, *nesting_task);
         std::cout << result_json << std::endl;
     }
