@@ -26,7 +26,7 @@ const generateRandomNestingRequestForServerAsync = async (countFigures, sheetWid
             [0, 0],
             [rectangleWidth, 0],
             [rectangleWidth, rectangleHeight],
-            [0, rectangleWidth]
+            [0, rectangleHeight]
         ]],
         'instances': [{
             'quantity': countFigures,
