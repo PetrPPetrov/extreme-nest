@@ -231,8 +231,8 @@ std::string generateJson(const NestingResult& result, const NestingTask& task)
         nested_part->children.push_back(Object::item_t("position", writable_ptr(position)));
         position->children.push_back(Number::make(instantiation.position.x()));
         position->children.push_back(Number::make(instantiation.position.y()));
-        nested_part->children.push_back(Object::item_t("angle", Number::make(instantiation.part->variations[instantiation.instantiation_index].angle)));
-        nested_part->children.push_back(Object::item_t("flip", Boolean::make(instantiation.part->variations[instantiation.instantiation_index].flip)));
+        nested_part->children.push_back(Object::item_t("angle", Number::make(instantiation.part->variations[instantiation.variation_index].angle)));
+        nested_part->children.push_back(Object::item_t("flip", Boolean::make(instantiation.part->variations[instantiation.variation_index].flip)));
 
         index++;
     }

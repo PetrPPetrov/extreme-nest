@@ -144,7 +144,41 @@ namespace Nfp
         // During computations our numbers could be slightly bigger than max_coordinate,
         // causing integer overflow. So, 0.1 is for safety only,
         // just to make sure that we avoid integer overflows.
-        return 0.1 * static_cast<double>(max_integer) / max_coordinate;
+        const double scale_candidate_by_coordinate = 0.1 * static_cast<double>(max_integer) / max_coordinate;
+
+        // Nest step is to calculate limits due possible penalty function overflow.
+        // For penalty function we use "size_t" type.
+        // We must avoid cases when we will have integer overflows in "size_t" type
+        // during penalty function calculating.
+
+        // We calculate maximum possible square of sheet
+        // Because our maximum coordinate is absolute,
+        // it is possible that a maximum sheet is a rectangle from
+        // (-max_coordinate, -max_coordinate) point to (max_coordinate, max_coordinate) point.
+        // So, max_coordinate * max_coordinate is quarter square of a total maximum possible sheet.
+        // So, we need to multiply max_coordinate * max_coordinate by 4.0 to calculate maximum possible square of sheet.
+        const double max_sheet_square = 4.0 * max_coordinate * max_coordinate;
+        // We use 3 components for penalty:
+        // 1) used sheet square 2) square of used part of sheet (which could be the same as the used sheet square in the worst case)
+        // 3) used maximum height of sheet (this component could be equal the used sheet heigt in the worst case, so,
+        // much lesser than the used sheet square in a generic case; however, if sheet length is 1 than we have the worst case,
+        // in this case this component could be the same as the used sheet square again).
+        // So, all 3 components for penalty could be the same as the used sheet square, so,
+        // it could be 3X of the maximum sheet square. This is because we multiply the maximum possible square of sheet by 3.0.
+        // We calculate penalty for each part, so, multiply the resulting
+        // maximum penalty by number of parts.
+        // Resulting number ("max_penalty") is maximum possible penalty in squared source units.
+        const double max_penalty = 3.0 * max_sheet_square * nesting_task->parts.size();
+        const size_t max_size_t = std::numeric_limits<size_t>::max();
+        // Calculate maximum allowable input scale in "size_t" units, because "double" type
+        // could have overflows (usually size_t is 64-bit number, while double has 48-bit mantis integer number).
+        const size_t max_input_scale = max_size_t / (static_cast<size_t>(max_penalty) + 1);
+        // Decrease maximum allowable input scale by 10 as we did for coordinate scaling for safety (in size_t integer arithmetic)
+        // and when cast the resulting scaling limitation to double type.
+        const double scale_candidate_by_penalty = static_cast<double>(max_input_scale / 10);
+
+        // Select the input scale as minimum value from two limits
+        return std::min<double>(scale_candidate_by_coordinate, scale_candidate_by_penalty);
     }
 
     inline void toPolygons(const contour_t& contour, polygon_set_t& polygons, bool outer_contour)

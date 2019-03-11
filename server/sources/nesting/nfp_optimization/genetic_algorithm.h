@@ -33,27 +33,7 @@ namespace Nfp
         size_t index;
     };
     typedef boost::shared_ptr<PartInfo> part_info_ptr;
-
-    inline part_info_ptr calculatePartInfo(const part_ptr& part)
-    {
-        part_info_ptr result = boost::make_shared<PartInfo>();
-        result->part = part;
-        result->variations_info.reserve(part->variations.size());
-        for (auto variation : part->variations)
-        {
-            using namespace boost::polygon;
-            part_variation_into_ptr variation_info = boost::make_shared<PartVariationInfo>();
-            variation_info->variation = variation;
-            variation_info->polygons = boost::make_shared<polygon_set_t>();
-            geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
-            toPolygons(*actual_variation_geometry, *variation_info->polygons);
-            extents(variation_info->bounding_box, *variation_info->polygons);
-            result->variations_info.push_back(variation_info);
-        }
-        // Use the first variation, because area of all variations should be the same
-        result->area += boost::polygon::area(*result->variations_info[0]->polygons);
-        return result;
-    }
+    typedef std::vector<part_info_ptr> parts_info_t;
 
     struct SheetInfo
     {
@@ -63,17 +43,7 @@ namespace Nfp
         rectangle_t bounding_box;
     };
     typedef boost::shared_ptr<SheetInfo> sheet_info_ptr;
-
-    inline sheet_info_ptr calculateSheetInfo(const sheet_ptr& sheet)
-    {
-        sheet_info_ptr result = boost::make_shared<SheetInfo>();
-        result->sheet = sheet;
-        result->polygons = boost::make_shared<polygon_set_t>();
-        toPolygons(*sheet->geometry, *result->polygons);
-        extents(result->bounding_box, *result->polygons);
-        result->area += boost::polygon::area(*result->polygons);
-        return result;
-    }
+    typedef std::vector<sheet_info_ptr> sheets_info_t;
 
     class GeneticAlgorithm
     {
@@ -96,16 +66,15 @@ namespace Nfp
 
     private:
         typedef std::list<individual_ptr> population_t;
-        typedef std::vector<part_info_ptr> parts_info_t;
-        typedef std::vector<sheet_info_ptr> sheets_info_t;
 
-        parts_info_t parts_info;
-        sheets_info_t sheets_info;
+        const parts_info_t& parts_info;
+        const sheets_info_t& sheets_info;
         long double sum_sheet_area = 0.0;
         population_t population;
         mutable std::mt19937 engine;
         mutable std::uniform_int_distribution<size_t> uniform;
 
+    public:
         void calculatePenalty(individual_ptr individual) const
         {
             if (individual->penalty)
@@ -166,8 +135,8 @@ namespace Nfp
                             {
                                 size_t penalty_for_used_sheet = static_cast<size_t>(sheet_info->area);
                                 const rectangle_t& bounding_box = this->parts_info[gene.part_number]->variations_info[gene.variation]->bounding_box;
-                                const int max_point_x = x(point) + xh(bounding_box);
-                                const int size_y = yh(sheet_info->bounding_box);
+                                const size_t max_point_x = x(point) + xh(bounding_box);
+                                const size_t size_y = yh(sheet_info->bounding_box);
                                 const size_t penalty_for_used_sheet_length = max_point_x * size_y;
                                 const size_t penalty_for_used_sheet_height = y(point) + yh(bounding_box);
                                 const size_t local_penalty = penalty_for_used_sheet + penalty_for_used_sheet_length + penalty_for_used_sheet_height;
@@ -196,6 +165,7 @@ namespace Nfp
                 }
             }
         }
+        private:
         std::vector<individual_ptr> getRandomPair() const
         {
             const size_t max_random = Config::GeneticAlgorithm::POPULATION_SIZE * Config::GeneticAlgorithm::POPULATION_SIZE;
@@ -291,25 +261,20 @@ namespace Nfp
                 }
             }
         }
-
-    public:
-        GeneticAlgorithm(const nesting_task_ptr& nesting_task) :
-            engine(std::random_device()())
+        long double calculateSumSheetArea() const
         {
-            sheets_info.reserve(nesting_task->sheets.size());
-            for (auto sheet : nesting_task->sheets)
+            long double sum_sheet_area = 0.0;
+            for (auto sheet_info : sheets_info)
             {
-                sheets_info.push_back(calculateSheetInfo(sheet));
-                sum_sheet_area += sheets_info.back()->area;
+                sum_sheet_area += sheet_info->area;
             }
-
-            parts_info.reserve(nesting_task->parts.size());
-            size_t index = 0;
-            for (auto part : nesting_task->parts)
-            {
-                parts_info.push_back(calculatePartInfo(part));
-                parts_info.back()->index = index++;
-            }
+            return sum_sheet_area;
+        }
+    public:
+        GeneticAlgorithm(const std::vector<part_info_ptr>& parts_info_, const std::vector<sheet_info_ptr>& sheets_info_) :
+            parts_info(parts_info_), sheets_info(sheets_info_),
+            engine(std::random_device()()), sum_sheet_area(calculateSumSheetArea())
+        {
             parts_info_t sorted_parts_info = parts_info; // Perform copy
             std::sort(sorted_parts_info.begin(), sorted_parts_info.end(), [](const part_info_ptr& element_a, const part_info_ptr& element_b)
             {

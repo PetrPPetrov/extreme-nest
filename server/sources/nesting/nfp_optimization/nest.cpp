@@ -13,20 +13,102 @@
 
 namespace Nfp
 {
+    inline part_info_ptr calculatePartInfo(const part_ptr& part)
+    {
+        part_info_ptr result = boost::make_shared<PartInfo>();
+        result->part = part;
+        result->variations_info.reserve(part->variations.size());
+        for (auto variation : part->variations)
+        {
+            using namespace boost::polygon;
+            part_variation_into_ptr variation_info = boost::make_shared<PartVariationInfo>();
+            variation_info->variation = variation;
+            variation_info->polygons = boost::make_shared<polygon_set_t>();
+            geometry_ptr actual_variation_geometry = variation.calculateActualGeometry();
+            toPolygons(*actual_variation_geometry, *variation_info->polygons);
+            extents(variation_info->bounding_box, *variation_info->polygons);
+            result->variations_info.push_back(variation_info);
+        }
+        // Use the first variation, because area of all variations should be the same
+        result->area += boost::polygon::area(*result->variations_info[0]->polygons);
+        return result;
+    }
+
+    inline sheet_info_ptr calculateSheetInfo(const sheet_ptr& sheet)
+    {
+        sheet_info_ptr result = boost::make_shared<SheetInfo>();
+        result->sheet = sheet;
+        result->polygons = boost::make_shared<polygon_set_t>();
+        toPolygons(*sheet->geometry, *result->polygons);
+        extents(result->bounding_box, *result->polygons);
+        result->area += boost::polygon::area(*result->polygons);
+        return result;
+    }
+
     class Nesting
     {
         const nesting_task_ptr& task;
+        parts_info_t parts_info;
+        sheets_info_t sheets_info;
         nesting_result_ptr result;
         size_t generation_count = 0;
         GeneticAlgorithm::individual_ptr best;
         std::mutex mutex_for_best;
         bool calculating = true;
 
+        void calculateSheetsInfo()
+        {
+            sheets_info.reserve(task->sheets.size());
+            for (auto sheet : task->sheets)
+            {
+                sheets_info.push_back(calculateSheetInfo(sheet));
+            }
+        }
+        void calculatePartsInfo()
+        {
+            parts_info.reserve(task->parts.size());
+            size_t index = 0;
+            for (auto part : task->parts)
+            {
+                parts_info.push_back(calculatePartInfo(part));
+                parts_info.back()->index = index++;
+            }
+        }
         void fillResult(const GeneticAlgorithm::individual_ptr& best)
         {
             result = boost::make_shared<NestingResult>();
 
-            //TODO:
+            // Contains the length until the straight vertical offcut for each sheet
+            std::vector<int> sheet_lengths(sheets_info.size(), 0);
+            std::vector<size_t> sheet_indexes;
+            sheet_indexes.reserve(best->genotype.size());
+
+            for (auto& gene : best->genotype)
+            {
+                if (gene.placed)
+                {
+                    PartInstantiation part;
+                    const part_info_ptr& part_info = parts_info[gene.part_number];
+                    part.part = part_info->part;
+                    part.position.x(gene.placement.x() / Config::Nfp::INPUT_SCALE);
+                    part.position.y(gene.placement.y() / Config::Nfp::INPUT_SCALE);
+                    part.sheet = sheets_info[gene.sheet_number]->sheet;
+                    part.variation_index = gene.variation;
+
+                    const int max_point_x = x(gene.placement) + xh(part_info->variations_info[gene.variation]->bounding_box);
+                    int& sheet_length = sheet_lengths[gene.sheet_number];
+                    sheet_length = std::max<int>(sheet_length, max_point_x);
+                    result->instantiations.push_back(part);
+                    sheet_indexes.push_back(gene.sheet_number);
+                }
+            }
+
+            size_t index = 0;
+            for (auto& part : result->instantiations)
+            {
+                part.sheet_length = sheet_lengths[sheet_indexes[index]] / Config::Nfp::INPUT_SCALE;
+                index++;
+            }
         }
     public:
         Nesting(const nesting_task_ptr& task_) : task(task_)
@@ -39,8 +121,9 @@ namespace Nfp
         void runInThread()
         {
             Config::Nfp::INPUT_SCALE = Nfp::calculateInputScale(task);
-
-            GeneticAlgorithm genetic_algorithm(task);
+            calculatePartsInfo();
+            calculateSheetsInfo();
+            GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);
 
             while (calculating)
             {
@@ -65,6 +148,7 @@ namespace Nfp
                 current_best = best;
                 calculating = false;
             }
+
             if (!current_best)
             {
 #ifdef _DEBUG
@@ -72,6 +156,7 @@ namespace Nfp
 #endif
                 throw std::runtime_error("not enough time to calculate nesting");
             }
+
             fillResult(current_best);
 #ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;

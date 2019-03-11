@@ -107,7 +107,7 @@ namespace Pr
                 const double zero_offset_y = part_variation->zero_position_inside_cell_box.y();
 
                 PartInstantiation part;
-                part.instantiation_index = gene.variation;
+                part.variation_index = gene.variation;
                 part.part = part_info->part;
                 part.position.x(base_sheet_x + gene.position.x() * Config::Pr::POSITION_STEP + zero_offset_x);
                 part.position.y(base_sheet_y + gene.position.y() * Config::Pr::POSITION_STEP + zero_offset_y);
