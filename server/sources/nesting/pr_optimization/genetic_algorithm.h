@@ -101,6 +101,10 @@ namespace Pr
             sheet_images.reserve(sheets_info.size());
             for (auto sheet_info : sheets_info)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 sheet_images.push_back(*sheet_info->cell_space); // Perform copy
             }
             size_t part_index = 0;
@@ -123,6 +127,10 @@ namespace Pr
                 {
                     for (int y = 0; y < sheet_image.getSize().y(); ++y)
                     {
+                        if (!g_calculating)
+                        {
+                            throw InterruptionException();
+                        }
                         const cell_t point(x, y);
                         if (sheet_image.getCell(point) && !original_sheet_image.getCell(point))
                         {
@@ -252,6 +260,10 @@ namespace Pr
         {
             for (size_t i = 0; i < Config::GeneticAlgorithm::POPULATION_SIZE; ++i)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 population.push_back(randomIndividual());
             }
         }
@@ -260,12 +272,20 @@ namespace Pr
             for (auto individual : population)
             {
                 calculatePenalty(individual);
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
             }
         }
         void sort()
         {
             population.sort([](const individual_ptr& a, const individual_ptr& b)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 return a->penalty < b->penalty;
             });
         }
@@ -275,6 +295,10 @@ namespace Pr
             next_population.push_back(getBest());
             while (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 auto pair = getRandomPair();
                 population_t children = mate(pair[0], pair[1]);
                 for (auto child : children)

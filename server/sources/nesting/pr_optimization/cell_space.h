@@ -21,10 +21,18 @@ namespace Pr
         polygons.clear();
         for (auto outer_contour : geometry.outer_contours)
         {
+            if (!g_calculating)
+            {
+                throw InterruptionException();
+            }
             polygon_ptr new_polygon = boost::make_shared<polygon_t>();
             new_polygon->outer().assign(outer_contour.begin(), outer_contour.end());
             for (auto inner_contour : geometry.holes)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 polygon_t inner_polygon;
                 inner_polygon.outer().assign(inner_contour.begin(), inner_contour.end());
                 // Check if the current hole is completely inside the current outer contour
@@ -45,6 +53,10 @@ namespace Pr
         box_t result;
         for (auto polygon : polygons)
         {
+            if (!g_calculating)
+            {
+                throw InterruptionException();
+            }
             box_t local_result;
             boost::geometry::envelope(*polygon, local_result);
             if (first_iteration)
@@ -152,6 +164,10 @@ namespace Pr
             {
                 for (int y = 0; y < image.getSize().y(); ++y)
                 {
+                    if (!g_calculating)
+                    {
+                        throw InterruptionException();
+                    }
                     if (image.getCell(cell_t(x, y)))
                     {
                         const int cur_x = point.x() + x;

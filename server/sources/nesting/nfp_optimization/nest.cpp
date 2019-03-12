@@ -173,7 +173,6 @@ namespace Nfp
 #endif
                 throw std::runtime_error("not enough time to calculate nesting");
             }
-
             fillResult(current_best);
 #ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;
