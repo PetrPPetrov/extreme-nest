@@ -23,6 +23,10 @@ geometry_ptr PartVariation::calculateActualGeometry() const
 
     auto transform_point = [a, mirror_y](point_t& point)
     {
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         const double nx = cos(a)*point.x() - sin(a)*point.y();
         const double ny = sin(a)*point.x() + cos(a)*point.y();
         point = mirror_y ? point_t(nx, -ny) : point_t(nx, ny);

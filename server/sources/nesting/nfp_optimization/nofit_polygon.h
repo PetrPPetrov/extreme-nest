@@ -87,12 +87,20 @@ namespace Nfp
 
     inline void accumulateMax(point_t& result, const point_t& point)
     {
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         result.x(std::max(result.x(), point.x()));
         result.y(std::max(result.y(), point.y()));
     }
 
     inline void accumulateMin(point_t& result, const point_t& point)
     {
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         result.x(std::min(result.x(), point.x()));
         result.y(std::min(result.y(), point.y()));
     }
@@ -187,12 +195,20 @@ namespace Nfp
         points.reserve(contour.size());
         for (auto cur_point : contour)
         {
+            if (!g_calculating)
+            {
+                throw InterruptionException();
+            }
             const int x = static_cast<int>(Config::Nfp::INPUT_SCALE * cur_point.x());
             const int y = static_cast<int>(Config::Nfp::INPUT_SCALE * cur_point.y());
             points.push_back(nfp_point_t(x, y));
         }
         polygon_t polygon;
         boost::polygon::set_points(polygon, points.begin(), points.end());
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         using namespace boost::polygon::operators;
         if (outer_contour)
         {
@@ -201,6 +217,10 @@ namespace Nfp
         else
         {
             polygons -= polygon;
+        }
+        if (!g_calculating)
+        {
+            throw InterruptionException();
         }
     }
 
@@ -219,6 +239,10 @@ namespace Nfp
 
     inline void convolveTwoSegments(std::vector<nfp_point_t>& figure, const edge_t& a, const edge_t& b)
     {
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         using namespace boost::polygon;
         figure.clear();
         figure.reserve(4);
@@ -340,6 +364,10 @@ namespace Nfp
                 for (polygon_with_holes_traits<polygon_t>::iterator_holes_type it = begin_holes(negative_nfp_polygon);
                     it != end_holes(negative_nfp_polygon); ++it)
                 {
+                    if (!g_calculating)
+                    {
+                        throw InterruptionException();
+                    }
                     polygon_t polygon;
                     set_points(polygon, begin_points(*it), end_points(*it));
                     *new_inner_nfp += polygon;

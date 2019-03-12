@@ -30,6 +30,10 @@ namespace Nfp
             result->variations_info.push_back(variation_info);
         }
         // Use the first variation, because area of all variations should be the same
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         result->area += boost::polygon::area(*result->variations_info[0]->polygons);
         return result;
     }
@@ -41,6 +45,10 @@ namespace Nfp
         result->polygons = boost::make_shared<polygon_set_t>();
         toPolygons(*sheet->geometry, *result->polygons);
         extents(result->bounding_box, *result->polygons);
+        if (!g_calculating)
+        {
+            throw InterruptionException();
+        }
         result->area += boost::polygon::area(*result->polygons);
         return result;
     }
@@ -53,8 +61,7 @@ namespace Nfp
         nesting_result_ptr result;
         size_t generation_count = 0;
         GeneticAlgorithm::individual_ptr best;
-        std::mutex mutex_for_best;
-        bool calculating = true;
+        std::mutex mutex_for_best; // TODO: Switch to use std::atomic<GeneticAlgorithm::individual_ptr> and avoid mutex
 
         void calculateSheetsInfo()
         {
@@ -118,14 +125,14 @@ namespace Nfp
         {
             return result;
         }
-        void runInThread()
+        void calculateNesting()
         {
             Config::Nfp::INPUT_SCALE = Nfp::calculateInputScale(task);
             calculatePartsInfo();
             calculateSheetsInfo();
             GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);
 
-            while (calculating)
+            while (g_calculating)
             {
                 genetic_algorithm.calculatePenalties();
                 genetic_algorithm.sort();
@@ -137,17 +144,27 @@ namespace Nfp
                 ++generation_count;
             }
         }
+        void runInThread()
+        {
+            try
+            {
+                calculateNesting();
+            }
+            catch (const InterruptionException&)
+            {
+            }
+        }
         void run()
         {
             std::thread calculation_thread(&Nesting::runInThread, this);
-            calculation_thread.detach();
             std::this_thread::sleep_for(std::chrono::seconds(static_cast<int>(task->time_in_seconds)));
             GeneticAlgorithm::individual_ptr current_best;
             {
                 std::lock_guard<std::mutex> guard(mutex_for_best);
                 current_best = best;
-                calculating = false;
+                g_calculating = false;
             }
+            calculation_thread.join();
 
             if (!current_best)
             {

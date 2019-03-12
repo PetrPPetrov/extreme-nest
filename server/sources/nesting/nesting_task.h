@@ -7,6 +7,7 @@
 
 #include <list>
 #include <vector>
+#include <atomic>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
@@ -70,3 +71,8 @@ typedef boost::shared_ptr<NestingResult> nesting_result_ptr;
 
 nesting_task_ptr generateTask(const NestingRequest::Order& nesting_order);
 std::string generateJson(const NestingResult& result, const NestingTask& task);
+
+struct InterruptionException
+{
+};
+static std::atomic<bool> g_calculating = true;

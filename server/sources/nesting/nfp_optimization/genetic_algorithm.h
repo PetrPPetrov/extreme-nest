@@ -88,6 +88,10 @@ namespace Nfp
 
             for (size_t gene_index = 0; gene_index < individual->genotype.size(); ++gene_index)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 Gene& gene = individual->genotype[gene_index];
                 gene.placed = false;
                 part_info_ptr part_info = parts_info[gene.part_number];
@@ -133,6 +137,10 @@ namespace Nfp
 
                             iterateAllPoints(final_nfp, [this, &min_local_penalty, &gene, sheet_number, sheet_info](const nfp_point_t& point)
                             {
+                                if (!g_calculating)
+                                {
+                                    throw InterruptionException();
+                                }
                                 size_t penalty_for_used_sheet = static_cast<size_t>(sheet_info->area);
                                 const rectangle_t& bounding_box = this->parts_info[gene.part_number]->variations_info[gene.variation]->bounding_box;
                                 const size_t max_point_x = x(point) + xh(bounding_box);
@@ -278,6 +286,10 @@ namespace Nfp
             parts_info_t sorted_parts_info = parts_info; // Perform copy
             std::sort(sorted_parts_info.begin(), sorted_parts_info.end(), [](const part_info_ptr& element_a, const part_info_ptr& element_b)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 return element_a->area > element_b->area;
             });
 
@@ -289,6 +301,10 @@ namespace Nfp
                 new_gene.max_variation = part_info->variations_info.size();
                 new_gene.variation = uniform(engine) % new_gene.max_variation;
                 adam->genotype.push_back(new_gene);
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
             }
             population.push_back(adam);
 
@@ -298,6 +314,10 @@ namespace Nfp
                 *new_child = *adam;
                 mutate(new_child);
                 population.push_back(new_child);
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
             }
         }
         void calculatePenalties()
@@ -305,12 +325,20 @@ namespace Nfp
             for (auto individual : population)
             {
                 calculatePenalty(individual);
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
             }
         }
         void sort()
         {
             population.sort([](const individual_ptr& a, const individual_ptr& b)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 return a->penalty < b->penalty;
             });
         }
@@ -320,6 +348,10 @@ namespace Nfp
             next_population.push_back(getBest());
             while (next_population.size() < Config::GeneticAlgorithm::POPULATION_SIZE)
             {
+                if (!g_calculating)
+                {
+                    throw InterruptionException();
+                }
                 auto pair = getRandomPair();
                 population_t children = mate(pair[0], pair[1]);
                 for (auto child : children)
