@@ -7,7 +7,23 @@
 
 import * as _ from 'underscore'
 
+const FIGURE_TYPE_TRIANGLE = 1;
+const FIGURE_TYPE_RECTANGLE = 2;
+
+function Triangle(width, height, yPosition, xPosition, direction) {
+    this.type = FIGURE_TYPE_TRIANGLE;
+    this.width = width;
+    this.height = height;
+    this.yPosition = yPosition;
+    this.xPosition = xPosition;
+    this.direction = direction;
+}
+
+const TRIANGLE_UP_DIRECTION = 1;
+const TRIANGLE_DOWN_DIRECTION = 2;
+
 function Rectangle(width, height, yPosition, xPosition) {
+    this.type = FIGURE_TYPE_RECTANGLE;
     this.width = width;
     this.height = height;
     this.yPosition = yPosition;
@@ -16,6 +32,11 @@ function Rectangle(width, height, yPosition, xPosition) {
 
 function divideRectangle(rectangle, countParts, geometry){
     if (countParts === 0) {
+        return;
+    }
+    if ( (countParts === 2) && (_.sample([true, false])) ) {
+        geometry.push(new Triangle(rectangle.width, rectangle.height, rectangle.yPosition, rectangle.xPosition, TRIANGLE_UP_DIRECTION));
+        geometry.push(new Triangle(rectangle.width, rectangle.height, rectangle.yPosition, rectangle.xPosition, TRIANGLE_DOWN_DIRECTION));
         return;
     }
     if (countParts === 1) {
@@ -38,6 +59,22 @@ function divideRectangle(rectangle, countParts, geometry){
         newHeight /= 2;
         divideRectangle(new Rectangle(newWidth, newHeight, rectangle.yPosition, rectangle.xPosition), leftCountParts, geometry);
         divideRectangle(new Rectangle(newWidth, newHeight, rectangle.yPosition + newHeight, rectangle.xPosition), rightCountParts, geometry);
+    }
+}
+
+function createTriangleGeometry(triangleWidth, triangleHeight, direction) {
+    if (direction === TRIANGLE_UP_DIRECTION) {
+        return [[
+            [0, 0],
+            [triangleWidth, 0],
+            [triangleWidth, triangleHeight],
+        ]];
+    } else {
+        return [[
+            [0, 0],
+            [0, triangleHeight],
+            [triangleWidth, triangleHeight],
+        ]];
     }
 }
 
@@ -74,22 +111,27 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
         'height': sheetHeight
     });
 
-    const rectangles = [];
+    const figures = [];
     const rootRectangle = new Rectangle(sheetWidth, sheetHeight, 0, 0);
-    divideRectangle(rootRectangle, countFigures, rectangles);
+    divideRectangle(rootRectangle, countFigures, figures);
 
     let figureID = 1;
     let nestedParts = nestingResponse.nestings[0].nested_parts;
-    rectangles.forEach(rectangle => {
-        const geometry = createRectangleGeometry(rectangle.width, rectangle.height);
+    figures.forEach(figure => {
+        let geometry = null;
+        if (figure.type === FIGURE_TYPE_TRIANGLE) {
+            geometry = createTriangleGeometry(figure.width, figure.height, figure.direction);
+        } else {
+            geometry = createRectangleGeometry(figure.width, figure.height);
+        }
         const index = _.findIndex(nestingRequest.parts, part => _.isEqual(part.geometry, geometry));
         if (index !== -1) {
             nestingRequest.parts[index].instances[0].quantity++;
             const nestingPartID = nestingRequest.parts[index].instances[0].id;
-            addNestingPart(nestedParts, nestingPartID, [rectangle.xPosition, rectangle.yPosition]);
+            addNestingPart(nestedParts, nestingPartID, [figure.xPosition, figure.yPosition]);
         } else {
             addNestingGeometry(nestingRequest.parts, figureID, geometry);
-            addNestingPart(nestedParts, figureID, [rectangle.xPosition, rectangle.yPosition]);
+            addNestingPart(nestedParts, figureID, [figure.xPosition, figure.yPosition]);
         }
         figureID++;
     });
