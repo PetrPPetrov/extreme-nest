@@ -50,6 +50,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
+                exclude: /\/node_modules\//,
                 include: [
                     path.resolve('scripts'),
                     path.resolve('node_modules/webpack-dev-server/client')
