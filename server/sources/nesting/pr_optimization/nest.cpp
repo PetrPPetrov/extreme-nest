@@ -9,7 +9,6 @@
 #include <random>
 #include <chrono>
 #include <thread>
-#include <mutex>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include "config.h"

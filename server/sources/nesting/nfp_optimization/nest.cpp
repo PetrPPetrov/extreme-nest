@@ -5,7 +5,6 @@
 
 #include <chrono>
 #include <thread>
-#include <mutex>
 #include "config.h"
 #include "nfp_optimization/nest.h"
 #include "nfp_optimization/nofit_polygon.h"
