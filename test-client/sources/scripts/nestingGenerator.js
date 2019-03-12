@@ -5,11 +5,7 @@
 
 'use strict';
 
-import * as _ from 'underscore';
-
-const generateGoldNestingAsync = async (countFigures, sheetWidth, sheetHeight, nestingTime) => {
-    return generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime);
-};
+import * as _ from 'underscore'
 
 function Rectangle(width, height, yPosition, xPosition) {
     this.width = width;
@@ -45,7 +41,16 @@ function divideRectangle(rectangle, countParts, geometry){
     }
 }
 
-function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
+function createRectangleGeometry(rectangleWidth, rectangleHeight) {
+    return [[
+        [0, 0],
+        [rectangleWidth, 0],
+        [rectangleWidth, rectangleHeight],
+        [0, rectangleHeight]
+    ]]
+}
+
+async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nestingTime) {
     const nestingRequest = {};
     nestingRequest.parts = [];
     nestingRequest.sheets = [];
@@ -61,28 +66,6 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
         'length': sheetWidth,
         'id': sheetID
     });
-
-    const geometry = [];
-    const rootRectangle = new Rectangle(sheetWidth, sheetHeight, 0, 0);
-    divideRectangle(rootRectangle, countFigures, geometry);
-    console.log(geometry);
-
-    const figureID = 11; //TODO: need to generate id
-    const rectangleHeight = (sheetHeight / countFigures) * 2;
-    const rectangleWidth = sheetWidth / 2;
-    nestingRequest.parts.push({
-        'geometry': [[
-            [0, 0],
-            [rectangleWidth, 0],
-            [rectangleWidth, rectangleHeight],
-            [0, rectangleHeight]
-        ]],
-        'instances': [{
-            'quantity': countFigures,
-            'id': figureID
-        }]
-    });
-
     nestingResponse.nestings.push({
         'sheet': sheetID,
         'nested_parts': [],
@@ -91,28 +74,46 @@ function generateNesting(countFigures, sheetWidth, sheetHeight, nestingTime) {
         'height': sheetHeight
     });
 
-    let currentXPos = 0;
-    let currentYPos = 0;
-    nestingRequest.parts.forEach(part => {
-        part.instances.forEach(instance => {
-            for (let i = 0; i < instance.quantity; i++) {
-                nestingResponse.nestings[0].nested_parts.push({
-                    'id': figureID,
-                    'angle': 0,
-                    'flip': false,
-                    'position': [currentXPos, currentYPos]
-                });
-                if (currentXPos + rectangleWidth >= sheetWidth) {
-                    currentYPos += rectangleHeight;
-                    currentXPos = 0;
-                } else {
-                    currentXPos += rectangleWidth;
-                }
-            }
-        });
+    const rectangles = [];
+    const rootRectangle = new Rectangle(sheetWidth, sheetHeight, 0, 0);
+    divideRectangle(rootRectangle, countFigures, rectangles);
+
+    let figureID = 1;
+    let nestedParts = nestingResponse.nestings[0].nested_parts;
+    rectangles.forEach(rectangle => {
+        const geometry = createRectangleGeometry(rectangle.width, rectangle.height);
+        const index = _.findIndex(nestingRequest.parts, part => _.isEqual(part.geometry, geometry));
+        if (index !== -1) {
+            nestingRequest.parts[index].instances[0].quantity++;
+            const nestingPartID = nestingRequest.parts[index].instances[0].id;
+            addNestingPart(nestedParts, nestingPartID, [rectangle.xPosition, rectangle.yPosition]);
+        } else {
+            addNestingGeometry(nestingRequest.parts, figureID, geometry);
+            addNestingPart(nestedParts, figureID, [rectangle.xPosition, rectangle.yPosition]);
+        }
+        figureID++;
     });
 
     return [ nestingRequest, nestingResponse ];
 }
 
-export default generateGoldNestingAsync
+function addNestingGeometry(nestedParts, figureID, geometry) {
+    nestedParts.push({
+        'geometry': geometry,
+        'instances': [{
+            'quantity': 1,
+            'id': figureID
+        }]
+    });
+}
+
+function addNestingPart(nestedParts, id, [xPos, yPos]) {
+    nestedParts.push({
+        'id': id,
+        'angle': 0,
+        'flip': false,
+        'position': [xPos, yPos]
+    });
+}
+
+export default generateNestingAsync

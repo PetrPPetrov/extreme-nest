@@ -31,14 +31,13 @@
 
     import drawCanvas from '../../scripts/canvasPainter'
     import networkConfiguration from '../../resources/data/network'
-    import generateGoldNestingAsync from '../../scripts/goldNestingGenerator'
-    import generateRandomNestingRequestForServerAsync from '../../scripts/randomNestingGenerator'
+    import generateNestingAsync from '../../scripts/nestingGenerator'
 
     export default {
         data() {
             return {
-                countFigures: 8,
-                sheetWidth: 2,
+                countFigures: 13,
+                sheetWidth: 8,
                 sheetHeight: 4,
                 nestingTime: 5,
                 canvasBlockSize: 20,
@@ -50,33 +49,26 @@
         },
         methods: {
 
-             onClickGenerate() {
+             async onClickGenerate() {
                 this.$store.dispatch('generationInProgress', true);
                 this.$store.dispatch('clearCanvases');
-                this.generateGoldNesting();
-                this.generateRandomNestingOnServer();
+                const [nestingRequest, nestingResponse] = await generateNestingAsync(
+                    Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime
+                );
+                this.generateGoldNesting(nestingRequest, nestingResponse);
+                this.generateRandomNestingOnServer(nestingRequest);
             },
 
-            generateGoldNesting(){
+            generateGoldNesting(nestingRequest, nestingResponse){
                 let canvas = this.$store.getters.canvasGoldGeneration;
                 this.$store.dispatch('goldVisualizationLog', 'Gold nesting generation in progress...');
-                generateGoldNestingAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
-                    .then(([nestingRequest, nestingResponse]) => {
-                        drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
-                        this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
-                        this.$store.dispatch('goldNestingResponse', JSON.stringify(nestingResponse, null, 4));
-                        this.$store.dispatch('goldVisualizationLog', 'Gold nesting generated successfully');
-                    })
-                    .catch(() => this.$store.dispatch('goldVisualizationLog', 'Gold nesting was not generated'));
+                drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
+                this.$store.dispatch('goldNestingRequest', JSON.stringify(nestingRequest, null, 4));
+                this.$store.dispatch('goldNestingResponse', JSON.stringify(nestingResponse, null, 4));
+                this.$store.dispatch('goldVisualizationLog', 'Gold nesting generated successfully');
             },
 
-            generateRandomNestingOnServer(){
-                return generateRandomNestingRequestForServerAsync(Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime)
-                    .then(nestingRequest => this.sendRequestOnNestingToServer(nestingRequest))
-                    .catch(() => this.$store.dispatch('randomVisualizationLog', 'Random nesting was not generated: inner error'))
-            },
-
-            sendRequestOnNestingToServer(nestingRequest) {
+            generateRandomNestingOnServer(nestingRequest){
                 this.$store.dispatch('randomVisualizationLog', 'Server generation in progress...');
                 this.$http.post(`${networkConfiguration.nestingServer.address}/new`, nestingRequest)
                     .then(response =>
@@ -96,7 +88,6 @@
                 this.$http.get(`${networkConfiguration.nestingServer.address}/result/${nestingID}/full`)
                     .then(response => {
                         if (!response.body.nestings) {
-                            this.$store.dispatch('generationInProgress', false);
                             setTimeout(() => this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                         } else {
                             const nestingResponse = response.body;
@@ -107,6 +98,10 @@
                             this.$store.dispatch('generationInProgress', false);
                         }
                     })
+                    .catch(() => {
+                        this.$store.dispatch('generationInProgress', false);
+                        this.$store.dispatch('randomVisualizationLog', 'Nesting was not generated on the server');
+                    });
             }
 
         }
