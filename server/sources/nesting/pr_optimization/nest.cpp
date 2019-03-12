@@ -69,7 +69,6 @@ namespace Pr
         nesting_result_ptr result;
         size_t generation_count = 0;
         GeneticAlgorithm::individual_ptr best;
-        std::mutex mutex_for_best; // TODO: Switch to use std::atomic<GeneticAlgorithm::individual_ptr> and avoid mutex
 
         void calculatePartsInfo()
         {
@@ -143,10 +142,7 @@ namespace Pr
             {
                 genetic_algorithm.calculatePenalties();
                 genetic_algorithm.sort();
-                {
-                    std::lock_guard<std::mutex> guard(mutex_for_best);
-                    best = genetic_algorithm.getBest();
-                }
+                best = genetic_algorithm.getBest();
                 genetic_algorithm.nextGeneration();
                 ++generation_count;
             }
@@ -165,22 +161,17 @@ namespace Pr
         {
             std::thread calculation_thread(&Nesting::runInThread, this);
             std::this_thread::sleep_for(std::chrono::seconds(static_cast<int>(task->time_in_seconds)));
-            GeneticAlgorithm::individual_ptr current_best;
-            {
-                std::lock_guard<std::mutex> guard(mutex_for_best);
-                current_best = best;
-                g_calculating = false;
-            }
+            g_calculating = false;
             calculation_thread.join();
 
-            if (!current_best)
+            if (!best)
             {
 #ifdef _DEBUG
                 std::cout << "best is null" << std::endl;
 #endif
                 throw std::runtime_error("not enough time to calculate nesting");
             }
-            fillResult(current_best);
+            fillResult(best);
 #ifdef _DEBUG
             std::cout << "generation count " << generation_count << std::endl;
             std::cout << "best penalty " << current_best->penalty << std::endl;
