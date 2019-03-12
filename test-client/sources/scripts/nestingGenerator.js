@@ -10,25 +10,28 @@ import * as _ from 'underscore'
 const FIGURE_TYPE_TRIANGLE = 1;
 const FIGURE_TYPE_RECTANGLE = 2;
 
-function Triangle(width, height, yPosition, xPosition, direction) {
-    this.type = FIGURE_TYPE_TRIANGLE;
-    this.width = width;
-    this.height = height;
-    this.yPosition = yPosition;
-    this.xPosition = xPosition;
-    this.direction = direction;
-}
-
 const TRIANGLE_UP_DIRECTION = 1;
 const TRIANGLE_DOWN_DIRECTION = 2;
 
-function Rectangle(width, height, yPosition, xPosition) {
-    this.type = FIGURE_TYPE_RECTANGLE;
+function Figure(type, width, height, yPosition, xPosition) {
+    this.type = type;
     this.width = width;
     this.height = height;
     this.yPosition = yPosition;
     this.xPosition = xPosition;
 }
+
+function Triangle(width, height, yPosition, xPosition, direction) {
+    Figure.call(this, FIGURE_TYPE_TRIANGLE, width, height, yPosition, xPosition);
+    this.direction = direction;
+}
+
+function Rectangle(width, height, yPosition, xPosition) {
+    Figure.call(this, FIGURE_TYPE_RECTANGLE, width, height, yPosition, xPosition);
+}
+
+Triangle.prototype = Object.create(Figure.prototype);
+Rectangle.prototype = Object.create(Figure.prototype);
 
 function divideRectangle(rectangle, countParts, geometry){
     if (countParts === 0) {
