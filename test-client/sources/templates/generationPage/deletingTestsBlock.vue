@@ -87,6 +87,8 @@
                         const canvasBlockSize = 20;
                         const canvas = this.$store.getters.canvasGoldGeneration;
                         drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
+                        delete test.goldRequest._id;
+                        delete test.goldResponse._id;
                         this.$store.dispatch('goldNestingRequest', JSON.stringify(test.goldRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
                         this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
