@@ -43,18 +43,24 @@ Ideas for Extreme Nest (PR optimization):
 * Add support of automation position tolerance calculation (for instance, minimum distance between points)
 * Use bitwise level for position x and position y during individual mate and mutation
 * Use two gene alleles, simulate dominant and recessive genes
-* Implement NFP algorithm fully in C++, i.e. as part of Extreme Nest
-* Implement neural network algorithm for nesting
 
 TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 ================================================================================
-* CalculateFitness
+* ~~CalculateFitness~~
+* Add support of infinite sheet length
+* Add support of non-rectangular sheets
+* Add support for pre-nesting
+* Add suppurt for defects on sheet
+* Add support for arcs
+* Add support for protection offset
+* Add support for border gap (for sheets)
 * Implement simplification for contours and holes (for a faster calculation)
 
 Ideas for NFP Optimization (NoFitPolygon, Minkowski sum and other parts in C++):
 =================================================================================
 * Use something like optimized QTree instead of simplification
-* Add "insertion place" parameter for genetic optimization (insertion order, variation index, insertion place)
+* Add "insertion place" parameter for genetic optimization (insertion order, variation index, insertion place as angle):
+> Maybe angle of the point on the NFP with respect to the centroid of the NFP. And then you have a variable from 0 to 2pi
 
 TODO for Deep Nest (NoFitPolygon, Minkowski sum in C++ as Node.js addon, other parts in JavaScript):
 ===================
@@ -70,5 +76,11 @@ TODO for Deep Nest (NoFitPolygon, Minkowski sum in C++ as Node.js addon, other p
 
 Generic TODO:
 =============
-* Run optimization in a thread, wait in the main thread for a specified time, get results and kill the calculation thread
+* ~~Run optimization in a thread, wait in the main thread for a specified time, get results and kill the calculation thread~~
+
+Generic Ideas:
+==============
+* ~~Implement NFP algorithm fully in C++, i.e. as part of Extreme Nest~~
+* Implement neural network algorithm for nesting
+
 
