@@ -15,35 +15,6 @@ After that, you can start server by using 'npm run start' command.
 
 For debugging purposes you can use 'npm run debug' command.
 
-TODO for Extreme Nest (PR optimization):
-========================================
-* ~~Add support for orientations~~
-* ~~Add support for flip flag~~
-* ~~Add support of multiple sheets~~
-* Add support for protection offset (it is hard to estimate the required time for now)
-* Add support for border gap for sheets (it is hard to estimate the required time for now)
-* Add support for arcs (should not take too much time, maybe 1-2 days)
-* Add support of infinite sheet length (should not take too much time, maybe 1-2 days; I think that "infinite" sheet will be finite sheet which it slightly bigger that length of all parts in their maximum orientation)
-* Add support of non-rectangular sheets (should not take too much time, maybe 1-2 days)
-* Add support for pre-nesting (should not take too much time, maybe 1-2 days)
-* Add support for defects on sheet (should not take too much time, maybe 1-2 days)
-* Add configuration file or command line options (should not take too much time, maybe 1-2 days)
-
-Ideas for optimization (PR optimization):
-=========================================
-* Introduce QTree for memory size & bandwidth optimization
-* Optimize part variation mask creation step - use QTree for that
-* Optimize part variation mask creation step - use quantity parameter
-* Use boost.polygon's polygon_90 instead of QTree (should take much lesser memory), it could be 100X faster than generic polygon operations. From boost.polygon.polygon_90 documentation:
-
-> The motivation for providing the polygon_90_set_concept is that it is a very common special case of planar geometry which afford the implementation of a variety of optimizations on the general planar geometry algorithms.  Manhattan geometry processing by the polygon_90_set_concept can be 100X faster than arbitrary angle polygon manipulation.  Because the performance benefits are so large and the special case is important enough, the library provides these performance benefits for those application domains that require them.
-
-Ideas for Extreme Nest (PR optimization):
-=========================================
-* Add support of automation position tolerance calculation (for instance, minimum distance between points)
-* Use bitwise level for position x and position y during individual mate and mutation
-* Use two gene alleles, simulate dominant and recessive genes
-
 TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 ================================================================================
 * ~~CalculateFitness~~
@@ -62,8 +33,37 @@ Ideas for NFP Optimization (NoFitPolygon, Minkowski sum and other parts in C++):
 * Add "insertion place" parameter for genetic optimization (insertion order, variation index, insertion place as angle):
 > Maybe angle of the point on the NFP with respect to the centroid of the NFP. And then you have a variable from 0 to 2pi
 
-TODO for Deep Nest (NoFitPolygon, Minkowski sum in C++ as Node.js addon, other parts in JavaScript):
-===================
+TODO for Extreme Nest (PR optimization - now suspended):
+========================================================
+* ~~Add support for orientations~~
+* ~~Add support for flip flag~~
+* ~~Add support of multiple sheets~~
+* Add support for protection offset (it is hard to estimate the required time for now)
+* Add support for border gap for sheets (it is hard to estimate the required time for now)
+* Add support for arcs (should not take too much time, maybe 1-2 days)
+* Add support of infinite sheet length (should not take too much time, maybe 1-2 days; I think that "infinite" sheet will be finite sheet which it slightly bigger that length of all parts in their maximum orientation)
+* Add support of non-rectangular sheets (should not take too much time, maybe 1-2 days)
+* Add support for pre-nesting (should not take too much time, maybe 1-2 days)
+* Add support for defects on sheet (should not take too much time, maybe 1-2 days)
+* Add configuration file or command line options (should not take too much time, maybe 1-2 days)
+
+Ideas for optimization (PR optimization - now suspended):
+=========================================================
+* Introduce QTree for memory size & bandwidth optimization
+* Optimize part variation mask creation step - use QTree for that
+* Optimize part variation mask creation step - use quantity parameter
+* Use boost.polygon's polygon_90 instead of QTree (should take much lesser memory), it could be 100X faster than generic polygon operations. From boost.polygon.polygon_90 documentation:
+
+> The motivation for providing the polygon_90_set_concept is that it is a very common special case of planar geometry which afford the implementation of a variety of optimizations on the general planar geometry algorithms.  Manhattan geometry processing by the polygon_90_set_concept can be 100X faster than arbitrary angle polygon manipulation.  Because the performance benefits are so large and the special case is important enough, the library provides these performance benefits for those application domains that require them.
+
+Ideas for Extreme Nest (PR optimization - now suspended):
+=========================================================
+* Add support of automation position tolerance calculation (for instance, minimum distance between points)
+* Use bitwise level for position x and position y during individual mate and mutation
+* Use two gene alleles, simulate dominant and recessive genes
+
+TODO for Deep Nest (NoFitPolygon, Minkowski sum in C++ as Node.js addon, other parts in JavaScript - now suspended):
+====================================================================================================================
 * Add support for orientations
 * Add support for flip flag
 * Add support of infinite sheet length
