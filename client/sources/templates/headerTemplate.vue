@@ -4,7 +4,6 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <img class="small-icon" :src="image">
                     <p class="header-title">EXTREME-NEST</p>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 toolbar">
@@ -18,15 +17,9 @@
 
 <script>
 
-    import image from '../resources/images/red-icon.png'
 
     export default {
-        name: 'headerTemplate',
-        data: function () {
-            return {
-                image: image
-            }
-        }
+        name: 'headerTemplate'
     }
 
 </script>
@@ -37,18 +30,12 @@
         width: 100%;
         height: 50px;
         background-color: white;
-    }
-
-    .small-icon {
-        float: left;
-        margin: 5px 5px 0 0;
-        height: 45px;
-        width: auto;
+        border-bottom: 1px solid #ACB1B4;
     }
 
     .header-title {
         float: left;
-        color: #4A4849;
+        color: #6F7D9A;
         margin: 12px 0 0 0;
         font-size: 22px;
         font-family: 'Staatliches', cursive;

@@ -11,26 +11,24 @@ html {
 ::-webkit-scrollbar {
     cursor: pointer;
     width: 10px;
+    height: 98%
 }
 
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey;
-    border-radius: 5px;
+    box-shadow: inset 0 0 5px #E6ECF0;
+    border-radius: 15px;
 }
 
 ::-webkit-scrollbar-thumb {
     cursor: pointer;
-    background: #882B34;
-    border-radius: 5px;
+    background: #B8DEF5;
+    border-radius: 15px;
 }
 
 section {
     height: 100%;
     width: 100%;
-    background: rgba(196, 31, 38, 1.0);
-    background: -webkit-linear-gradient(top left, rgba(196, 31, 38, 1.0), rgba(78, 53, 64, 1.0));
-    background: -moz-linear-gradient(top left, rgba(196, 31, 38, 1.0), rgba(78, 53, 64, 1.0));
-    background: linear-gradient(top left, rgba(196, 31, 38, 1.0), rgba(78, 53, 64, 1.0));
+    background-color: #E6ECF0;
 }
 
 section,
@@ -40,7 +38,6 @@ section div div {
 }
 
 .block {
-    border: 1px solid #DBD8D9;
     padding: 15px 25px 20px 25px;
     margin-top: 12%;
     text-align: center;
@@ -50,7 +47,7 @@ section div div {
 
 .block-title {
     font-family: 'Open Sans Condensed', sans-serif;
-    color: white;
+    color: #8996A2;
     font-size: 32px;
 }
 
@@ -66,7 +63,7 @@ section div div {
     font-family: 'Open Sans', sans-serif;
     padding: 7px 12px 7px 12px;
     background-color: white;
-    border: 1px solid #DBD8D9;
+    border: 1px solid #A3D4F2;
     width: 100%;
     height: 405px;
     border-radius: 5px;
@@ -89,7 +86,7 @@ section div div {
     border-radius: 5px;
     font-size: 15px;
     border: 0;
-    background: #0D88E4;
+    background: #48AAE6;
     -webkit-transition: all 0.3s ease;;
     -moz-transition: all 0.3s ease;;
     -o-transition: all 0.3s ease;;
@@ -97,12 +94,16 @@ section div div {
 }
 
 .block-button:hover {
-    background-color: #122C44;
+    background-color: #3B8ABB;
+}
+
+.block-button:disabled {
+    pointer-events: none;
 }
 
 .disabled-block-button {
     cursor: default;
-    background-color: #122C44;
+    background-color: #B8DEF5;
 }
 
 .block-select {
@@ -112,6 +113,7 @@ section div div {
     padding: 5px 25px 5px 25px;
     border-radius: 5px;
     font-size: 15px;
+    border: 1px solid #A3D4F2;
     width: 60%;
 }
 
@@ -121,7 +123,7 @@ section div div {
 
 .log-message {
     transform: translateY(7px);
-    color: white;
+    color: #8996A2;
     font-size: 16px;
     font-family: 'Open Sans Condensed', sans-serif;
 }
@@ -131,14 +133,14 @@ section div div {
     margin-top: 30px;
     float: left;
     font-size: 45px;
-    color: white;
+    color: #8996A2;
 }
 
 .subtitle {
     font-family: 'Open Sans Condensed', sans-serif;
     transform: translateY(-20px);
     float: left;
-    color: white;
+    color: #8996A2;
     font-size: 18px;
 }
 
@@ -146,6 +148,10 @@ section div div {
     font-family: 'Open Sans', sans-serif;
     float: left;
     margin: 5px 0 0 16px;
-    color: white;
+    color: #8996A2;
     font-size: 18px;
+}
+
+canvas {
+    border: 1px solid #A3D4F2;
 }

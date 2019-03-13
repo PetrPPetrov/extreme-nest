@@ -67,7 +67,6 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: path.resolve(__dirname, './resources/styles/style.css')},
             {from: path.resolve(__dirname, './resources/images/white-icon.png')},
-            {from: path.resolve(__dirname, './resources/images/red-icon.png')},
             {from: path.resolve(__dirname, './resources/images/visualization-icon.png')}
         ])
     ],
