@@ -6,7 +6,7 @@ TODO list:
 * Do not run nesting automatically after new test generation, instead of this add new button 'Run nesting' under 'Visualize test' button and horizontal separator.
 * Generate colors for visualization randomly, but they should be different from each other
 * Visualize server response by using the same colors as for gold response visualization
-* Rename 'Tests' page to 'Create' (just rename link for this "page")
+* ~~Rename 'Tests' page to 'Create' (just rename link for this "page")~~
 
 Ideas:
 ======
