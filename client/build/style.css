@@ -47,14 +47,8 @@ section div div {
 
 .block-title {
     font-family: 'Open Sans Condensed', sans-serif;
-    color: #8996A2;
+    color: #4B5259;
     font-size: 32px;
-}
-
-.block-tip {
-    font-size: 14px;
-    color: #8B8888;
-    margin-bottom: 5px;
 }
 
 .block-textarea {
@@ -123,7 +117,7 @@ section div div {
 
 .log-message {
     transform: translateY(7px);
-    color: #8996A2;
+    color: #5D666E;
     font-size: 16px;
     font-family: 'Open Sans Condensed', sans-serif;
 }
@@ -133,14 +127,14 @@ section div div {
     margin-top: 30px;
     float: left;
     font-size: 45px;
-    color: #8996A2;
+    color: #727C86;
 }
 
 .subtitle {
     font-family: 'Open Sans Condensed', sans-serif;
     transform: translateY(-20px);
     float: left;
-    color: #8996A2;
+    color: #4B5259;
     font-size: 18px;
 }
 
@@ -148,7 +142,7 @@ section div div {
     font-family: 'Open Sans', sans-serif;
     float: left;
     margin: 5px 0 0 16px;
-    color: #8996A2;
+    color: #4B5259;
     font-size: 18px;
 }
 
