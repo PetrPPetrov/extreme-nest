@@ -81,6 +81,7 @@ Generic TODO:
 Generic Ideas:
 ==============
 * ~~Implement NFP algorithm fully in C++, i.e. as part of Extreme Nest~~
+* Use Microsoft Azure or something other for running nesting requests in parallel?
 * Implement neural network algorithm for nesting
 
 
