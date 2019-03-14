@@ -100,8 +100,6 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
     nestingResponse.message = 'successfully completed';
     nestingResponse.nestings = [];
 
-    sheetWidth += 0.0001;
-    sheetHeight += 0.0001;
     const sheetID = 55; // TODO: need to generate id
     nestingRequest.sheets.push({
         'height': sheetHeight,
@@ -129,26 +127,20 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
         } else {
             geometry = createRectangleGeometry(figure.width, figure.height);
         }
-        const index = _.findIndex(nestingRequest.parts, part => _.isEqual(part.geometry, geometry));
-        if (index !== -1) {
-            nestingRequest.parts[index].instances[0].quantity++;
-            const nestingPartID = nestingRequest.parts[index].instances[0].id;
-            addNestingPart(nestedParts, nestingPartID, [figure.xPosition, figure.yPosition]);
-        } else {
-            addNestingGeometry(nestingRequest.parts, figureID, geometry);
-            addNestingPart(nestedParts, figureID, [figure.xPosition, figure.yPosition]);
-        }
+        addNestingGeometry(nestingRequest.parts, figureID, geometry, generateColor());
+        addNestingPart(nestedParts, figureID, [figure.xPosition, figure.yPosition]);
         figureID++;
     });
 
     return [ nestingRequest, nestingResponse ];
 }
 
-function addNestingGeometry(nestedParts, figureID, geometry) {
+function addNestingGeometry(nestedParts, figureID, geometry, color) {
     nestedParts.push({
         'geometry': geometry,
         'instances': [{
             'quantity': 1,
+            'color': color,
             'id': figureID
         }]
     });
@@ -161,6 +153,15 @@ function addNestingPart(nestedParts, id, [xPos, yPos]) {
         'flip': false,
         'position': [xPos, yPos]
     });
+}
+
+function generateColor() {
+    const hexValues = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e"];
+    let newColor = "#";
+    for (let i = 0; i < 6; i++ ) {
+        newColor += hexValues[Math.round( Math.random() * 14 )];
+    }
+    return newColor;
 }
 
 export default generateNestingAsync

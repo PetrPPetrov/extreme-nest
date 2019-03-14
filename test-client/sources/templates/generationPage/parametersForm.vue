@@ -73,6 +73,7 @@
             onClickRunNesting(){
                 this.$store.dispatch('generationInProgress', true);
                 const nestingRequest = JSON.parse(this.$store.getters.goldNestingRequest);
+                deleteColorsInNestingRequest(nestingRequest);
                 this.$store.dispatch('randomVisualizationLog', 'Nesting generation on the server in progress...');
                 this.$http.post(`${networkConfiguration.nestingServer.address}/new`, nestingRequest)
                     .then(response =>
@@ -95,8 +96,6 @@
                             setTimeout(() => this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                         } else {
                             const nestingResponse = response.body;
-                            console.log(nestingRequest);
-                            console.log(nestingResponse);
                             drawCanvas(canvas, nestingRequest, nestingResponse, this.canvasBlockSize);
                             this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
                             this.$store.dispatch('randomNestingResponse', JSON.stringify(nestingResponse, null, 4));
@@ -111,6 +110,15 @@
             }
 
         }
+    }
+
+    function deleteColorsInNestingRequest(nestingRequest){
+        nestingRequest.parts.forEach(part => {
+            part.instances.forEach(instance => {
+                delete instance.color;
+            })
+        });
+        return nestingRequest;
     }
 
 </script>

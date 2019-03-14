@@ -52,15 +52,23 @@ module.exports = {
 };
 
 function composeNestings(promisesNestings) {
-    return promisesNestings.map(
-        ([id, goldRequest, serverRequest, goldResponse]) => ({
+    return promisesNestings.map(([id, goldRequest, serverRequest, goldResponse]) => ({
             id: id,
             status: 'progress',
             goldRequest: goldRequest,
-            serverRequest: serverRequest,
+            serverRequest: deleteColorsInNestingRequest(serverRequest),
             goldResponse: goldResponse
         })
     );
+}
+
+function deleteColorsInNestingRequest(nestingRequest){
+    nestingRequest.parts.forEach(part => {
+        part.instances.forEach(instance => {
+            delete instance.color;
+        })
+    });
+    return nestingRequest;
 }
 
 const requestify = require('requestify');

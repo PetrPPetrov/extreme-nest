@@ -27,7 +27,7 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
 
         const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
         functional.doIf(geometry, () => {
-            const color = generateColorByPosition(position);
+            const color = generateColor();
             canvas.add(createLocalCoordinateSystem(position, rotationAngle, color));
             geometry.geometry.forEach(vertices =>
                 canvas.add(new fabric.Path(createCoordinates(vertices), {
@@ -66,10 +66,13 @@ function createLocalCoordinateSystem(vertex, angle, color) {
     });
 }
 
-function generateColorByPosition([xPos, yPos]) {
-    const x = ((xPos + 17) * 23).toString(16).padStart(3, 0);
-    const y = ((yPos + 13) * 31).toString(16).padStart(3, 0);
-    return `#${x}${y}`.slice(0, 7);
+function generateColor() {
+    const hexValues = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e"];
+    let newColor = "#";
+    for (let i = 0; i < 6; i++ ) {
+        newColor += hexValues[Math.round( Math.random() * 14 )];
+    }
+    return newColor;
 }
 
 export default drawCanvas
