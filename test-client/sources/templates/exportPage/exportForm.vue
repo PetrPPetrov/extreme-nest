@@ -3,7 +3,7 @@
     <div id="export-form" class="block">
         <p class="block-title">Export</p>
         <input id="input-export-file" type="file" @change="onChangeSelectedFile($event)">
-        <button id="run-nesting-button" class="button" @click="onClickReadFile">Export</button>
+        <button id="run-nesting-button" class="button" @click="onClickReadFile" :disabled="!selectedFile">Export</button>
         <hr>
         <p class="log-message">{{ $store.getters.networkLog }}</p>
     </div>
@@ -17,8 +17,7 @@
     export default {
         data() {
             return {
-                selectedFile: [],
-                exportedNestingFile : ''
+                selectedFile: null
             }
         },
         methods: {
@@ -32,10 +31,13 @@
                 reader.onload = (() => {
                     return (event) => {
                         this.$store.dispatch('networkLog', 'File was loaded');
-                        this.exportedNestingFile = event.target.result;
+                        this.$store.dispatch('exportNestingRequest', event.target.result);
                     };
                 })(this.selectedFile);
-                reader.onerror = () => this.$store.dispatch('networkLog', 'File wasn\'t loaded');
+                reader.onerror = () => {
+                    this.selectedFile = null;
+                    this.$store.dispatch('networkLog', 'File wasn\'t loaded');
+                };
                 reader.readAsText(this.selectedFile);
             },
 
@@ -46,6 +48,9 @@
 
 <style scoped>
 
+    #export-form {
+        width: calc(100% + 15px);
+    }
 
     input[type=file] {
         outline: none;
