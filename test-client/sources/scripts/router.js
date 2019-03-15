@@ -10,6 +10,7 @@ import VueRouter from 'vue-router'
 
 import storage from '../scripts/storage'
 import generationPage from '../templates/generationPage/generationPage'
+import exportPage from '../templates/exportPage/exportPage'
 import testingPage from '../templates/testingPage/testingPage'
 
 Vue.use(VueRouter);
@@ -17,8 +18,16 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     routes: [
         {
-            path: `/generation`,
+            path: `/create`,
             component: generationPage,
+            beforeEnter: (to, from, next) => {
+                storage.dispatch('clear');
+                next();
+            }
+        },
+        {
+            path: `/export`,
+            component: exportPage,
             beforeEnter: (to, from, next) => {
                 storage.dispatch('clear');
                 next();
@@ -34,7 +43,7 @@ const router = new VueRouter({
         },
         {
             path: '/',
-            redirect: `/generation`,
+            redirect: `/create`,
             beforeEnter: (to, from, next) => {
                 next();
             }

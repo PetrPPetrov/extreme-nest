@@ -34,6 +34,10 @@ module.exports = {
     performance: {
         hints: false
     },
+    // devServer: {
+    //     host: 'localhost',
+    //     port: 8080
+    // },
     module: {
         rules: [
             {
