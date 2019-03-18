@@ -1,9 +1,9 @@
 <template>
 
-    <div id="export-form" class="block">
-        <p class="block-title">Export</p>
+    <div id="import-form" class="block">
+        <p class="block-title">Import</p>
         <input id="input-export-file" type="file" @change="onChangeSelectedFile($event)">
-        <button id="run-nesting-button" class="button" @click="onClickReadFile" :disabled="!selectedFile">Export</button>
+        <button id="run-nesting-button" class="button" @click="onClickImport" :disabled="!selectedFile">Import</button>
         <hr>
         <p class="log-message">{{ $store.getters.networkLog }}</p>
     </div>
@@ -13,6 +13,7 @@
 <script>
 
     import * as _ from 'underscore'
+    import convertToJSONNestingRequest from '../../scripts/nestingImporter'
 
     export default {
         data() {
@@ -26,12 +27,13 @@
                 this.selectedFile = _.first(event.target.files);
             },
 
-            onClickReadFile() {
-                var reader = new FileReader();
+            onClickImport() {
+                const reader = new FileReader();
                 reader.onload = (() => {
                     return (event) => {
                         this.$store.dispatch('networkLog', 'File was loaded');
-                        this.$store.dispatch('exportNestingRequest', event.target.result);
+                        const request = convertToJSONNestingRequest(event.target.result);
+                        this.$store.dispatch('exportNestingRequest', JSON.stringify(request, null, 4));
                     };
                 })(this.selectedFile);
                 reader.onerror = () => {
@@ -48,7 +50,7 @@
 
 <style scoped>
 
-    #export-form {
+    #import-form {
         width: calc(100% + 15px);
     }
 

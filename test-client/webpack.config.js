@@ -34,10 +34,11 @@ module.exports = {
     performance: {
         hints: false
     },
-    // devServer: {
-    //     host: 'localhost',
-    //     port: 8080
-    // },
+    devServer: {
+        hot: true,
+        open: true,
+        publicPath: '/'
+    },
     module: {
         rules: [
             {
