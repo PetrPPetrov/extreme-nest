@@ -12,6 +12,8 @@
 #include "nesting_request.h"
 #include "nesting_task.h"
 #include "extreme_error.h"
+#include "config.h"
+#include "simplify.h"
 #include "pr_optimization/nest.h"
 #include "nfp_optimization/nest.h"
 

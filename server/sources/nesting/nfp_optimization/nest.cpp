@@ -125,6 +125,10 @@ namespace Nfp
         }
         void calculateNesting()
         {
+            if (Config::Generic::Simplification::RUN)
+            {
+                simplify(task);
+            }
             Config::Nfp::INPUT_SCALE = Nfp::calculateInputScale(task);
             calculatePartsInfo();
             calculateSheetsInfo();

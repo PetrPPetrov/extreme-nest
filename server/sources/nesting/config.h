@@ -10,6 +10,12 @@ namespace Config
     namespace Generic
     {
         static double ROTATION_ANGLE_STEP = 0.1;
+        namespace Simplification
+        {
+            static bool RUN = true;
+            static double TOLERANCE = 0.1;
+            static bool HIGHEST_QUALITY = false;
+        }
     }
 
     namespace GeneticAlgorithm

@@ -43,6 +43,7 @@ set(HEADERS
   ${EXTREME_NEST_SOURCE_DIR}/extreme_json.h
   ${EXTREME_NEST_SOURCE_DIR}/nesting_request.h
   ${EXTREME_NEST_SOURCE_DIR}/nesting_task.h
+  ${EXTREME_NEST_SOURCE_DIR}/simplify.h
 )
 
 set(SOURCES

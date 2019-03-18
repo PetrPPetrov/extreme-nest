@@ -71,6 +71,7 @@ typedef boost::shared_ptr<NestingResult> nesting_result_ptr;
 
 nesting_task_ptr generateTask(const NestingRequest::Order& nesting_order);
 std::string generateJson(const NestingResult& result, const NestingTask& task);
+void simplify(nesting_task_ptr nesting_task);
 
 struct InterruptionException
 {

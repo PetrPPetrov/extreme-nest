@@ -133,6 +133,10 @@ namespace Pr
         }
         void calculateNesting()
         {
+            if (Config::Generic::Simplification::RUN)
+            {
+                simplify(task);
+            }
             calculatePartsInfo();
             calculateSheetsInfo();
             GeneticAlgorithm genetic_algorithm(parts_info, sheets_info);

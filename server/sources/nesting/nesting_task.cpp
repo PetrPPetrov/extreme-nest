@@ -9,6 +9,7 @@
 #include <list>
 #include <boost/math/constants/constants.hpp>
 #include "config.h"
+#include "simplify.h"
 #include "extreme_json.h"
 #include "nesting_task.h"
 
@@ -244,4 +245,28 @@ std::string generateJson(const NestingResult& result, const NestingTask& task)
     Output output;
     root.write(output);
     return output.getOutput();
+}
+
+void simplify(geometry_ptr geometry)
+{
+    for (auto& outer_contour : geometry->outer_contours)
+    {
+        outer_contour = simplify(outer_contour, Config::Generic::Simplification::TOLERANCE, Config::Generic::Simplification::HIGHEST_QUALITY);
+    }
+    for (auto& hole : geometry->holes)
+    {
+        hole = simplify(hole, Config::Generic::Simplification::TOLERANCE, Config::Generic::Simplification::HIGHEST_QUALITY);
+    }
+}
+
+void simplify(nesting_task_ptr nesting_task)
+{
+    for (auto part : nesting_task->parts)
+    {
+        simplify(part->variations[0].source_geometry);
+    }
+    for (auto sheet : nesting_task->sheets)
+    {
+        simplify(sheet->geometry);
+    }
 }
