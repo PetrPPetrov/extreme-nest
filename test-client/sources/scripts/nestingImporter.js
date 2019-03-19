@@ -11,10 +11,12 @@ import converter from 'xml-js'
 const convertToJSONNestingRequest = function (xmlNestingRequest) {
     const jsonText = converter.xml2json(xmlNestingRequest, {compact: true, spaces: 4});
     const jsonRequest = JSON.parse(jsonText);
+    console.log(jsonRequest);
 
     const jsonProblem = jsonRequest.nesting.problem;
     const boardComponentAttrs = jsonProblem.boards.piece.component._attributes;
     const sheetComponent = {
+        id: 111, // TODO: need to add id generation
         polygonID: boardComponentAttrs.idPolygon,
         type: boardComponentAttrs.type,
         xOffset: boardComponentAttrs.xOffset,
@@ -25,10 +27,12 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
     let uniquePieceID = 1;
     jsonProblem.lot.piece.forEach(piece => {
         const quantity = piece._attributes.quantity;
+        const pieceID = piece._attributes.id;
         const pieceComponentAttrs = piece.component._attributes;
         for (let i = 0; i < quantity; i++) {
             pieces.push({
                 id: uniquePieceID++,
+                pieceID: pieceID,
                 polygonID: pieceComponentAttrs.idPolygon,
                 type: pieceComponentAttrs.type,
                 xOffset: pieceComponentAttrs.xOffset,
@@ -57,10 +61,20 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
         }
     });
 
-    return convertToPowerNestAPI(sheetComponent, pieces, polygons);
+    const solution = _.first(jsonRequest.nesting.solutions.solution);
+    const placements = solution.placement.map(placement => ({
+        pieceID: placement._attributes.idPiece,
+        angle: placement._attributes.angle,
+        xPos: placement._attributes.x,
+        yPos: placement._attributes.y
+    }));
+
+    const nestingRequest = convertRequestToPowerNestAPI(sheetComponent, pieces, polygons);
+    const nestingResponse = convertResponseToPowerNestAPI(sheetComponent, pieces, placements);
+    return [ nestingRequest, nestingResponse ];
 };
 
-function convertToPowerNestAPI(sheetComponent, pieces, polygons) {
+function convertRequestToPowerNestAPI(sheetComponent, pieces, polygons) {
     const nestingRequest = {};
     nestingRequest.parts = [];
     nestingRequest.sheets = [];
@@ -69,6 +83,7 @@ function convertToPowerNestAPI(sheetComponent, pieces, polygons) {
     const polygon = _.find(polygons, polygon => polygon.polygonID === sheetComponent.polygonID);
     const polygonLines = polygon.lines;
     nestingRequest.sheets.push({
+        id: sheetComponent.id,
         length: (polygonLines[0].x1 - polygonLines[0].x0),
         height: (polygonLines[1].y1 - polygonLines[1].y0)
     });
@@ -89,7 +104,30 @@ function convertToPowerNestAPI(sheetComponent, pieces, polygons) {
         });
     });
 
+
     return nestingRequest;
+}
+
+function convertResponseToPowerNestAPI(sheetComponent, pieces, placements) {
+    const nestingResponse = {};
+    nestingResponse.nestings = [];
+    nestingResponse.methods = 'Successfully completed';
+
+    nestingResponse.nestings.push({
+        sheet: sheetComponent.id,
+        nested_parts: []
+    });
+    placements.forEach(placement => {
+        const piece = _.find(pieces, piece => piece.pieceID === placement.pieceID);
+        _.first(nestingResponse.nestings).nested_parts.push({
+            id: piece.id,
+            flip: false,
+            angle: placement.angle,
+            position: [ placement.xPos, placement.yPos ]
+        });
+    });
+
+    return nestingResponse;
 }
 
 export default convertToJSONNestingRequest

@@ -13,6 +13,7 @@
 <script>
 
     import * as _ from 'underscore'
+    import drawCanvas from '../../scripts/canvasPainter'
     import convertToJSONNestingRequest from '../../scripts/nestingImporter'
 
     export default {
@@ -32,8 +33,9 @@
                 reader.onload = (() => {
                     return (event) => {
                         this.$store.dispatch('networkLog', 'File was loaded');
-                        const request = convertToJSONNestingRequest(event.target.result);
+                        const [request, response] = convertToJSONNestingRequest(event.target.result);
                         this.$store.dispatch('exportNestingRequest', JSON.stringify(request, null, 4));
+                        drawCanvas(this.$store.getters.canvasGoldGeneration, request, response, 5);
                     };
                 })(this.selectedFile);
                 reader.onerror = () => {
