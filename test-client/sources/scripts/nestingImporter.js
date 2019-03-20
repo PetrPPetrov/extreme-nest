@@ -11,7 +11,6 @@ import converter from 'xml-js'
 const convertToJSONNestingRequest = function (xmlNestingRequest) {
     const jsonText = converter.xml2json(xmlNestingRequest, {compact: true, spaces: 4});
     const jsonRequest = JSON.parse(jsonText);
-    console.log(jsonRequest);
 
     const jsonProblem = jsonRequest.nesting.problem;
     const boardComponentAttrs = jsonProblem.boards.piece.component._attributes;
@@ -90,20 +89,16 @@ function convertRequestToPowerNestAPI(sheetComponent, pieces, polygons) {
 
     pieces.forEach(piece => {
         const polygon = _.find(polygons, polygon => polygon.polygonID === piece.polygonID);
-        let geometry = [];
-        polygon.lines.forEach(line => {
-            geometry.push([ line.x0, line.y0 ]);
-            geometry.push([ line.x1, line.y1 ]);
-        });
+        const geometry = polygon.lines.map(line => [ line.x0, line.y0 ]);
         nestingRequest.parts.push({
             geometry: [geometry],
             instances: [{
                 id: piece.id,
+                pieceID: piece.pieceID,
                 quantity: 1
             }]
         });
     });
-
 
     return nestingRequest;
 }
@@ -121,9 +116,10 @@ function convertResponseToPowerNestAPI(sheetComponent, pieces, placements) {
         const piece = _.find(pieces, piece => piece.pieceID === placement.pieceID);
         _.first(nestingResponse.nestings).nested_parts.push({
             id: piece.id,
+            pieceID: piece.pieceID,
             flip: false,
-            angle: placement.angle,
-            position: [ placement.xPos, placement.yPos ]
+            angle: parseFloat(placement.angle),
+            position: [ parseFloat(placement.xPos), parseFloat(placement.yPos) ]
         });
     });
 

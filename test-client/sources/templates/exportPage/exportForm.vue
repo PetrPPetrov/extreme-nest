@@ -32,6 +32,7 @@
                 const reader = new FileReader();
                 reader.onload = (() => {
                     return (event) => {
+                        this.$store.getters.canvasGoldGeneration.clear();
                         this.$store.dispatch('networkLog', 'File was loaded');
                         const [request, response] = convertToJSONNestingRequest(event.target.result);
                         this.$store.dispatch('exportNestingRequest', JSON.stringify(request, null, 4));

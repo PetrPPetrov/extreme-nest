@@ -29,19 +29,39 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
         functional.doIf(geometry, () => {
             const color = generateColor();
             canvas.add(createLocalCoordinateSystem(position, rotationAngle, color));
-            geometry.geometry.forEach(vertices =>
+            geometry.geometry.forEach(vertices => {
+                const [xAlignment, yAlignment] = getAlignment(vertices, rotationAngle);
                 canvas.add(new fabric.Path(createCoordinates(vertices), {
-                    top: yPos * blockSize,
-                    left: xPos * blockSize,
+                    top: yPos * blockSize + (yAlignment * blockSize),
+                    left: xPos * blockSize + (xAlignment * blockSize),
                     angle: rotationAngle,
                     fill: color
-                }))
-            )
+                }));
+            });
         });
     });
 
     canvas.renderAll();
 };
+
+function getAlignment(vertices, angle) {
+    let maxXAlignment = 0.0;
+    let maxYAlignment = 0.0;
+    vertices.forEach(vertex => {
+        if (parseFloat(vertex[0]) < maxXAlignment) {
+            maxXAlignment = vertex[0];
+        }
+        if (parseFloat(vertex[1]) < maxYAlignment) {
+            maxYAlignment = vertex[1];
+        }
+    });
+
+    if (angle === 180) {
+        return [-maxXAlignment, maxYAlignment]
+    } else {
+        return [maxXAlignment, maxYAlignment]
+    }
+}
 
 function createSheetBorder(canvas, width, height) {
     return new fabric.Path(`M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`, {
