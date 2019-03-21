@@ -61,6 +61,10 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
     });
 
     const solution = _.first(jsonRequest.nesting.solutions.solution);
+    if (_.isNull(solution) || _.isUndefined(solution)) {
+        throw new Error("Nesting does not contain solution");
+    }
+
     const placements = solution.placement.map(placement => ({
         pieceID: placement._attributes.idPiece,
         angle: placement._attributes.angle,

@@ -14,7 +14,7 @@
             <div class="block">
                 <p class="block-title">Imported nesting</p>
                 <label for="textarea-export-nesting-request">Nesting request:</label>
-                <textarea id="textarea-export-nesting-request" disabled v-model="$store.getters.exportNestingRequest"></textarea>
+                <textarea id="textarea-export-nesting-request" disabled v-model="$store.getters.importNestingRequest"></textarea>
             </div>
         </div>
     </div>

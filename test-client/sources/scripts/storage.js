@@ -18,7 +18,8 @@ const storage = new Vuex.Store({
         goldNestingResponse: '',
         randomNestingRequest: '',
         randomNestingResponse: '',
-        exportNestingRequest: '',
+        importNestingRequest: '',
+        importNestingResponse: '',
         networkLog: '...',
         goldVisualizationLog: '...',
         randomVisualizationLog: '...',
@@ -35,7 +36,8 @@ const storage = new Vuex.Store({
         goldNestingRequest: state => state.goldNestingRequest,
         goldNestingResponse: state => state.goldNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
-        exportNestingRequest: state => state.exportNestingRequest,
+        importNestingRequest: state => state.importNestingRequest,
+        importNestingResponse: state => state.importNestingResponse,
         randomNestingResponse: state => state.randomNestingResponse,
         networkLog: state => state.networkLog,
         goldVisualizationLog: state => state.goldVisualizationLog,
@@ -49,7 +51,8 @@ const storage = new Vuex.Store({
             commit('set', { key: 'randomNestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingResponse', value: '' });
-            commit('set', { key: 'exportNestingRequest', value: '' });
+            commit('set', { key: 'importNestingRequest', value: '' });
+            commit('set', { key: 'importNestingResponse', value: '' });
             commit('set', { key: 'networkLog', value: '...' });
             commit('set', { key: 'goldVisualizationLog', value: '...' });
             commit('set', { key: 'randomVisualizationLog', value: '...' });
@@ -73,8 +76,11 @@ const storage = new Vuex.Store({
         randomNestingRequest({ commit }, request) {
             commit('set', { key: 'randomNestingRequest', value: request });
         },
-        exportNestingRequest({ commit }, request) {
-            commit('set', { key: 'exportNestingRequest', value: request });
+        importNestingRequest({ commit }, request) {
+            commit('set', { key: 'importNestingRequest', value: request });
+        },
+        importNestingResponse({ commit }, request) {
+            commit('set', { key: 'importNestingResponse', value: request });
         },
         randomNestingResponse({ commit }, response) {
             commit('set', { key: 'randomNestingResponse', value: response });
