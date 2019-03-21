@@ -22,19 +22,18 @@
 
             onClickSaveTest() {
                 this.isSavingInProgress = true;
-
                 this.$store.dispatch('networkLog', 'Saving in progress...');
                 const http = new HttpClient(this.$http);
                 http.createNewTest()
                     .then(newTest => {
-                            Promise.all([
-                                http.joinGoldRequestToTest(this.$store.getters.goldNestingRequest, newTest.id),
-                                http.joinServerRequestToTest(this.$store.getters.randomNestingRequest, newTest.id),
-                                http.joinGoldResponseToTest(this.$store.getters.goldNestingResponse, newTest.id)
-                            ]);
-                            this.$root.$emit('add', newTest.id);
-                        })
-                        .then(() => this.$store.dispatch('networkLog', 'Test was saved'))
+                        Promise.all([
+                            http.joinGoldRequestToTest(this.$store.getters.goldNestingRequest, newTest.id),
+                            http.joinServerRequestToTest(this.$store.getters.randomNestingRequest, newTest.id),
+                            http.joinGoldResponseToTest(this.$store.getters.goldNestingResponse, newTest.id)
+                        ]);
+                        this.$root.$emit('add', newTest.id);
+                    })
+                    .then(() => this.$store.dispatch('networkLog', 'Test was saved'))
                     .catch(() => this.$store.dispatch('networkLog', 'Test wasn\'t saved'))
                     .finally(() => this.isSavingInProgress = false);
             }

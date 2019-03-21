@@ -92,8 +92,8 @@
                 let group = new fabric.Group(canvas.getObjects());
                 group.scaleX = this.scale / canvas.scale;
                 group.scaleY = this.scale / canvas.scale;
-                group.left = group.width / 2 + this.transX * this.scale;
-                group.top = group.height / 2 + this.transY * this.scale;
+                group.left = group.width / 15 + this.transX * this.scale;
+                group.top = group.height / 15 + this.transY * this.scale;
                 group.destroy();
 
                 canvas.scale = this.scale;
