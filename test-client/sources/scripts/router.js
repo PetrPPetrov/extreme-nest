@@ -10,7 +10,7 @@ import VueRouter from 'vue-router'
 
 import storage from '../scripts/storage'
 import generationPage from '../templates/generationPage/generationPage'
-import exportPage from '../templates/exportPage/exportPage'
+import importPage from '../templates/importPage/importPage'
 import testingPage from '../templates/testingPage/testingPage'
 
 Vue.use(VueRouter);
@@ -27,7 +27,7 @@ const router = new VueRouter({
         },
         {
             path: `/export`,
-            component: exportPage,
+            component: importPage,
             beforeEnter: (to, from, next) => {
                 storage.dispatch('clear');
                 next();

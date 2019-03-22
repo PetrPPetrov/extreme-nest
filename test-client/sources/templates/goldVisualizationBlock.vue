@@ -68,8 +68,8 @@
             },
 
             setScale(scaleToSet, anchorX, anchorY) {
-                const baseScale = 1;
-                const zoomMax = 15;
+                const baseScale = 0.1;
+                const zoomMax = 100;
                 const zoomMin = 1;
                 if (scaleToSet > zoomMax * baseScale) {
                     scaleToSet = zoomMax * baseScale;

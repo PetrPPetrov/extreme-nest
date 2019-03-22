@@ -23,7 +23,7 @@
 
 <script>
 
-    import exportForm from './exportForm'
+    import exportForm from './importForm'
     import goldVisualizationBlock from '../goldVisualizationBlock'
 
     export default {
