@@ -10,19 +10,17 @@
         <input id="input-sheet-height" type="number" v-model="sheetHeight" v-bind:class="{'error-input': (sheetHeight <= 0 || sheetHeight === '')}">
         <label for="input-nesting-time" v-bind:class="{'error-label': (nestingTime <= 0 || nestingTime === '')}">Nesting time in seconds:</label>
         <input id="input-nesting-time" type="number" v-model="nestingTime" v-bind:class="{'error-input': (nestingTime <= 0 || nestingTime === '')}">
-        <label for="input-canvas-block-size" v-bind:class="{'error-label': (canvasBlockSize <= 0 || canvasBlockSize === '')}">Block size for canvas:</label>
-        <input id="input-canvas-block-size" type="number" v-model="canvasBlockSize" v-bind:class="{'error-input': (canvasBlockSize <= 0 || canvasBlockSize === '')}">
         <button id="generation-button" class="button" @click="onClickGenerate" :disabled="(countFigures <= 0 || countFigures === '') ||
             (sheetWidth <= 0 || sheetWidth === '') || (sheetHeight <= 0 || sheetHeight === '') || (nestingTime <= 0 || nestingTime === '') ||
-            (canvasBlockSize <= 0 || canvasBlockSize === '') || this.$store.getters.generationInProgress">Generate</button>
+             this.$store.getters.generationInProgress">Generate</button>
         <saving-test-block></saving-test-block>
         <hr>
         <deleting-test-block></deleting-test-block>
         <hr>
         <button id="run-nesting-button" class="button" @click="onClickRunNesting" :disabled="(countFigures <= 0 || countFigures === '') ||
             (sheetWidth <= 0 || sheetWidth === '') || (sheetHeight <= 0 || sheetHeight === '') || (nestingTime <= 0 || nestingTime === '') ||
-            (canvasBlockSize <= 0 || canvasBlockSize === '') || this.$store.getters.generationInProgress ||
-            ($store.getters.nestingRequest === '') || ($store.getters.goldNestingResponse === '')">Run nesting</button>
+            this.$store.getters.generationInProgress || ($store.getters.nestingRequest === '') ||
+            ($store.getters.goldNestingResponse === '')">Run nesting</button>
         <hr>
         <p class="log-message">{{ $store.getters.networkLog }}</p>
     </div>
@@ -44,7 +42,6 @@
                 sheetWidth: 8,
                 sheetHeight: 4,
                 nestingTime: 1,
-                canvasBlockSize: 20,
             }
         },
         components: {
@@ -60,7 +57,7 @@
                 const [nestingRequest, nestingResponse] = await generateNestingAsync(
                     Math.floor(this.countFigures), this.sheetWidth, this.sheetHeight, this.nestingTime
                 );
-                this.$root.$emit('draw-gold-nesting-canvas', [nestingRequest, nestingResponse, this.canvasBlockSize]);
+                this.$root.$emit('draw-gold-nesting-canvas', [nestingRequest, nestingResponse, 20]);
                 this.$store.dispatch('nestingRequest', JSON.stringify(nestingRequest, null, 4));
                 this.$store.dispatch('goldNestingResponse', JSON.stringify(nestingResponse, null, 4));
                 this.$store.dispatch('goldVisualizationLog', 'Nesting generated successfully');
@@ -92,9 +89,9 @@
                             setTimeout(() => this.receiveNestingResponseFromServer(nestingRequest, nestingID), nestingRequest.time * 1000)
                         } else {
                             const nestingResponse = response.body;
-                            this.$root.$emit('draw-server-nesting-canvas', [nestingRequest, nestingResponse, this.canvasBlockSize]);
+                            this.$root.$emit('draw-server-nesting-canvas', [nestingRequest, nestingResponse, 20]);
                             this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
-                            this.$store.dispatch('randomNestingResponse', JSON.stringify(nestingResponse, null, 4));
+                            this.$store.dispatch('serverNestingResponse', JSON.stringify(nestingResponse, null, 4));
                             this.$store.dispatch('serverVisualizationLog', 'Server generated nesting successfully');
                             this.$store.dispatch('generationInProgress', false);
                         }

@@ -6,7 +6,7 @@
                 <p class="hidden-xs hidden-sm col-md-6 col-lg-6 header-title">extreme-nest-test-client</p>
                 <nav class="col-xs-9 col-sm-7 col-md-6 col-lg-6">
                     <router-link to="/testing" class="nav-button">Testing</router-link>
-                    <router-link to="/export" class="nav-button">Import</router-link>
+                    <router-link to="/import" class="nav-button">Import</router-link>
                     <router-link to="/create" class="nav-button">Create</router-link>
                 </nav>
             </div>

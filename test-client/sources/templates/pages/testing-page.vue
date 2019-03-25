@@ -14,7 +14,12 @@
             </div>
         </div>
         <div class="col-md-4 col-lg-4 block-wrapper">
-            <request-response-info-form></request-response-info-form>
+            <div class="block">
+                <p class="block-title">Request & responses</p>
+                <information-block title="Nesting request:" :data="$store.getters.nestingRequest" height="187"></information-block>
+                <information-block title="Gold nesting response:" :data="$store.getters.goldNestingResponse" height="187"></information-block>
+                <information-block title="Nesting response from server:" :data="$store.getters.serverNestingResponse" height="187"></information-block>
+            </div>
         </div>
     </div>
 
@@ -23,14 +28,14 @@
 <script>
 
     import navigationForm from '../forms/navigation-form'
+    import informationBlock from '../components/information-block'
     import visualizationBlock from '../components/visualization-block'
-    import requestResponseInfoForm from '../forms/request-response-info-form'
 
     export default {
         components: {
             navigationForm: navigationForm,
-            visualizationBlock: visualizationBlock,
-            requestResponseInfoForm: requestResponseInfoForm
+            informationBlock: informationBlock,
+            visualizationBlock: visualizationBlock
         }
     }
 

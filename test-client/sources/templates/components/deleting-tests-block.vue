@@ -17,7 +17,6 @@
 
     import * as _ from 'underscore';
     import HttpClient from '../../scripts/network'
-    import drawCanvas from '../../scripts/canvasPainter'
 
     export default {
         data() {
@@ -78,18 +77,15 @@
 
             onClickVisualizeTest() {
                 this.$store.dispatch('clear');
-                this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} visualization in progress...`);
                 const http = new HttpClient(this.$http);
                 http.getTestByTestID(this.selectedTestID)
                     .then(test => {
-                        const canvasBlockSize = 20;
-                        const canvas = this.$store.getters.canvasGoldGeneration;
-                        drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
                         delete test.goldRequest._id;
                         delete test.goldResponse._id;
                         this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
+                        this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
                         this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
                     })
                     .catch(() => {

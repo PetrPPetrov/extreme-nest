@@ -10,12 +10,12 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex);
 
-const storage = new Vuex.Store({
+const store = new Vuex.Store({
     state: {
         nestingRequest: '',
         goldNestingResponse: '',
         randomNestingRequest: '',
-        randomNestingResponse: '',
+        serverNestingResponse: '',
         importNestingRequest: '',
         importNestingResponse: '',
         networkLog: '...',
@@ -31,10 +31,10 @@ const storage = new Vuex.Store({
     getters: {
         nestingRequest: state => state.nestingRequest,
         goldNestingResponse: state => state.goldNestingResponse,
+        serverNestingResponse: state => state.randomNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
         importNestingRequest: state => state.importNestingRequest,
         importNestingResponse: state => state.importNestingResponse,
-        randomNestingResponse: state => state.randomNestingResponse,
         networkLog: state => state.networkLog,
         goldVisualizationLog: state => state.goldVisualizationLog,
         serverVisualizationLog: state => state.serverVisualizationLog,
@@ -45,7 +45,7 @@ const storage = new Vuex.Store({
             commit('set', { key: 'nestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingRequest', value: '' });
-            commit('set', { key: 'randomNestingResponse', value: '' });
+            commit('set', { key: 'serverNestingResponse', value: '' });
             commit('set', { key: 'importNestingRequest', value: '' });
             commit('set', { key: 'importNestingResponse', value: '' });
             commit('set', { key: 'networkLog', value: '...' });
@@ -67,8 +67,8 @@ const storage = new Vuex.Store({
         importNestingResponse({ commit }, request) {
             commit('set', { key: 'importNestingResponse', value: request });
         },
-        randomNestingResponse({ commit }, response) {
-            commit('set', { key: 'randomNestingResponse', value: response });
+        serverNestingResponse({ commit }, response) {
+            commit('set', { key: 'serverNestingResponse', value: response });
         },
         networkLog({ commit }, message) {
             commit('set', { key: 'networkLog', value: message });
@@ -85,4 +85,4 @@ const storage = new Vuex.Store({
     }
 });
 
-export default storage;
+export default store;

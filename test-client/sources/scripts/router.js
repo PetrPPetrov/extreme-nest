@@ -8,7 +8,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import storage from '../scripts/storage'
+import store from './store'
 import generationPage from '../templates/pages/generation-page'
 import importPage from '../templates/pages/import-page'
 import testingPage from '../templates/pages/testing-page'
@@ -21,15 +21,15 @@ const router = new VueRouter({
             path: `/create`,
             component: generationPage,
             beforeEnter: (to, from, next) => {
-                storage.dispatch('clear');
+                store.dispatch('clear');
                 next();
             }
         },
         {
-            path: `/export`,
+            path: `/import`,
             component: importPage,
             beforeEnter: (to, from, next) => {
-                storage.dispatch('clear');
+                store.dispatch('clear');
                 next();
             }
         },
@@ -37,7 +37,7 @@ const router = new VueRouter({
             path: '/testing',
             component: testingPage,
             beforeEnter: (to, from, next) => {
-                storage.dispatch('clear');
+                store.dispatch('clear');
                 next();
             }
         },

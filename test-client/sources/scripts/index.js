@@ -8,8 +8,8 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 
+import store from './store'
 import router from './router'
-import storage from './storage'
 
 import headerForm from '../templates/forms/header-form'
 
@@ -17,7 +17,7 @@ Vue.use(VueResource);
 
 new Vue({
     el : '#app',
-    store: storage,
+    store: store,
     router: router,
     components : {
         headerForm: headerForm
