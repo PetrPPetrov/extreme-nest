@@ -23,8 +23,8 @@
 
 <script>
 
-    import exportForm from './importForm'
-    import goldVisualizationBlock from '../goldVisualizationBlock'
+    import exportForm from '../forms/import-form'
+    import goldVisualizationBlock from '../components/gold-visualization-block'
 
     export default {
         components: {

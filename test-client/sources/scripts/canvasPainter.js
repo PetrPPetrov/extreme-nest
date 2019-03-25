@@ -5,7 +5,7 @@
 
 'use strict';
 
-const functional = require('./functionalUtils');
+const _ = require('underscore');
 const requestParser = require('./nestingRequestParser');
 const responseParser = require('./nestingResponseParser');
 
@@ -26,7 +26,7 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
         const yPos = position[1];
 
         const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
-        functional.doIf(geometry, () => {
+        if (!_.isUndefined(geometry) && !_.isNull(geometry)) {
             const color = generateColor();
             canvas.add(createLocalCoordinateSystem(position, rotationAngle, color));
             geometry.geometry.forEach(vertices => {
@@ -38,7 +38,7 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
                     fill: color
                 }));
             });
-        });
+        }
     });
 
     canvas.renderAll();

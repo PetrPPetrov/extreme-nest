@@ -20,10 +20,10 @@
 
 <script>
 
-    import parametersForm from './parametersForm'
-    import goldVisualizationBlock from '../goldVisualizationBlock'
-    import serverVisualizationBlock from '../serverVisualizationBlock'
-    import requestResponseInfoForm from '../requestResponseInfoForm'
+    import parametersForm from '../forms/parameters-form'
+    import requestResponseInfoForm from '../forms/request-response-info-form'
+    import goldVisualizationBlock from '../components/gold-visualization-block'
+    import serverVisualizationBlock from '../components/server-visualization-block'
 
     export default {
         components : {

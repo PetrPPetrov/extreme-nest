@@ -11,7 +11,7 @@ import VueResource from 'vue-resource'
 import router from './router'
 import storage from './storage'
 
-import headerForm from '../templates/headerForm'
+import headerForm from '../templates/forms/header-form'
 
 Vue.use(VueResource);
 

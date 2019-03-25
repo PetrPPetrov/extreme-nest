@@ -5,6 +5,8 @@
 
 'use strict';
 
-const functional = require('./functionalUtils');
-
-module.exports.getNestingBySheetId = (nestingResponse, id) => nestingResponse.nestings.find(nesting => functional.doIf(nesting.sheet === id, () => nesting));
+module.exports.getNestingBySheetId = (nestingResponse, id) => nestingResponse.nestings.find(nesting => {
+    if (nesting.sheet === id){
+        return nesting;
+    }
+});

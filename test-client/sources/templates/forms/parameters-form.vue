@@ -31,8 +31,8 @@
 
 <script>
 
-    import savingTestBlock from './savingTestBlock'
-    import deletingTestBlock from './deletingTestsBlock'
+    import savingTestBlock from '../components/saving-test-block'
+    import deletingTestBlock from '../components/deleting-tests-block'
 
     import drawCanvas from '../../scripts/canvasPainter'
     import networkConfiguration from '../../resources/data/network'

@@ -9,9 +9,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import storage from '../scripts/storage'
-import generationPage from '../templates/generationPage/generationPage'
-import importPage from '../templates/importPage/importPage'
-import testingPage from '../templates/testingPage/testingPage'
+import generationPage from '../templates/pages/generation-page'
+import importPage from '../templates/pages/import-page'
+import testingPage from '../templates/pages/testing-page'
 
 Vue.use(VueRouter);
 
