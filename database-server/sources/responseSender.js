@@ -22,22 +22,22 @@ function ResponseSender(response) {
 
 ResponseSender.prototype.sendOK = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.OK} status`);
-    this.response.status(HTTP_STATUS_CODE.OK).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
+    this.response.status(HTTP_STATUS_CODE.OK).json(data);
 };
 
 ResponseSender.prototype.sendCreated = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.CREATED} status`);
-    this.response.status(HTTP_STATUS_CODE.CREATED).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
+    this.response.status(HTTP_STATUS_CODE.CREATED).json(data);
 };
 
 ResponseSender.prototype.sendBadRequest = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.BAD_REQUEST} status`);
-    this.response.status(HTTP_STATUS_CODE.BAD_REQUEST).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
+    this.response.status(HTTP_STATUS_CODE.BAD_REQUEST).json(data);
 };
 
 ResponseSender.prototype.sendNotFound = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.NOT_FOUND} status`);
-    this.response.status(HTTP_STATUS_CODE.NOT_FOUND).set({'Content-Type': 'application/json; charset=utf-8'}).send(data);
+    this.response.status(HTTP_STATUS_CODE.NOT_FOUND).json(data);
 };
 
 module.exports = ResponseSender;

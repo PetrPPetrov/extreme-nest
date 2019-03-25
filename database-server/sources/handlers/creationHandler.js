@@ -5,14 +5,10 @@
 
 'use strict';
 
-const nestingDAO = require('../dao/nesting');
-const testingDAO = require('../dao/testing');
-const goldRequestsDAO = require('../dao/goldRequests');
-const goldResponsesDAO = require('../dao/goldResponses');
-const serverRequestsDAO = require('../dao/serverRequests');
+const nestingDAO = require('../dao/nestingDAO');
 const databaseConnector = require('../databaseConnector');
 
-const testingService = require('../services/testing');
+const testingService = require('../services/testing/testingService');
 
 const ResponseSender = require('../responseSender');
 
@@ -25,9 +21,8 @@ module.exports = {
     onNestingCreation: (request, response) => {
         log.trace('Request on: nesting creation');
         const sender = new ResponseSender(response);
-
         databaseConnector.connect()
-            .then(connection => nestingDAO.create(databaseConnector.getDatabase(connection)))
+            .then(connection => nestingDAO.createAsync(databaseConnector.getDatabase(connection)))
             .then(id => sender.sendCreated({ id: id }))
             .catch(errorID => sender.sendBadRequest({ id: errorID }))
     },
@@ -38,45 +33,6 @@ module.exports = {
         testingService.createNewTesting()
             .then(testing => sender.sendCreated(testing))
             .catch(error => sender.sendBadRequest(error))
-    },
-
-    onGoldRequestCreation: (request, response) => {
-        log.trace('Request on: gold request creation');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                goldRequestsDAO.create(database, request.body)
-                    .then(id => nestingDAO.updateByID(database, request.params.id, {"goldRequestID": id}))
-                    .then(() => sender.sendCreated({ result: true }))
-            })
-            .catch(() => sender.sendBadRequest({ result: false }))
-    },
-
-    onServerRequestCreation: (request, response) => {
-        log.trace('Request on: server request creation');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                serverRequestsDAO.create(database, request.body)
-                    .then(id => nestingDAO.updateByID(database, request.params.id, {"serverRequestID": id}))
-                    .then(() => sender.sendCreated({ result: true }))
-            })
-            .catch(() => sender.sendBadRequest({ result: false }))
-    },
-
-    onGoldResponseCreation: (request, response) => {
-        log.trace('Request on: gold response creation');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                goldResponsesDAO.create(database, request.body)
-                    .then(id => nestingDAO.updateByID(database, request.params.id, {"goldResponseID": id}))
-                    .then(() => sender.sendCreated({ result: true }))
-            })
-            .catch(() => sender.sendBadRequest({ result: false }))
-    },
+    }
 
 };

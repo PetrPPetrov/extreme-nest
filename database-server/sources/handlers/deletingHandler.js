@@ -7,11 +7,8 @@
 
 const databaseConnector = require('../databaseConnector');
 
-const testingDAO = require('../dao/testing');
-const nestingDAO = require('../dao/nesting');
-const goldRequestDAO = require('../dao/goldRequests');
-const goldResponsesDAO = require('../dao/goldResponses');
-const serverRequestsDAO = require('../dao/serverRequests');
+const testingDAO = require('../dao/testingsDAO');
+const nestingDAO = require('../dao/nestingDAO');
 
 const ResponseSender = require('../responseSender');
 
@@ -27,7 +24,7 @@ module.exports = {
         databaseConnector.connect()
             .then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                nestingDAO.getByID(database, request.params.id)
+                nestingDAO.getByIDAsync(request.params.id)
                     .then(nesting => nestingDAO.removeByID(database, request.params.id))
                     .then(() => sender.sendOK({ result : true}))
             })

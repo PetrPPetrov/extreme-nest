@@ -5,10 +5,8 @@
 
 'use strict';
 
-const nestingDAO = require('../dao/nesting');
-const testingDAO = require('../dao/testing');
-const goldRequestsDAO = require('../dao/goldRequests');
-const goldResponsesDAO = require('../dao/goldResponses');
+const nestingDAO = require('../dao/nestingDAO');
+const testingDAO = require('../dao/testingsDAO');
 const databaseConnector = require('../databaseConnector');
 
 const ResponseSender = require('../responseSender');
@@ -44,32 +42,6 @@ module.exports = {
             .then(connection => testingDAO.getByID(databaseConnector.getDatabase(connection), request.params.id))
             .then(testing => sender.sendOK(testing))
             .catch(error => sender.sendNotFound(error))
-    },
-
-    onGoldRequestReceiving: (request, response) => {
-        log.trace('Request on: getting gold request');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                nestingDAO.getByID(database, request.params.id)
-                    .then(nesting => goldRequestsDAO.getByID(database, nesting.goldRequestID))
-                    .then(goldRequest => sender.sendOK(goldRequest))
-            })
-            .catch(error => sender.sendNotFound(error));
-    },
-
-    onGoldResponseReceiving: (request, response) => {
-        log.trace('Request on: getting gold response');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => {
-                const database = databaseConnector.getDatabase(connection);
-                nestingDAO.getByID(database, request.params.id)
-                    .then(nesting => goldResponsesDAO.getByID(database, nesting.goldResponseID))
-                    .then(goldResponse => sender.sendOK(goldResponse))
-            })
-            .catch(error => sender.sendNotFound(error));
     }
 
 };

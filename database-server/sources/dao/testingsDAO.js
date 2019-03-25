@@ -26,7 +26,7 @@ module.exports = {
                 .catch(error => {
                     log.warn(`New testing was not created. Cause: ${error}`);
                     reject(incorrectID)
-                });
+                })
         });
     },
 

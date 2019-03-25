@@ -6,12 +6,11 @@
 'use strict';
 
 const _ = require('underscore');
-const nestingDAO = require('../dao/nesting');
-const testingDAO = require('../dao/testing');
-const goldRequestsDAO = require('../dao/goldRequests');
-const goldResponsesDAO = require('../dao/goldResponses');
-const serverRequestsDAO = require('../dao/serverRequests');
-const databaseConnector = require('../databaseConnector');
+const nestingDAO = require('../../dao/nestingDAO');
+const testingDAO = require('../../dao/testingsDAO');
+const goldRequestsDAO = require('../../dao/requestsDAO');
+const goldResponsesDAO = require('../../dao/responsesDAO');
+const databaseConnector = require('../../databaseConnector');
 const testingChecker = require('./testingChecker');
 
 const log4js = require('log4js');
@@ -33,7 +32,6 @@ module.exports = {
                         Promise.all([
                             nesting._id,
                             goldRequestsDAO.getByID(database, nesting.goldRequestID),
-                            serverRequestsDAO.getByID(database, nesting.serverRequestID),
                             goldResponsesDAO.getByID(database, nesting.goldResponseID)
                         ])
                     );
@@ -52,11 +50,10 @@ module.exports = {
 };
 
 function composeNestings(promisesNestings) {
-    return promisesNestings.map(([id, goldRequest, serverRequest, goldResponse]) => ({
+    return promisesNestings.map(([id, goldRequest, goldResponse]) => ({
             id: id,
             status: 'progress',
-            goldRequest: goldRequest,
-            serverRequest: deleteColorsInNestingRequest(serverRequest),
+            goldRequest: deleteColorsInNestingRequest(goldRequest),
             goldResponse: goldResponse
         })
     );
@@ -72,7 +69,7 @@ function deleteColorsInNestingRequest(nestingRequest){
 }
 
 const requestify = require('requestify');
-const configuration = require('../../resources/configuration');
+const configuration = require('../../../resources/configuration');
 
 async function startTesting(testing) {
     const connection = await databaseConnector.connect();
