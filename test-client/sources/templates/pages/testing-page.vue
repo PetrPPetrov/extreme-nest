@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-4 col-lg-4 block-wrapper">
             <div class="block">
-                <p class="block-title">Request & responses</p>
+                <p class="block-title">Requests & responses</p>
                 <information-block title="Nesting request:" :data="$store.getters.nestingRequest" height="187"></information-block>
                 <information-block title="Gold nesting response:" :data="$store.getters.goldNestingResponse" height="187"></information-block>
                 <information-block title="Nesting response from server:" :data="$store.getters.serverNestingResponse" height="187"></information-block>

@@ -93,7 +93,6 @@
                 this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
                 this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
                 if (!_.isNull(test.serverResponse) && !_.isUndefined(test.serverResponse)) {
-                    this.$store.dispatch('randomNestingRequest', JSON.stringify(test.serverRequest, null, 4));
                     this.$store.dispatch('serverNestingResponse', JSON.stringify(test.serverResponse, null, 4));
                     this.$store.dispatch('serverVisualizationLog', `Nesting from server was visualized`);
                     this.$root.$emit('draw-server-nesting-canvas', [test.serverRequest, test.serverResponse, 20]);

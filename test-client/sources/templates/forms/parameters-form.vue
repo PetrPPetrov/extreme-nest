@@ -90,7 +90,6 @@
                         } else {
                             const nestingResponse = response.body;
                             this.$root.$emit('draw-server-nesting-canvas', [nestingRequest, nestingResponse, 20]);
-                            this.$store.dispatch('randomNestingRequest', JSON.stringify(nestingRequest, null, 4));
                             this.$store.dispatch('serverNestingResponse', JSON.stringify(nestingResponse, null, 4));
                             this.$store.dispatch('serverVisualizationLog', 'Server generated nesting successfully');
                             this.$store.dispatch('generationInProgress', false);
@@ -137,8 +136,7 @@
     #input-count-figures,
     #input-sheet-height,
     #input-sheet-width,
-    #input-nesting-time,
-    #input-canvas-block-size {
+    #input-nesting-time {
         width: 100%;
     }
 

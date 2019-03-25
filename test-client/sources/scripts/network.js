@@ -64,13 +64,6 @@ HttpClient.prototype.joinGoldRequestToTest = function(goldRequest, testID) {
 };
 
 
-// Server requests
-HttpClient.prototype.joinServerRequestToTest = function(serverRequest, testID) {
-    return this.http.post(`${networkConfiguration.databaseServer.address}/serverRequests/${testID}`, serverRequest)
-        .then(response => response.body)
-};
-
-
 // Gold responses
 HttpClient.prototype.getGoldResponseByTestID = function(testID) {
     return this.http.get(`${networkConfiguration.databaseServer.address}/goldResponses/${testID}`)

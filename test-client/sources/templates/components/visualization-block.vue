@@ -35,6 +35,9 @@
                 height: 240,
                 selection: false
             });
+            this.$root.$on('clear-canvases', () => {
+                this.canvas.clear();
+            });
             this.$root.$on(this.event, ([request, response, blockSize]) => {
                 this.canvas.clear();
                 drawCanvas(this.canvas, request, response, blockSize);

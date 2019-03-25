@@ -14,7 +14,6 @@ const store = new Vuex.Store({
     state: {
         nestingRequest: '',
         goldNestingResponse: '',
-        randomNestingRequest: '',
         serverNestingResponse: '',
         importNestingRequest: '',
         importNestingResponse: '',
@@ -31,8 +30,7 @@ const store = new Vuex.Store({
     getters: {
         nestingRequest: state => state.nestingRequest,
         goldNestingResponse: state => state.goldNestingResponse,
-        serverNestingResponse: state => state.randomNestingResponse,
-        randomNestingRequest: state => state.randomNestingRequest,
+        serverNestingResponse: state => state.serverNestingResponse,
         importNestingRequest: state => state.importNestingRequest,
         importNestingResponse: state => state.importNestingResponse,
         networkLog: state => state.networkLog,
@@ -44,7 +42,6 @@ const store = new Vuex.Store({
         clear({ commit }) {
             commit('set', { key: 'nestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
-            commit('set', { key: 'randomNestingRequest', value: '' });
             commit('set', { key: 'serverNestingResponse', value: '' });
             commit('set', { key: 'importNestingRequest', value: '' });
             commit('set', { key: 'importNestingResponse', value: '' });
@@ -58,17 +55,14 @@ const store = new Vuex.Store({
         goldNestingResponse({ commit }, response) {
             commit('set', { key: 'goldNestingResponse', value: response });
         },
-        randomNestingRequest({ commit }, request) {
-            commit('set', { key: 'randomNestingRequest', value: request });
+        serverNestingResponse({ commit }, response) {
+            commit('set', { key: 'serverNestingResponse', value: response });
         },
         importNestingRequest({ commit }, request) {
             commit('set', { key: 'importNestingRequest', value: request });
         },
         importNestingResponse({ commit }, request) {
             commit('set', { key: 'importNestingResponse', value: request });
-        },
-        serverNestingResponse({ commit }, response) {
-            commit('set', { key: 'serverNestingResponse', value: response });
         },
         networkLog({ commit }, message) {
             commit('set', { key: 'networkLog', value: message });

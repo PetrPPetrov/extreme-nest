@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <button class="button" @click="onClickSaveTest" :disabled="$store.getters.nestingRequest === '' || $store.getters.randomNestingRequest === '' ||
+        <button class="button" @click="onClickSaveTest" :disabled="$store.getters.nestingRequest === '' ||
             $store.getters.goldNestingResponse === '' || $store.getters.generationInProgress || isSavingInProgress">Save test</button>
     </div>
 
@@ -28,7 +28,6 @@
                     .then(newTest => {
                         Promise.all([
                             http.joinGoldRequestToTest(this.$store.getters.nestingRequest, newTest.id),
-                            http.joinServerRequestToTest(this.$store.getters.randomNestingRequest, newTest.id),
                             http.joinGoldResponseToTest(this.$store.getters.goldNestingResponse, newTest.id)
                         ]);
                         this.$root.$emit('add', newTest.id);

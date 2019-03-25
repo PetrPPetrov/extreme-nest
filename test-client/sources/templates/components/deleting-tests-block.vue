@@ -77,6 +77,7 @@
 
             onClickVisualizeTest() {
                 this.$store.dispatch('clear');
+                this.$root.$emit('clear-canvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} visualization in progress...`);
                 const http = new HttpClient(this.$http);
                 http.getTestByTestID(this.selectedTestID)

@@ -61,7 +61,6 @@
                     .then(newTest => {
                         Promise.all([
                             http.joinGoldRequestToTest(this.$store.getters.importNestingRequest, newTest.id),
-                            http.joinServerRequestToTest(this.$store.getters.importNestingRequest, newTest.id),
                             http.joinGoldResponseToTest(this.$store.getters.importNestingResponse, newTest.id)
                         ]);
                         this.$root.$emit('add', newTest.id);
