@@ -54,7 +54,7 @@
             onClickDeleteTest(){
                 this.isDeletingInProgress = true;
                 this.$store.dispatch('clear');
-                this.$store.dispatch('clearCanvases');
+                this.$root.$emit('clear-canvases');
                 this.$store.dispatch('networkLog', `Deleting in progress...`);
                 const http = new HttpClient(this.$http);
                 http.removeTestByID(this.selectedTestID)
