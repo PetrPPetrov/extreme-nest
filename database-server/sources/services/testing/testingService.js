@@ -6,7 +6,7 @@
 'use strict';
 
 const _ = require('underscore');
-const nestingDAO = require('../../dao/nestingDAO');
+const nestingDAO = require('../../dao/testsDAO');
 const testingDAO = require('../../dao/testingsDAO');
 const goldRequestsDAO = require('../../dao/requestsDAO');
 const goldResponsesDAO = require('../../dao/responsesDAO');
@@ -23,18 +23,14 @@ module.exports = {
         const today = new Date();
         const currentDate = `${today.getDate()}.${(today.getMonth()+1)}.${today.getFullYear()}`;
         const currentTime = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-        const connection = await databaseConnector.connect();
-        const database = databaseConnector.getDatabase(connection);
         return new Promise(async (resolve, reject) =>
-            nestingDAO.getAll(database)
+            nestingDAO.getAllAsync()
                 .then(async nestings => {
-                    const promisesArray = nestings.map(nesting =>
-                        Promise.all([
-                            nesting._id,
-                            goldRequestsDAO.getByID(database, nesting.goldRequestID),
-                            goldResponsesDAO.getByID(database, nesting.goldResponseID)
-                        ])
-                    );
+                    const promisesArray = nestings.map(nesting => Promise.all([
+                        nesting._id,
+                        goldRequestsDAO.getByIDAsync(nesting.goldRequestID),
+                        goldResponsesDAO.getByIDAsync(nesting.goldResponseID)
+                    ]));
                     const promisesNestings = await Promise.all(promisesArray);
                     return testingDAO.create(database, { date: currentDate, time: currentTime, nestings: composeNestings(promisesNestings) })
                 })
@@ -43,7 +39,6 @@ module.exports = {
                     resolve(newTesting)
                 })
                 .catch(() => reject({}))
-                .finally(() => connection.close())
         );
     }
 

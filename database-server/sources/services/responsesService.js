@@ -5,7 +5,7 @@
 
 'use strict';
 
-const nestingDAO = require('../dao/nestingDAO');
+const testsDAO = require('../dao/testsDAO');
 const responsesDAO = require('../dao/responsesDAO');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     createResponseAsync: (response, testID) => {
         return new Promise((resolve, reject) => {
             responsesDAO.createAsync(response)
-                .then(id => nestingDAO.updateByIDAsync(testID, {"goldResponseID": id}))
+                .then(id => testsDAO.updateByIDAsync(testID, {"goldResponseID": id}))
                 .then(() => resolve({ result: true }))
                 .catch(() => reject({ result: false }))
         });
@@ -21,7 +21,7 @@ module.exports = {
 
     getResponseByIDAsync: (id) => {
         return new Promise((resolve, reject) => {
-            nestingDAO.getByIDAsync(id)
+            testsDAO.getByIDAsync(id)
                 .then(nesting => responsesDAO.getByIDAsync(nesting.goldResponseID))
                 .then(response => resolve(response))
                 .catch(() => reject({}));

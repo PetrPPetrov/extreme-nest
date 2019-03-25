@@ -37,17 +37,23 @@ module.exports = {
         });
     },
 
-    getAll: (database) => {
+    getAllAsync: () => {
         return new Promise((resolve, reject) => {
-            database.collection(tableName).find({}).toArray()
-                .then(nestings => {
-                    log.debug(`All the nestings were found.`);
-                    resolve(nestings);
-                })
-                .catch(error => {
-                    log.warn(`All the nestings were found. Cause: ${error}`);
-                    reject([])
-                });
+            databaseConnector.connect().then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection(tableName).find({}).toArray()
+                    .then(nestings => {
+                        log.debug(`All the nestings were found.`);
+                        resolve(nestings);
+                    })
+                    .catch(error => {
+                        log.warn(`All the nestings were found. Cause: ${error}`);
+                        reject([])
+                    })
+                    .finally(() => {
+                        connection.close();
+                    })
+            });
         });
     },
 
@@ -78,11 +84,11 @@ module.exports = {
                 database.collection(tableName).updateOne({"_id": ObjectId(id)}, {"$set": properties})
                     .then(() => {
                         log.debug(`Nesting with ID: ${id} was changed`);
-                        resolve({});
+                        resolve(true);
                     })
                     .catch(error => {
                         log.warn(`Nesting with ID: ${id} was not changed. Cause: ${error}`);
-                        reject({});
+                        reject(false);
                     })
                     .finally(() => {
                         connection.close();
@@ -91,17 +97,23 @@ module.exports = {
         });
     },
 
-    removeByID: (database, id) => {
+    removeByIDAsync: (id) => {
         return new Promise((resolve, reject) => {
-            database.collection(tableName).deleteOne({"_id": ObjectId(id)})
-                .then(() => {
-                    log.debug(`Nesting was deleted by ID: ${id}`);
-                    resolve(true);
-                })
-                .catch(error => {
-                    log.warn(`Nesting was not deleted by ID: ${id}. Cause: ${error}`);
-                    reject(false)
-                });
+            databaseConnector.connect().then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection(tableName).deleteOne({"_id": ObjectId(id)})
+                    .then(() => {
+                        log.debug(`Nesting was deleted by ID: ${id}`);
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        log.warn(`Nesting was not deleted by ID: ${id}. Cause: ${error}`);
+                        reject(false)
+                    })
+                    .finally(() => {
+                        connection.close();
+                    });
+            });
         });
     }
 

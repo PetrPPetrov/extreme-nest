@@ -5,7 +5,7 @@
 
 'use strict';
 
-const nestingDAO = require('../dao/nestingDAO');
+const nestingDAO = require('../dao/testsDAO');
 const testingDAO = require('../dao/testingsDAO');
 const databaseConnector = require('../databaseConnector');
 
@@ -16,15 +16,6 @@ const log = log4js.getLogger(__filename);
 log.level = 'trace';
 
 module.exports = {
-
-    onNestingReceiving: (request, response) => {
-        log.trace('Request on: getting nesting');
-        const sender = new ResponseSender(response);
-        databaseConnector.connect()
-            .then(connection => nestingDAO.getAll(databaseConnector.getDatabase(connection)))
-            .then(nestings => sender.sendOK(nestings.map(nesting => nesting._id)))
-            .catch(error => sender.sendNotFound(error))
-    },
 
     onAllTestingReceiving: (request, response) => {
         log.trace('Request on: getting all the testings');
