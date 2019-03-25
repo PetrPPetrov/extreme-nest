@@ -12,9 +12,7 @@ Vue.use(Vuex);
 
 const storage = new Vuex.Store({
     state: {
-        canvasGoldGeneration: {},
-        canvasRandomGeneration: {},
-        goldNestingRequest: '',
+        nestingRequest: '',
         goldNestingResponse: '',
         randomNestingRequest: '',
         randomNestingResponse: '',
@@ -22,7 +20,7 @@ const storage = new Vuex.Store({
         importNestingResponse: '',
         networkLog: '...',
         goldVisualizationLog: '...',
-        randomVisualizationLog: '...',
+        serverVisualizationLog: '...',
         generationInProgress : false,
     },
     mutations: {
@@ -31,9 +29,7 @@ const storage = new Vuex.Store({
         }
     },
     getters: {
-        canvasGoldGeneration: state => state.canvasGoldGeneration,
-        canvasRandomGeneration: state => state.canvasRandomGeneration,
-        goldNestingRequest: state => state.goldNestingRequest,
+        nestingRequest: state => state.nestingRequest,
         goldNestingResponse: state => state.goldNestingResponse,
         randomNestingRequest: state => state.randomNestingRequest,
         importNestingRequest: state => state.importNestingRequest,
@@ -41,34 +37,23 @@ const storage = new Vuex.Store({
         randomNestingResponse: state => state.randomNestingResponse,
         networkLog: state => state.networkLog,
         goldVisualizationLog: state => state.goldVisualizationLog,
-        randomVisualizationLog: state => state.randomVisualizationLog,
+        serverVisualizationLog: state => state.serverVisualizationLog,
         generationInProgress: state => state.generationInProgress
     },
     actions: {
         clear({ commit }) {
-            commit('set', { key: 'goldNestingRequest', value: '' });
+            commit('set', { key: 'nestingRequest', value: '' });
             commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingRequest', value: '' });
-            commit('set', { key: 'goldNestingResponse', value: '' });
             commit('set', { key: 'randomNestingResponse', value: '' });
             commit('set', { key: 'importNestingRequest', value: '' });
             commit('set', { key: 'importNestingResponse', value: '' });
             commit('set', { key: 'networkLog', value: '...' });
             commit('set', { key: 'goldVisualizationLog', value: '...' });
-            commit('set', { key: 'randomVisualizationLog', value: '...' });
+            commit('set', { key: 'serverVisualizationLog', value: '...' });
         },
-        clearCanvases({ commit, state }) {
-            state['canvasGoldGeneration'].clear();
-            state['canvasRandomGeneration'].clear();
-        },
-        canvasGoldGeneration({ commit }, canvas) {
-            commit('set', { key: 'canvasGoldGeneration', value: canvas });
-        },
-        canvasRandomGeneration({ commit }, canvas) {
-            commit('set', { key: 'canvasRandomGeneration', value: canvas });
-        },
-        goldNestingRequest({ commit }, request) {
-            commit('set', { key: 'goldNestingRequest', value: request });
+        nestingRequest({ commit }, request) {
+            commit('set', { key: 'nestingRequest', value: request });
         },
         goldNestingResponse({ commit }, response) {
             commit('set', { key: 'goldNestingResponse', value: response });
@@ -91,8 +76,8 @@ const storage = new Vuex.Store({
         goldVisualizationLog({ commit }, message) {
             commit('set', { key: 'goldVisualizationLog', value: message });
         },
-        randomVisualizationLog({ commit }, message) {
-            commit('set', { key: 'randomVisualizationLog', value: message });
+        serverVisualizationLog({ commit }, message) {
+            commit('set', { key: 'serverVisualizationLog', value: message });
         },
         generationInProgress({ commit }, status) {
             commit('set', { key: 'generationInProgress', value: status });

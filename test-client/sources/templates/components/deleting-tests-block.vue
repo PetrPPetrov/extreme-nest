@@ -60,7 +60,6 @@
                 const http = new HttpClient(this.$http);
                 http.removeTestByID(this.selectedTestID)
                     .then(() => {
-
                         this.$store.dispatch('networkLog', `Test was deleted`);
                         this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
                         if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
@@ -89,7 +88,7 @@
                         drawCanvas(canvas, test.goldRequest, test.goldResponse, canvasBlockSize);
                         delete test.goldRequest._id;
                         delete test.goldResponse._id;
-                        this.$store.dispatch('goldNestingRequest', JSON.stringify(test.goldRequest, null, 4));
+                        this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
                         this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
                     })

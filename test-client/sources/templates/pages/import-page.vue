@@ -7,7 +7,8 @@
         <div class="col-md-5 col-lg-5 block-wrapper">
             <div id="visualization-block" class="block">
                 <p class="block-title">Visualization</p>
-                <gold-visualization-block></gold-visualization-block>
+                <visualization-block title="Visualization of imported nesting:" :log-message="$store.getters.goldVisualizationLog"
+                    event="draw-gold-nesting-canvas"></visualization-block>
             </div>
         </div>
         <div class="col-md-4 col-lg-4 block-wrapper">
@@ -24,12 +25,12 @@
 <script>
 
     import exportForm from '../forms/import-form'
-    import goldVisualizationBlock from '../components/gold-visualization-block'
+    import visualizationBlock from '../components/visualization-block'
 
     export default {
         components: {
             exportForm: exportForm,
-            goldVisualizationBlock: goldVisualizationBlock
+            visualizationBlock: visualizationBlock
         }
     }
 

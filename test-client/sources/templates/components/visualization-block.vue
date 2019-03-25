@@ -1,14 +1,11 @@
 <template>
 
     <div>
-        <label for="canvas-server-visualization">Visualization of nesting from server:</label>
-        <canvas id="canvas-server-visualization"
-                @mousemove="onMouseMoveInCanvas"
-                @mousedown="onMouseDownInCanvas"
-                @mouseup="omMouseUpInCanvas"
-                @wheel="onMouseWheelInCanvas"></canvas>
+        <label :for="event">{{ title }}</label>
+        <canvas :id="event" @mousemove="onMouseMoveInCanvas" @mousedown="onMouseDownInCanvas"
+            @mouseup="omMouseUpInCanvas" @wheel="onMouseWheelInCanvas"></canvas>
         <hr>
-        <p class="log-message">{{ $store.getters.randomVisualizationLog }}</p>
+        <p class="log-message">{{ this.logMessage }}</p>
     </div>
 
 </template>
@@ -16,10 +13,13 @@
 <script>
 
     const fabric = require('fabric').fabric;
+    import drawCanvas from '../../scripts/canvasPainter'
 
     export default {
+        props: ['title', 'event', 'log-message'],
         data() {
             return {
+                canvas: null,
                 transX: 0,
                 transY: 0,
                 scale: 1,
@@ -29,12 +29,16 @@
             }
         },
         mounted() {
-            this.$store.dispatch('canvasRandomGeneration', new fabric.StaticCanvas('canvas-server-visualization', {
+            this.canvas = new fabric.StaticCanvas(this.event, {
                 scale: 1,
                 width: 445,
                 height: 240,
                 selection: false
-            }));
+            });
+            this.$root.$on(this.event, ([request, response, blockSize]) => {
+                this.canvas.clear();
+                drawCanvas(this.canvas, request, response, blockSize);
+            });
         },
         methods : {
 
@@ -59,7 +63,7 @@
             },
 
             onMouseWheelInCanvas(event) {
-                const canvas = document.getElementById('canvas-server-visualization');
+                const canvas = document.getElementById(this.event);
                 const offset = canvas.getBoundingClientRect();
                 const centerX = event.pageX - offset.left;
                 const centerY = event.pageY - offset.top;
@@ -68,8 +72,8 @@
             },
 
             setScale(scaleToSet, anchorX, anchorY) {
-                const baseScale = 1;
-                const zoomMax = 10;
+                const baseScale = 0.1;
+                const zoomMax = 100;
                 const zoomMin = 1;
                 if (scaleToSet > zoomMax * baseScale) {
                     scaleToSet = zoomMax * baseScale;
@@ -88,16 +92,14 @@
             },
 
             applyTransform: function () {
-                let canvas = this.$store.getters.canvasRandomGeneration;
-                let group = new fabric.Group(canvas.getObjects());
-                group.scaleX = this.scale / canvas.scale;
-                group.scaleY = this.scale / canvas.scale;
+                let group = new fabric.Group(this.canvas.getObjects());
+                group.scaleX = this.scale / this.canvas.scale;
+                group.scaleY = this.scale / this.canvas.scale;
                 group.left = group.width / 15 + this.transX * this.scale;
                 group.top = group.height / 15 + this.transY * this.scale;
                 group.destroy();
-
-                canvas.scale = this.scale;
-                canvas.renderAll();
+                this.canvas.scale = this.scale;
+                this.canvas.renderAll();
             }
         }
     }

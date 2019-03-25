@@ -15,7 +15,6 @@
 
     import * as _ from 'underscore'
     import HttpClient from '../../scripts/network'
-    import drawCanvas from '../../scripts/canvasPainter'
     import convertToJSONNestingRequest from '../../scripts/nestingImporter'
 
     export default {
@@ -35,13 +34,12 @@
                 const reader = new FileReader();
                 reader.onload = (() => {
                     return (event) => {
-                        this.$store.getters.canvasGoldGeneration.clear();
                         this.$store.dispatch('networkLog', 'File was loaded');
                         try {
                             const [request, response] = convertToJSONNestingRequest(event.target.result);
                             this.$store.dispatch('importNestingRequest', JSON.stringify(request, null, 4));
                             this.$store.dispatch('importNestingResponse', JSON.stringify(response, null, 4));
-                            drawCanvas(this.$store.getters.canvasGoldGeneration, request, response, 5);
+                            this.$root.$emit('draw-gold-nesting-canvas', [request, response, 5]);
                             this.$store.dispatch('goldVisualizationLog', 'Nesting request from XML was visualized');
                         } catch (e) {
                             this.$store.dispatch('goldVisualizationLog', 'Nesting request from XML wasn\'t visualized: solution is absent');

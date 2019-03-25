@@ -30,7 +30,6 @@
 
     import * as _ from 'underscore';
     import HttpClient from '../../scripts/network'
-    import drawCanvas from '../../scripts/canvasPainter'
 
     export default {
         data() {
@@ -81,27 +80,25 @@
             onTestClick(event) {
                 const testID = event.srcElement.textContent;
                 this.$store.dispatch('clear');
-                this.$store.dispatch('clearCanvases');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
-                this.$store.dispatch('randomVisualizationLog', `Test: ${testID} visualization in progress...`);
+                this.$store.dispatch('serverVisualizationLog', `Test: ${testID} visualization in progress...`);
 
                 const selectedTestingID = this.getSelectedTestingID();
                 const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
                 const test = _.first(filteredTesting.nestings.filter(nesting => nesting.id === testID));
 
-                const canvasBlockSize = 20;
-                this.$store.dispatch('goldNestingRequest', JSON.stringify(test.goldRequest, null, 4));
+                this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
                 this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
-                drawCanvas(this.$store.getters.canvasGoldGeneration, test.goldRequest, test.goldResponse, canvasBlockSize);
+                this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
                 this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
                 if (!_.isNull(test.serverResponse) && !_.isUndefined(test.serverResponse)) {
                     this.$store.dispatch('randomNestingRequest', JSON.stringify(test.serverRequest, null, 4));
                     this.$store.dispatch('randomNestingResponse', JSON.stringify(test.serverResponse, null, 4));
-                    this.$store.dispatch('randomVisualizationLog', `Nesting from server was visualized`);
-                    drawCanvas(this.$store.getters.canvasRandomGeneration, test.serverRequest, test.serverResponse, canvasBlockSize);
+                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was visualized`);
+                    this.$root.$emit('draw-server-nesting-canvas', [test.serverRequest, test.serverResponse, 20]);
                 } else {
-                    this.$store.dispatch('randomVisualizationLog', `Nesting from server was not visualized`);
+                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was not visualized`);
                 }
             },
 

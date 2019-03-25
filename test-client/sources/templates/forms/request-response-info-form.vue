@@ -12,7 +12,7 @@
         </div>
         <div v-if="!isOpenedResponses">
             <label for="textarea-gold-nesting-request">Gold nesting request:</label>
-            <textarea id="textarea-gold-nesting-request" disabled v-model="$store.getters.goldNestingRequest"></textarea>
+            <textarea id="textarea-gold-nesting-request" disabled v-model="$store.getters.nestingRequest"></textarea>
             <label for="textarea-random-nesting-request">Nesting request to server:</label>
             <textarea id="textarea-random-nesting-request" disabled v-model="$store.getters.randomNestingRequest"></textarea>
         </div>
