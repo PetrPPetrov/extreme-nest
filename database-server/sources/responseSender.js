@@ -20,22 +20,22 @@ function ResponseSender(response) {
     this.response = response;
 }
 
-ResponseSender.prototype.sendOK = function (data) {
+ResponseSender.prototype.sendOKSync = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.OK} status`);
     this.response.status(HTTP_STATUS_CODE.OK).json(data);
 };
 
-ResponseSender.prototype.sendCreated = function (data) {
+ResponseSender.prototype.sendCreatedSync = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.CREATED} status`);
     this.response.status(HTTP_STATUS_CODE.CREATED).json(data);
 };
 
-ResponseSender.prototype.sendBadRequest = function (data) {
+ResponseSender.prototype.sendBadRequestSync = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.BAD_REQUEST} status`);
     this.response.status(HTTP_STATUS_CODE.BAD_REQUEST).json(data);
 };
 
-ResponseSender.prototype.sendNotFound = function (data) {
+ResponseSender.prototype.sendNotFoundSync = function (data) {
     log.trace(`Response was sent with ${HTTP_STATUS_CODE.NOT_FOUND} status`);
     this.response.status(HTTP_STATUS_CODE.NOT_FOUND).json(data);
 };

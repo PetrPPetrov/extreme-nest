@@ -12,8 +12,8 @@ const databaseConnector = require('../databaseConnector');
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-const incorrectID = 0;
-const tableName = 'nesting';
+const INCORRECT_ID = 0;
+const TABLE_NAME = 'nesting';
 
 module.exports = {
 
@@ -21,18 +21,18 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).insertOne({})
+                database.collection(TABLE_NAME).insertOne({})
                     .then(nesting => {
                         log.debug(`New nesting was created ID: ${nesting.ops[0]._id} `);
                         resolve(nesting.ops[0]._id);
                     })
                     .catch(error => {
                         log.warn(`New nesting was not created. Cause: ${error}`);
-                        reject(incorrectID);
+                        reject(INCORRECT_ID);
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             })
         });
     },
@@ -41,7 +41,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).find({}).toArray()
+                database.collection(TABLE_NAME).find({}).toArray()
                     .then(nestings => {
                         log.debug(`All the nestings were found.`);
                         resolve(nestings);
@@ -52,7 +52,7 @@ module.exports = {
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             });
         });
     },
@@ -61,7 +61,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).findOne(ObjectId(id))
+                database.collection(TABLE_NAME).findOne(ObjectId(id))
                     .then(nesting => {
                         log.debug(`Nesting with ID: ${id} was found`);
                         resolve(nesting);
@@ -72,7 +72,7 @@ module.exports = {
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             });
         });
     },
@@ -81,7 +81,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).updateOne({"_id": ObjectId(id)}, {"$set": properties})
+                database.collection(TABLE_NAME).updateOne({"_id": ObjectId(id)}, {"$set": properties})
                     .then(() => {
                         log.debug(`Nesting with ID: ${id} was changed`);
                         resolve(true);
@@ -92,7 +92,7 @@ module.exports = {
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             });
         });
     },
@@ -101,7 +101,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).deleteOne({"_id": ObjectId(id)})
+                database.collection(TABLE_NAME).deleteOne({"_id": ObjectId(id)})
                     .then(() => {
                         log.debug(`Nesting was deleted by ID: ${id}`);
                         resolve(true);

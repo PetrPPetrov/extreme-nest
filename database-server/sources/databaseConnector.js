@@ -24,14 +24,4 @@ module.exports = {
 
     getDatabase : (connection) => connection.db(configuration.databaseName),
 
-    getDatabaseAsync: (onConnection) => {
-        let dbConnection = null;
-        this.connect()
-            .then((connection) => {
-                dbConnection = connection;
-                onConnection(this.getDatabase(connection))
-            })
-            .finally(() => dbConnection.close())
-    }
-
 };

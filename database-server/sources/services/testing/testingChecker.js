@@ -23,10 +23,10 @@ module.exports.checkTest = (test) => {
     if (!isValidDimensions(test.goldResponse, test.serverResponse)) {
         log.debug(`Test with ID: ${test.id} was failed. Cause: invalid dimensions.`);
         return FAILED_RESULT;
-    } else if (!isEqualInstances(test.serverRequest, test.serverResponse)){
+    } else if (!isEqualInstances(test.goldRequest, test.serverResponse)){
         log.debug(`Test with ID: ${test.id} was failed. Cause: instances are not equal.`);
         return FAILED_RESULT;
-    } else if (!isEqualCountInstances(test.serverRequest, test.serverResponse)){
+    } else if (!isEqualCountInstances(test.goldRequest, test.serverResponse)){
         log.debug(`Test with ID: ${test.id} was failed. Cause: count instances is not equal.`);
         return FAILED_RESULT;
     } else if (!isEqualSheets(test.goldResponse, test.serverResponse)){
@@ -49,13 +49,13 @@ function isValidDimensions(goldResponse, serverResponse) {
               (goldResponseLength + availableLengthDifference < serverResponseLength) );
 }
 
-function isEqualInstances(serverRequest, serverResponse) {
+function isEqualInstances(request, response) {
     let serverRequestInstancesID = [];
-    serverRequest.parts.forEach(part => {
+    request.parts.forEach(part => {
         serverRequestInstancesID = part.instances.map(instance => instance.id);
     });
 
-    for (let nesting of serverResponse.nestings) {
+    for (let nesting of response.nestings) {
         for (let part of nesting.nested_parts) {
             if (_.isUndefined(serverRequestInstancesID.find(id => id === part.id))) {
                 return false;
@@ -66,13 +66,13 @@ function isEqualInstances(serverRequest, serverResponse) {
     return true;
 }
 
-function isEqualCountInstances(serverRequest, serverResponse){
+function isEqualCountInstances(request, response){
     let requestInstances = [];
-    serverRequest.parts.forEach(part => {
+    request.parts.forEach(part => {
         requestInstances = part.instances.map(instance => ({id: instance.id, quantity: instance.quantity}));
     });
 
-    serverResponse.nestings.forEach(nesting => nesting.nested_parts.forEach(part => {
+    response.nestings.forEach(nesting => nesting.nested_parts.forEach(part => {
         for (let instance of requestInstances) {
             if (instance.id === part.id) {
                 instance.quantity--;

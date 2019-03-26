@@ -12,8 +12,8 @@ const databaseConnector = require('../databaseConnector');
 const log = log4js.getLogger(__filename);
 log.level = 'debug';
 
-const incorrectID = 0;
-const tableName = 'goldResponses';
+const INCORRECT_ID = 0;
+const TABLE_NAME = 'goldResponses';
 
 module.exports = {
 
@@ -21,18 +21,18 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).insertOne(goldResponse)
+                database.collection(TABLE_NAME).insertOne(goldResponse)
                     .then(response => {
                         log.debug(`New response was created. ID: ${response.ops[0]._id}`);
                         resolve(response.ops[0]._id);
                     })
                     .catch(error => {
                         log.warn(`New response was not created. Cause: ${error}`);
-                        reject(incorrectID)
+                        reject(INCORRECT_ID)
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             });
         });
     },
@@ -41,7 +41,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             databaseConnector.connect().then(connection => {
                 const database = databaseConnector.getDatabase(connection);
-                database.collection(tableName).findOne(ObjectId(id))
+                database.collection(TABLE_NAME).findOne(ObjectId(id))
                     .then(goldResponse => {
                         log.debug(`Response with ID: ${id} was found`);
                         resolve(goldResponse);
@@ -52,22 +52,28 @@ module.exports = {
                     })
                     .finally(() => {
                         connection.close();
-                    })
+                    });
             });
         });
     },
 
-    removeByID: (database, id) => {
+    removeByIDAsync: (id) => {
         return new Promise((resolve, reject) => {
-            database.collection(tableName).deleteOne({"_id": ObjectId(id)})
-                .then(() => {
-                    log.debug(`Response was deleted by ID: ${id}`);
-                    resolve(true);
-                })
-                .catch(error => {
-                    log.warn(`Response was not deleted by ID: ${id}. Cause: ${error}`);
-                    reject(false)
-                });
+            databaseConnector.connect().then(connection => {
+                const database = databaseConnector.getDatabase(connection);
+                database.collection(TABLE_NAME).deleteOne({"_id": ObjectId(id)})
+                    .then(() => {
+                        log.debug(`Response was deleted by ID: ${id}`);
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        log.warn(`Response was not deleted by ID: ${id}. Cause: ${error}`);
+                        reject(false)
+                    })
+                    .finally(() => {
+                        connection.close();
+                    });
+            });
         });
     }
 
