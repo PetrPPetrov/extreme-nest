@@ -5,6 +5,10 @@
         <select id="select-tests" v-model="selectedTestID" v-bind:class="{'error-input': this.selectedTestID === ''}">
             <option v-for="test in tests">{{ test }}</option>
         </select>
+        <label for="new-test-name" v-bind:class="{'error-label': this.selectedTestID === ''}">Enter new name:</label>
+        <input id="new-test-name">
+        <button id="rename-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+            this.$store.getters.generationInProgress">Rename test</button>
         <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
             this.$store.getters.generationInProgress" @click="onClickDeleteTest">Delete test</button>
         <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
@@ -102,6 +106,10 @@
 <style scoped>
 
     #select-tests {
+        width: 100%;
+    }
+
+    #new-test-name {
         width: 100%;
         margin-bottom: 10px;
     }
