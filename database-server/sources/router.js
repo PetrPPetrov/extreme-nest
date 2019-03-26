@@ -49,10 +49,18 @@ module.exports.route = (server) => {
             .catch(result => responseSender.sendBadRequestSync(result));
     });
 
+    server.put('/nesting/:id', (request, response) => {
+        log.trace('Request on: changing test name');
+        const responseSender = new ResponseSender(response);
+        testService.changeTestAliasByIDAsync(request.params.id, request.body.alias)
+            .then(result => responseSender.sendOKSync(result))
+            .catch(result => responseSender.sendNotFoundSync(result));
+    });
+
     server.get('/nesting/', (request, response) => {
         log.trace('Request on: getting all tests');
         const responseSender = new ResponseSender(response);
-        testService.getAllTestsIDAsync(request.params.id)
+        testService.getAllTestsAsync(request.params.id)
             .then(result => responseSender.sendOKSync(result))
             .catch(result => responseSender.sendNotFoundSync(result));
     });

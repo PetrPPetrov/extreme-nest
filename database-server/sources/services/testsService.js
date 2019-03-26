@@ -17,11 +17,19 @@ module.exports = {
         });
     },
 
-    getAllTestsIDAsync: () => {
+    getAllTestsAsync: () => {
         return new Promise((resolve, reject) => {
             testsDAO.getAllAsync()
-                .then(tests => resolve(tests.map(test => test._id)))
+                .then(tests => resolve(tests))
                 .catch(() => reject([]));
+        });
+    },
+
+    changeTestAliasByIDAsync: (id, newAlias) => {
+        return new Promise((resolve, reject) => {
+            testsDAO.updateByIDAsync(id, { alias: newAlias })
+                .then(() => resolve({ result: true }))
+                .catch(() => reject({ result: false }));
         });
     },
 

@@ -1,17 +1,17 @@
 <template>
 
     <div>
-        <label for="select-tests" v-bind:class="{'error-label': this.selectedTestID === ''}">Select test:</label>
-        <select id="select-tests" v-model="selectedTestID" v-bind:class="{'error-input': this.selectedTestID === ''}">
-            <option v-for="test in tests">{{ test }}</option>
+        <label for="select-tests" v-bind:class="{'error-label': this.selectedTest === ''}">Select test:</label>
+        <select id="select-tests" v-model="selectedTest" v-bind:class="{'error-input': this.selectedTest === ''}">
+            <option v-for="test in visibleTests">{{ test}}</option>
         </select>
-        <label for="new-test-name" v-bind:class="{'error-label': (this.selectedTestID === '' || newTestName === '' )}">Enter new name:</label>
-        <input id="new-test-name" v-model="newTestName" v-bind:class="{'error-input': (this.selectedTestID === '' || newTestName === '' )}">
-        <button id="rename-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+        <label for="new-test-name" v-bind:class="{'error-label': (this.selectedTest === '' || newTestName === '' )}">Enter new name:</label>
+        <input id="new-test-name" v-model="newTestName" v-bind:class="{'error-input': (this.selectedTest === '' || newTestName === '' )}">
+        <button id="rename-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' ||
             newTestName === '' || this.$store.getters.generationInProgress" @click="onClickRenameTest">Rename test</button>
-        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+        <button id="deleting-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' ||
             this.$store.getters.generationInProgress" @click="onClickDeleteTest">Delete test</button>
-        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTestID === '' ||
+        <button id="visualization-button" class="button" :disabled="isDeletingInProgress || this.selectedTest === '' ||
             this.$store.getters.generationInProgress" @click="onClickVisualizeTest">Visualize test</button>
     </div>
 
@@ -27,7 +27,8 @@
             return {
                 networkLog: '...',
                 tests: [],
-                selectedTestID: '',
+                visibleTests: [],
+                selectedTest: '',
                 newTestName: '',
                 isDeletingInProgress: false
             }
@@ -37,27 +38,60 @@
             http.getAllTestsID()
                 .then(tests => {
                     this.tests = tests;
+                    console.log(tests);
+                    this.reloadVisibleTests();
                     this.$store.dispatch('networkLog', 'Tests were loaded');
-                    if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
-                        this.selectedTestID = _.first(this.tests);
-                    } else {
-                        this.selectedTestID = '';
-                    }
                 })
                 .catch(() => {
                     this.$store.dispatch('networkLog', 'Tests weren\'t loaded')
                 });
         },
         mounted() {
-            this.$root.$on('add', (testID) => {
-                this.tests.unshift(testID);
-                this.selectedTestID = _.first(this.tests);
+            this.$root.$on('add', (test) => {
+                test._id = test.id;
+                delete test.id;
+                this.tests.unshift(test);
+                this.reloadVisibleTests();
             });
         },
         methods: {
 
             onClickRenameTest(){
+                const alias = this.newTestName;
+                if (!this.isExistTestWithAlias(alias)) {
+                    const test = this.getSelectedTest();
+                    const http = new HttpClient(this.$http);
+                    http.changeTestAlias(test._id, alias)
+                        .then(() => {
+                            test.alias = alias;
+                            this.reloadVisibleTests();
+                            this.$store.dispatch('networkLog', `Test was renamed`);
+                        })
+                        .catch(() => {
+                            this.$store.dispatch('networkLog', `Test wasn't renamed`);
+                        })
+                } else {
+                    this.$store.dispatch('networkLog', `New name already exists`);
+                }
+                this.newTestName = '';
+            },
 
+            isExistTestWithAlias(alias) {
+                return !_.isUndefined(_.find(this.tests, (test) => test.alias === alias));
+            },
+
+            getSelectedTest() {
+                const test = _.find(this.tests, (test) => test._id === this.selectedTest);
+                return !_.isUndefined(test) ? test : _.find(this.tests, (test) => test.alias === this.selectedTest);
+            },
+
+            reloadVisibleTests() {
+                this.visibleTests = this.tests.map(test => !_.isUndefined(test.alias) ? test.alias : test._id);
+                if (!_.isUndefined(_.first(this.visibleTests))){
+                    this.selectedTest = _.first(this.visibleTests);
+                } else {
+                    this.selectedTest = '';
+                }
             },
 
             onClickDeleteTest(){
@@ -66,15 +100,12 @@
                 this.$root.$emit('clear-canvases');
                 this.$store.dispatch('networkLog', `Deleting in progress...`);
                 const http = new HttpClient(this.$http);
-                http.removeTestByID(this.selectedTestID)
+                const test = this.getSelectedTest();
+                http.removeTestByID(test._id)
                     .then(() => {
                         this.$store.dispatch('networkLog', `Test was deleted`);
-                        this.tests.splice(this.tests.indexOf(this.selectedTestID), 1);
-                        if (!_.isNull(_.first(this.tests)) && !_.isUndefined(_.first(this.tests))){
-                            this.selectedTestID = _.first(this.tests);
-                        } else {
-                            this.selectedTestID = '';
-                        }
+                        this.tests.splice(test, 1);
+                        this.reloadVisibleTests();
                     })
                     .catch(() => {
                         this.$store.dispatch('networkLog', `Test wasn't deleted`)
@@ -87,19 +118,19 @@
             onClickVisualizeTest() {
                 this.$store.dispatch('clear');
                 this.$root.$emit('clear-canvases');
-                this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} visualization in progress...`);
+                this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} visualization in progress...`);
                 const http = new HttpClient(this.$http);
-                http.getTestByTestID(this.selectedTestID)
+                http.getTestByTestID(this.getSelectedTest()._id)
                     .then(test => {
                         delete test.goldRequest._id;
                         delete test.goldResponse._id;
                         this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
                         this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
                         this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
-                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} was visualized`)
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} was visualized`)
                     })
                     .catch(() => {
-                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTestID} wasn't visualized`)
+                        this.$store.dispatch('goldVisualizationLog', `Test: ${this.selectedTest} wasn't visualized`)
                     });
             }
 
