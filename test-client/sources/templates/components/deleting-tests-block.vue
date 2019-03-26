@@ -38,7 +38,6 @@
             http.getAllTestsID()
                 .then(tests => {
                     this.tests = tests;
-                    console.log(tests);
                     this.reloadVisibleTests();
                     this.$store.dispatch('networkLog', 'Tests were loaded');
                 })

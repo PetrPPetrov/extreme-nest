@@ -46,7 +46,6 @@
             http.getAllTestingResults()
                 .then(testingResults => {
                     this.testings = testingResults;
-                    console.log(this.testings);
                     this.showTestings();
                     this.networkLog = 'Testing results were loaded'
                 })
@@ -79,7 +78,7 @@
             },
 
             onTestClick(event) {
-                const testID = event.srcElement.textContent;
+                const testID = this.getSelectedTest(event.srcElement.textContent).id;
                 this.$store.dispatch('clear');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
                 this.$store.dispatch('serverVisualizationLog', `Test: ${testID} visualization in progress...`);
@@ -102,6 +101,11 @@
                 }
             },
 
+            getSelectedTest(value) {
+                const test = _.find(this.tests, (test) => test.id === value);
+                return !_.isUndefined(test) ? test : _.find(this.tests, (test) => test.alias === value);
+            },
+
             showTestings() {
                 const firstTesting = _.first(this.testings);
                 if (!_.isUndefined(firstTesting) && !_.isNull(firstTesting)) {
@@ -117,7 +121,11 @@
                 const selectedTestingID = this.getSelectedTestingID();
                 const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
                 if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
-                    this.tests = filteredTesting.nestings.map(nesting => ({id: nesting.id, icon: this.getTestStatusImage(nesting.status)}));
+                    console.log(filteredTesting.nestings);
+                    this.tests = filteredTesting.nestings.map(nesting => ({
+                        id: !_.isUndefined(nesting.alias) && !_.isNull(nesting.alias) ? nesting.alias : nesting.id,
+                        icon: this.getTestStatusImage(nesting.status)
+                    }));
                 } else {
                     this.tests = [];
                 }
@@ -160,8 +168,12 @@
                         this.testings = testingResults;
                         const selectedTestingID = this.getSelectedTestingID();
                         const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
-                        if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
-                            this.tests = filteredTesting.nestings.map(nesting => ({id: nesting.id, icon: this.getTestStatusImage(nesting.status), status: nesting.status}));
+                        if (!_.isUndefined(filteredTesting.nestings)) {
+                            this.tests = filteredTesting.nestings.map(nesting => ({
+                                status: nesting.status,
+                                id: !_.isUndefined(nesting.alias) && !_.isNull(nesting.alias) ? nesting.alias : nesting.id,
+                                icon: this.getTestStatusImage(nesting.status)
+                            }));
                             const uncheckedTests = this.tests.filter(test => test.status === 'progress');
                             if (!_.isEmpty(uncheckedTests)) {
                                 setTimeout(() => this.reloadTestingResults(), 1000);

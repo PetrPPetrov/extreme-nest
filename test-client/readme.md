@@ -21,6 +21,6 @@ TODO list:
 Ideas:
 ======
 * Add small buttons 'Test passed' and 'Test failed' (or just small buttons with icons, need to think about their design)
-* Add 'import' block to 'Create' page. User selects an input file in some format (format like from https://paginas.fe.up.pt/~esicup/datasets?page=2 page), and a new test is created, without gold response.
-* Add feature to rename test
+* ~~Add 'import' block to 'Create' page. User selects an input file in some format (format like from https://paginas.fe.up.pt/~esicup/datasets?page=2 page), and a new test is created, without gold response.~~
+* ~~Add feature to rename test~~
   

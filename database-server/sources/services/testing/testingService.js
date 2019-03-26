@@ -61,6 +61,7 @@ async function createNewTestingAsync() {
             .then(async nestings => {
                 const promisesArray = nestings.map(nesting => Promise.all([
                     nesting._id,
+                    nesting.alias,
                     goldRequestsDAO.getByIDAsync(nesting.goldRequestID),
                     goldResponsesDAO.getByIDAsync(nesting.goldResponseID)
                 ]));
@@ -76,8 +77,9 @@ async function createNewTestingAsync() {
 }
 
 function composeNestings(promisesNestings) {
-    return promisesNestings.map(([id, goldRequest, goldResponse]) => ({
+    return promisesNestings.map(([id, alias, goldRequest, goldResponse]) => ({
             id: id,
+            alias: alias,
             status: 'progress',
             goldRequest: deleteColorsInNestingRequest(goldRequest),
             goldResponse: goldResponse
