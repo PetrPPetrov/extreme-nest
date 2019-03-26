@@ -18,8 +18,8 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
         id: 111, // TODO: need to add id generation
         polygonID: boardComponentAttrs.idPolygon,
         type: boardComponentAttrs.type,
-        xOffset: boardComponentAttrs.xOffset,
-        yOffset: boardComponentAttrs.yOffset
+        xOffset: parseFloat(boardComponentAttrs.xOffset),
+        yOffset: parseFloat(boardComponentAttrs.yOffset)
     };
 
     let pieces = [];
@@ -34,8 +34,8 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
                 pieceID: pieceID,
                 polygonID: pieceComponentAttrs.idPolygon,
                 type: pieceComponentAttrs.type,
-                xOffset: pieceComponentAttrs.xOffset,
-                yOffset: pieceComponentAttrs.yOffset
+                xOffset: parseFloat(pieceComponentAttrs.xOffset),
+                yOffset: parseFloat(pieceComponentAttrs.yOffset)
             });
         }
     });
@@ -47,10 +47,10 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
         if (polygonID.startsWith('polygon')){
             const countVertices = polygonAttrs.nVertices;
             const lines = polygon.lines.segment.map(segment => ({
-                x0: segment._attributes.x0,
-                y0: segment._attributes.y0,
-                x1: segment._attributes.x1,
-                y1: segment._attributes.y1
+                x0: parseFloat(segment._attributes.x0),
+                y0: parseFloat(segment._attributes.y0),
+                x1: parseFloat(segment._attributes.x1),
+                y1: parseFloat(segment._attributes.y1)
             }));
             polygons.push({
                 polygonID: polygonID,
@@ -67,9 +67,9 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
 
     const placements = solution.placement.map(placement => ({
         pieceID: placement._attributes.idPiece,
-        angle: placement._attributes.angle,
-        xPos: placement._attributes.x,
-        yPos: placement._attributes.y
+        angle: parseFloat(placement._attributes.angle),
+        xPos: parseFloat(placement._attributes.x),
+        yPos: parseFloat(placement._attributes.y)
     }));
 
     const nestingRequest = convertRequestToPowerNestAPI(sheetComponent, pieces, polygons);
@@ -93,7 +93,7 @@ function convertRequestToPowerNestAPI(sheetComponent, pieces, polygons) {
 
     pieces.forEach(piece => {
         const polygon = _.find(polygons, polygon => polygon.polygonID === piece.polygonID);
-        const geometry = polygon.lines.map(line => [ line.x0, line.y0 ]);
+        const geometry = polygon.lines.map(line => [ parseFloat(line.x0), parseFloat(line.y0) ]);
         nestingRequest.parts.push({
             geometry: [geometry],
             instances: [{

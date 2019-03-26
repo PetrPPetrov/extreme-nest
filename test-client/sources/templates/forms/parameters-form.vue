@@ -108,6 +108,7 @@
         nestingRequest.parts.forEach(part => {
             part.instances.forEach(instance => {
                 delete instance.color;
+                delete instance.pieceID;
             })
         });
         return nestingRequest;

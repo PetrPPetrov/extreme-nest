@@ -89,6 +89,7 @@ function deleteColorsInNestingRequest(nestingRequest){
     nestingRequest.parts.forEach(part => {
         part.instances.forEach(instance => {
             delete instance.color;
+            delete instance.pieceID;
         })
     });
     return nestingRequest;
@@ -120,7 +121,7 @@ function sendNestingRequest(nestingRequest) {
             return nestingID;
         })
         .catch(error => {
-            log.warn(`Request was not request was not accepted for nesting. Cause: ${error}`);
+            log.warn(`Request was not accepted for nesting. Cause: ${error}`);
             return false;
         });
 }

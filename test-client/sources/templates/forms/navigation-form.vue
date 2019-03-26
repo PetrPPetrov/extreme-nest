@@ -46,6 +46,7 @@
             http.getAllTestingResults()
                 .then(testingResults => {
                     this.testings = testingResults;
+                    console.log(this.testings);
                     this.showTestings();
                     this.networkLog = 'Testing results were loaded'
                 })
@@ -92,10 +93,10 @@
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
                 this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
                 this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
-                if (!_.isNull(test.serverResponse) && !_.isUndefined(test.serverResponse)) {
+                if (!_.isNull(test.goldRequest) && !_.isUndefined(test.serverResponse)) {
                     this.$store.dispatch('serverNestingResponse', JSON.stringify(test.serverResponse, null, 4));
                     this.$store.dispatch('serverVisualizationLog', `Nesting from server was visualized`);
-                    this.$root.$emit('draw-server-nesting-canvas', [test.serverRequest, test.serverResponse, 20]);
+                    this.$root.$emit('draw-server-nesting-canvas', [test.goldRequest, test.serverResponse, 20]);
                 } else {
                     this.$store.dispatch('serverVisualizationLog', `Nesting from server was not visualized`);
                 }
