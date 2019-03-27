@@ -13,7 +13,11 @@
             <img class="test-status-icon" :src="test.icon">
             <p class="tests-nav-button" @click="onTestClick($event)">{{ test.id }}</p>
         </div>
-
+        <hr>
+        <label for="selected-test">Selected test:</label>
+        <input id="selected-test" disabled v-model="selectedTest">
+        <img class="test-status-button" :src="failedIcon" @click="onChangeTestStatus('failed')">
+        <img class="test-status-button" :src="successIcon" @click="onChangeTestStatus('success')">
         <hr>
         <button class="button" @click="onClickRunTests" :disabled="isDeletingInProgress">Run new testing</button>
         <hr>
@@ -34,9 +38,12 @@
     export default {
         data() {
             return {
+                failedIcon,
+                successIcon,
                 networkLog: '...',
                 testings: [],
                 selectedTesting: '',
+                selectedTest: '',
                 tests: [],
                 isDeletingInProgress: false,
             }
@@ -79,6 +86,7 @@
 
             onTestClick(event) {
                 const testID = this.getSelectedTest(event.srcElement.textContent).id;
+                this.selectedTest = testID;
                 this.$store.dispatch('clear');
                 this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
                 this.$store.dispatch('serverVisualizationLog', `Test: ${testID} visualization in progress...`);
@@ -103,7 +111,7 @@
 
             getSelectedTest(value) {
                 const test = _.find(this.tests, (test) => test.id === value);
-                return !_.isUndefined(test) ? test : _.find(this.tests, (test) => test.alias === value);
+                return !_.isUndefined(test) && !_.isNull(test) ? test : _.find(this.tests, (test) => test.alias === value);
             },
 
             showTestings() {
@@ -145,6 +153,13 @@
                         this.networkLog = 'Testing was not deleted'
                     })
                     .finally(() => this.isDeletingInProgress = false);
+            },
+
+            onChangeTestStatus(status) {
+                if (this.selectedTest === '') {
+                    this.networkLog = 'Test wasn\'t selected';
+                    return;
+                }
             },
 
             onClickRunTests() {
@@ -242,6 +257,31 @@
         float: left;
         width: 15px;
         height: auto;
+        transition: .5s;
+    }
+
+    .test-status-button {
+        display: block;
+        float: right;
+        width: 34px;
+        height: 34px;
+        border: 1px solid #A3D4F2;
+        border-radius: 15px;
+        padding: 7px 7px 7px 7px;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    .test-status-button:hover {
+        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);
+    }
+
+    #selected-test {
+        width: calc(100% - 80px);
+    }
+
+    label{
+        display: block;
     }
 
     @media (max-width: 768px) {
