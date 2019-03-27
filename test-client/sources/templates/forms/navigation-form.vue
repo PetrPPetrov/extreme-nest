@@ -160,6 +160,17 @@
                     this.networkLog = 'Test wasn\'t selected';
                     return;
                 }
+
+                const test = this.getSelectedTest(this.selectedTest);
+                const http = new HttpClient(this.$http);
+                http.changeTestStatus(this.getSelectedTestingID(), test.id, status)
+                    .then(() => {
+                        this.showTestings();
+                        this.networkLog = 'Test status was changed';
+                    })
+                    .catch(() => {
+                        this.networkLog = 'Test status wasn\'t changed';
+                    })
             },
 
             onClickRunTests() {
@@ -167,7 +178,7 @@
                 http.runNewTesting()
                     .then((newTesting) => {
                         this.testings.unshift(newTesting);
-                        this.showTestings();
+                        this.showTestsForSelectedTesting();
                         setTimeout(() => this.reloadTestingResults(), 1000);
                         this.networkLog = 'New testing was ran'
                     })

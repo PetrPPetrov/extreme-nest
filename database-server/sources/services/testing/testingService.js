@@ -26,11 +26,9 @@ module.exports = {
         });
     },
 
-    removeTestingByID: (id) => {
+    changePassedTestStatusByIDAsync: (testingID, testID, newStatus) => {
         return new Promise((resolve, reject) => {
-            testingDAO.removeByIDAsync(id)
-                .then(() => resolve({result: true}))
-                .catch(() => reject({result: false}));
+            resolve({ result: true });
         });
     },
 
@@ -47,6 +45,14 @@ module.exports = {
             testingDAO.getByIDAsync(id)
                 .then(testing => resolve(testing))
                 .catch(testing => reject(testing));
+        });
+    },
+
+    removeTestingByID: (id) => {
+        return new Promise((resolve, reject) => {
+            testingDAO.removeByIDAsync(id)
+                .then(() => resolve({result: true}))
+                .catch(() => reject({result: false}));
         });
     }
 

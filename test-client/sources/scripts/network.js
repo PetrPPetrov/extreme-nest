@@ -23,6 +23,11 @@ HttpClient.prototype.runNewTesting = function() {
         .then(response => response.body);
 };
 
+HttpClient.prototype.changeTestStatus = function(testingID, testID, status) {
+    return this.http.put(`${networkConfiguration.databaseServer.address}/testing/${testingID}`, { testID: testID, status: status })
+        .then(response => response.body);
+};
+
 HttpClient.prototype.removeTestingResultByID = function(testingResultID) {
     return this.http.delete(`${networkConfiguration.databaseServer.address}/testing/${testingResultID}`)
         .then(response => response.body.result);

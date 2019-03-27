@@ -57,6 +57,14 @@ module.exports.route = (server) => {
             .catch(result => responseSender.sendNotFoundSync(result));
     });
 
+    server.put('/testing/:id', (request, response) => {
+        log.trace('Request on: changing passed test status');
+        const responseSender = new ResponseSender(response);
+        testingsService.changePassedTestStatusByIDAsync(request.params.id, request.body.testID, request.body.status)
+            .then(result => responseSender.sendOKSync(result))
+            .catch(result => responseSender.sendNotFoundSync(result));
+    });
+
     server.get('/nesting/', (request, response) => {
         log.trace('Request on: getting all tests');
         const responseSender = new ResponseSender(response);
