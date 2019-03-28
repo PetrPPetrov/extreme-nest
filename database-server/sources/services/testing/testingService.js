@@ -6,6 +6,7 @@
 'use strict';
 
 const _ = require('underscore');
+const ObjectId = require('mongodb').ObjectId;
 const nestingDAO = require('../../dao/testsDAO');
 const testingDAO = require('../../dao/testingsDAO');
 const goldRequestsDAO = require('../../dao/requestsDAO');
@@ -28,7 +29,9 @@ module.exports = {
 
     changePassedTestStatusByIDAsync: (testingID, testID, newStatus) => {
         return new Promise((resolve, reject) => {
-            resolve({ result: true });
+            testingDAO.updateByQueryAsync({"_id" : ObjectId(testingID), "nestings.id" : ObjectId(testID)}, {"nestings.$.status": newStatus})
+                .then(() => resolve({result: true}))
+                .catch(() => reject({result: false}));
         });
     },
 
@@ -135,12 +138,12 @@ function sendNestingRequest(nestingRequest) {
 }
 
 function getNestingResponse(nestingOrderID, delay) {
-    return new Promise((resolve,reject) =>
-        setTimeout( () =>
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
             requestify.get(`http://${configuration.nestingServerAddress}/result/${nestingOrderID}/full`)
                 .then(async response => {
                     const responseBody = response.getBody();
-                    if (_.isUndefined(responseBody.nestings) || _.isNull(responseBody.nestings)){
+                    if (_.isUndefined(responseBody.nestings) || _.isNull(responseBody.nestings)) {
                         log.trace('Re-receive nesting response');
                         resolve(await getNestingResponse(nestingOrderID, delay));
                     } else {
@@ -152,6 +155,6 @@ function getNestingResponse(nestingOrderID, delay) {
                     log.warn(`Nesting response was not get. Cause: ${error}`);
                     reject({});
                 })
-        , delay)
-    );
+        }, delay);
+    });
 }

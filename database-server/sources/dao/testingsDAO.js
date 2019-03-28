@@ -83,6 +83,7 @@ module.exports = {
                 const database = databaseConnector.getDatabase(connection);
                 database.collection(TABLE_NAME).updateOne({"_id": ObjectId(id)}, {"$set": properties})
                     .then(() => {
+
                         log.debug(`Testing with ID: ${id} was changed`);
                         resolve({});
                     })

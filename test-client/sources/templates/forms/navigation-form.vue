@@ -63,8 +63,12 @@
         methods: {
 
             getSelectedTestingID(){
-                let selectedTestingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
-                return selectedTestingID.substring(1, selectedTestingID.length - 1);
+                if (this.selectedTesting === '') {
+                    return '';
+                } else {
+                    let selectedTestingID = this.selectedTesting.match(/\[[\w\d]+\]/i)[0];
+                    return selectedTestingID.substring(1, selectedTestingID.length - 1);
+                }
             },
 
             getTestStatusImage(status) {
@@ -127,9 +131,10 @@
 
             showTestsForSelectedTesting() {
                 const selectedTestingID = this.getSelectedTestingID();
-                const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                let filteredTesting = _.find(this.testings, (testing) => testing._id === selectedTestingID);
+                filteredTesting = !_.isUndefined(filteredTesting) ? filteredTesting : _.first(this.testings);
                 if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
-                    console.log(filteredTesting.nestings);
+                    this.selectedTesting = `[${filteredTesting._id}] - ${filteredTesting.date} - ${filteredTesting.time}`;
                     this.tests = filteredTesting.nestings.map(nesting => ({
                         id: !_.isUndefined(nesting.alias) && !_.isNull(nesting.alias) ? nesting.alias : nesting.id,
                         icon: this.getTestStatusImage(nesting.status)
@@ -165,10 +170,16 @@
                 const http = new HttpClient(this.$http);
                 http.changeTestStatus(this.getSelectedTestingID(), test.id, status)
                     .then(() => {
-                        this.showTestings();
+                        const selectedTestingID = this.getSelectedTestingID();
+                        const filteredTesting = _.find(this.testings, (testing) => testing._id === selectedTestingID);
+                        let filteredTest = _.find(filteredTesting.nestings, (el) => el.id === test.id);
+                        filteredTest = !_.isUndefined(filteredTest) && !_.isNull(filteredTest) ? filteredTest : _.find(filteredTesting.nestings, (el) => el.alias === value);
+                        filteredTest.status = status;
+                        this.showTestsForSelectedTesting();
                         this.networkLog = 'Test status was changed';
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.log(error);
                         this.networkLog = 'Test status wasn\'t changed';
                     })
             },
@@ -177,12 +188,14 @@
                 const http = new HttpClient(this.$http);
                 http.runNewTesting()
                     .then((newTesting) => {
+                        console.log(this.testings);
                         this.testings.unshift(newTesting);
                         this.showTestsForSelectedTesting();
                         setTimeout(() => this.reloadTestingResults(), 1000);
                         this.networkLog = 'New testing was ran'
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.log(error);
                         this.networkLog = 'New testing was not ran'
                     });
             },
@@ -193,7 +206,8 @@
                     .then(testingResults => {
                         this.testings = testingResults;
                         const selectedTestingID = this.getSelectedTestingID();
-                        const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                        let filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
+                        filteredTesting = !_.isUndefined(filteredTesting) ? filteredTesting : _.first(this.testings);
                         if (!_.isUndefined(filteredTesting.nestings)) {
                             this.tests = filteredTesting.nestings.map(nesting => ({
                                 status: nesting.status,
