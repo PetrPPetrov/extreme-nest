@@ -11,13 +11,13 @@
         <hr>
         <div class="wrapper-test-nav-button" v-for="test in tests">
             <img class="test-status-icon" :src="test.icon">
-            <p class="tests-nav-button" @click="onTestClick($event)">{{ test.id }}</p>
+            <p class="tests-nav-button" @click="onTestClick($event)">{{ (test.alias ? test.alias : test.id) }}</p>
         </div>
         <hr>
         <label for="selected-test">Selected test:</label>
         <input id="selected-test" disabled v-model="selectedTest">
-        <img class="test-status-button" :src="failedIcon" @click="onChangeTestStatus('failed')">
-        <img class="test-status-button" :src="successIcon" @click="onChangeTestStatus('success')">
+        <img class="test-status-button" :src="failedIcon" @click="onChangeTestStatus('failed')" title="Failed test">
+        <img class="test-status-button" :src="successIcon" @click="onChangeTestStatus('success')" title="Success test">
         <hr>
         <button class="button" @click="onClickRunTests" :disabled="isDeletingInProgress">Run new testing</button>
         <hr>
@@ -71,6 +71,11 @@
                 }
             },
 
+            getSelectedTest(value) {
+                const test = _.find(this.tests, (test) => test.id === value);
+                return !_.isUndefined(test) && !_.isNull(test) ? test : _.find(this.tests, (test) => test.alias === value);
+            },
+
             getTestStatusImage(status) {
                 switch (status) {
                     case 'progress':
@@ -82,40 +87,6 @@
                     default:
                         return progressIcon;
                 }
-            },
-
-            onChangeSelect(){
-                this.showTestsForSelectedTesting();
-            },
-
-            onTestClick(event) {
-                const testID = this.getSelectedTest(event.srcElement.textContent).id;
-                this.selectedTest = testID;
-                this.$store.dispatch('clear');
-                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
-                this.$store.dispatch('serverVisualizationLog', `Test: ${testID} visualization in progress...`);
-
-                const selectedTestingID = this.getSelectedTestingID();
-                const filteredTesting = _.first(this.testings.filter((testing) => testing._id === selectedTestingID));
-                const test = _.first(filteredTesting.nestings.filter(nesting => nesting.id === testID));
-
-                this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
-                this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
-                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
-                this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
-                this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
-                if (!_.isNull(test.goldRequest) && !_.isUndefined(test.serverResponse)) {
-                    this.$store.dispatch('serverNestingResponse', JSON.stringify(test.serverResponse, null, 4));
-                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was visualized`);
-                    this.$root.$emit('draw-server-nesting-canvas', [test.goldRequest, test.serverResponse, 20]);
-                } else {
-                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was not visualized`);
-                }
-            },
-
-            getSelectedTest(value) {
-                const test = _.find(this.tests, (test) => test.id === value);
-                return !_.isUndefined(test) && !_.isNull(test) ? test : _.find(this.tests, (test) => test.alias === value);
             },
 
             showTestings() {
@@ -136,11 +107,42 @@
                 if (!_.isUndefined(filteredTesting.nestings) && !_.isNull(filteredTesting.nestings)) {
                     this.selectedTesting = `[${filteredTesting._id}] - ${filteredTesting.date} - ${filteredTesting.time}`;
                     this.tests = filteredTesting.nestings.map(nesting => ({
-                        id: !_.isUndefined(nesting.alias) && !_.isNull(nesting.alias) ? nesting.alias : nesting.id,
+                        id: nesting.id,
+                        alias: nesting.alias,
                         icon: this.getTestStatusImage(nesting.status)
                     }));
                 } else {
                     this.tests = [];
+                }
+            },
+
+            onChangeSelect(){
+                this.showTestsForSelectedTesting();
+            },
+
+            onTestClick(event) {
+                const selectedTest = this.getSelectedTest(event.srcElement.textContent);
+                const testID = selectedTest.id;
+                this.selectedTest = !_.isNull(selectedTest.alias) ? selectedTest.alias : selectedTest.id;
+                this.$store.dispatch('clear');
+                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
+                this.$store.dispatch('serverVisualizationLog', `Test: ${testID} visualization in progress...`);
+
+                const selectedTestingID = this.getSelectedTestingID();
+                const filteredTesting = _.find(this.testings, (testing) => testing._id === selectedTestingID);
+                const test = _.find(filteredTesting.nestings, (nesting) => nesting.id === testID);
+
+                this.$store.dispatch('nestingRequest', JSON.stringify(test.goldRequest, null, 4));
+                this.$store.dispatch('goldNestingResponse', JSON.stringify(test.goldResponse, null, 4));
+                this.$store.dispatch('goldVisualizationLog', `Test: ${testID} visualization in progress...`);
+                this.$root.$emit('draw-gold-nesting-canvas', [test.goldRequest, test.goldResponse, 20]);
+                this.$store.dispatch('goldVisualizationLog', `Gold nesting was visualized`);
+                if (!_.isNull(test.goldRequest) && !_.isUndefined(test.serverResponse)) {
+                    this.$store.dispatch('serverNestingResponse', JSON.stringify(test.serverResponse, null, 4));
+                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was visualized`);
+                    this.$root.$emit('draw-server-nesting-canvas', [test.goldRequest, test.serverResponse, 20]);
+                } else {
+                    this.$store.dispatch('serverVisualizationLog', `Nesting from server was not visualized`);
                 }
             },
 
@@ -178,8 +180,7 @@
                         this.showTestsForSelectedTesting();
                         this.networkLog = 'Test status was changed';
                     })
-                    .catch((error) => {
-                        console.log(error);
+                    .catch(() => {
                         this.networkLog = 'Test status wasn\'t changed';
                     })
             },
@@ -188,14 +189,12 @@
                 const http = new HttpClient(this.$http);
                 http.runNewTesting()
                     .then((newTesting) => {
-                        console.log(this.testings);
                         this.testings.unshift(newTesting);
                         this.showTestsForSelectedTesting();
                         setTimeout(() => this.reloadTestingResults(), 1000);
                         this.networkLog = 'New testing was ran'
                     })
-                    .catch((error) => {
-                        console.log(error);
+                    .catch(() => {
                         this.networkLog = 'New testing was not ran'
                     });
             },
