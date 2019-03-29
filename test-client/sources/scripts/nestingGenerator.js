@@ -102,10 +102,11 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
 
     const sheetID = 55; // TODO: need to generate id
     nestingRequest.sheets.push({
-        'height': parseFloat(sheetHeight),
-        'length': parseFloat(sheetWidth),
+        'height': parseFloat(sheetHeight) + 0.001,
+        'length': parseFloat(sheetWidth) + 0.001,
         'id': sheetID
     });
+    
     nestingResponse.nestings.push({
         'sheet': sheetID,
         'nested_parts': [],
