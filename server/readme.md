@@ -84,4 +84,8 @@ Generic Ideas:
 * Use Microsoft Azure or something other for running nesting requests in parallel?
 * Implement neural network algorithm for nesting
 
+Nesting errors:
+===============
 
+* <a href="./run_area/failed/1.json">#1 Request</a> [ [count figures = 12], [sheet width = 8], [sheet height = 4], [time = 15s] ] - Not enough figures
+* <a href="./run_area/failed/2.json">#2 Request</a> [ [count figures = 4], [sheet width = 2], [sheet height = 2], [time = 30s] ] - Not enough figures
