@@ -41,18 +41,14 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    #visualization-block {
-        width: calc(100% + 15px);
-    }
+    #visualization-block
+        width: calc(100% + 15px)
 
-    @media(max-width: 768px) {
+    @media(max-width: 768px)
 
-        #visualization-block {
-            width: 80%;
-        }
-
-    }
+        #visualization-block
+            width: 80%
 
 </style>

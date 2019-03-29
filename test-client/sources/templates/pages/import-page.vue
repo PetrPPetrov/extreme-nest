@@ -38,11 +38,9 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    #visualization-block {
-        width: calc(100% + 15px);
-    }
-
+    #visualization-block
+        width: calc(100% + 15px)
 
 </style>

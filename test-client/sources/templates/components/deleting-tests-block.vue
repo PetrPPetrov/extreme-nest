@@ -138,24 +138,20 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    #select-tests {
-        width: 100%;
-    }
+    #select-tests
+        width: 100%
 
-    #new-test-name {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+    #new-test-name
+        width: 100%
+        margin-bottom: 10px
 
-    label[for="select-tests"] {
-        margin-top: 0;
-        padding-top: 0;
-    }
+    label[for="select-tests"]
+        margin-top: 0
+        padding-top: 0
 
-    #visualization-button {
-        margin-bottom: 0;
-    }
+    #visualization-button
+        margin-bottom: 0
 
 </style>

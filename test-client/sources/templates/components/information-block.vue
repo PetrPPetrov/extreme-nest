@@ -15,11 +15,10 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    textarea {
-        width: 100%;
-        resize: none;
-    }
+    textarea
+        width: 100%
+        resize: none
 
 </style>

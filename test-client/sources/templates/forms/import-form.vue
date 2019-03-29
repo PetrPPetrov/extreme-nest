@@ -75,34 +75,30 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    #import-form {
-        width: calc(100% + 15px);
-    }
+    #import-form
+        width: calc(100% + 15px)
 
-    input[type=file] {
-        outline: none;
-        cursor: pointer;
-        width: 100%;
-        overflow: hidden;
-        margin-bottom: 10px;
-    }
+    input[type=file]
+        outline: none
+        cursor: pointer
+        width: 100%
+        overflow: hidden
+        margin-bottom: 10px
 
-    input[type=file]:before {
-        color: white;
-        padding: 3px 11px 3px 10px;
-        font-size: 12px;
-        border-radius: 10px;
-        content: 'Select file';
-        display: inline-block;
-        background: #48AAE6;
-        text-align: center;
-        font-family: Helvetica, Arial, sans-serif;
-    }
+    input[type=file]:before
+        color: white
+        padding: 3px 11px 3px 10px
+        font-size: 12px
+        border-radius: 10px
+        content: 'Select file'
+        display: inline-block
+        background: #48AAE6
+        text-align: center
+        font-family: Helvetica, Arial, sans-serif
 
-    input[type=file]::-webkit-file-upload-button {
-        visibility: hidden;
-    }
+    input[type=file]::-webkit-file-upload-button
+        visibility: hidden
 
 </style>

@@ -41,10 +41,9 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    button {
-        margin-bottom: 0;
-    }
+    button
+        margin-bottom: 0
 
 </style>

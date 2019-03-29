@@ -116,29 +116,23 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    #parameters-block {
-        width: calc(100% + 15px);
-    }
+    #parameters-block
+        width: calc(100% + 15px)
 
-    #generation-button {
-        margin-top: 10px;
-    }
+    #generation-button
+        margin-top: 10px
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px)
 
-        #parameters-block {
-            width: 100%;
-        }
-
-    }
+        #parameters-block
+            width: 100%
 
     #input-count-figures,
     #input-sheet-height,
     #input-sheet-width,
-    #input-nesting-time {
-        width: 100%;
-    }
+    #input-nesting-time
+        width: 100%
 
 </style>

@@ -231,89 +231,73 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="sass">
 
-    label {
-        margin-top: 10px;
-    }
+    label
+        margin-top: 10px
 
-    button {
-        margin: 0;
-    }
+    button
+        margin: 0
 
-    #delete-button {
-        margin-top: 10px;
-    }
+    #delete-button
+        margin-top: 10px
 
-    #select-testing {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+    #select-testing
+        width: 100%
+        margin-bottom: 10px
 
-    #navigation-block {
-        width: calc(100% + 15px);
-    }
+    #navigation-block
+        width: calc(100% + 15px)
 
-    .wrapper-test-nav-button {
-        border-radius: 15px;
-        padding: 7px 15px 7px 15px;
-        margin: 0;
-        cursor: pointer;
-        font-family: 'Open Sans', sans-serif;
-        transition: .5s;
-        color: #14171A;
-        font-size: 12px;
-    }
+    .wrapper-test-nav-button
+        border-radius: 15px
+        padding: 7px 15px 7px 15px
+        margin: 0
+        cursor: pointer
+        font-family: 'Open Sans', sans-serif
+        transition: .5s
+        color: #14171A
+        font-size: 12px
 
-    .wrapper-test-nav-button:hover {
-        color: #48AAE6;
-        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);
-    }
+    .wrapper-test-nav-button:hover
+        color: #48AAE6
+        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1)
 
-    .tests-nav-button {
-        padding: 0;
-        margin: 0;
-    }
+    .tests-nav-button
+        padding: 0
+        margin: 0
 
-    .test-status-icon {
-        padding: 0;
-        margin: 1px 5px 0 0;
-        float: left;
-        width: 15px;
-        height: auto;
-        transition: .5s;
-    }
+    .test-status-icon
+        padding: 0
+        margin: 1px 5px 0 0
+        float: left
+        width: 15px
+        height: auto
+        transition: .5s
 
-    .test-status-button {
-        display: block;
-        float: right;
-        width: 34px;
-        height: 34px;
-        border: 1px solid #A3D4F2;
-        border-radius: 15px;
-        padding: 7px 7px 7px 7px;
-        margin-left: 5px;
-        cursor: pointer;
-    }
+    .test-status-button
+        display: block
+        float: right
+        width: 34px
+        height: 34px
+        border: 1px solid #A3D4F2
+        border-radius: 15px
+        padding: 7px 7px 7px 7px
+        margin-left: 5px
+        cursor: pointer
 
-    .test-status-button:hover {
-        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1);
-    }
+    .test-status-button:hover
+        box-shadow: inset 2px 2px 5px rgba(154, 147, 140, 0.5), 1px 1px 5px rgba(255, 255, 255, 1)
 
-    #selected-test {
-        width: calc(100% - 80px);
-    }
+    #selected-test
+        width: calc(100% - 80px)
 
-    label{
-        display: block;
-    }
+    label
+        display: block
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px)
 
-        #navigation-block {
-            width: 100%;
-        }
-
-    }
+        #navigation-block
+            width: 100%
 
 </style>
