@@ -69,14 +69,14 @@ function createTriangleGeometry(triangleWidth, triangleHeight, direction) {
     if (direction === TRIANGLE_UP_DIRECTION) {
         return [[
             [0, 0],
-            [triangleWidth, 0],
-            [triangleWidth, triangleHeight],
+            [parseFloat(triangleWidth), 0],
+            [parseFloat(triangleWidth), parseFloat(triangleHeight)],
         ]];
     } else {
         return [[
             [0, 0],
-            [0, triangleHeight],
-            [triangleWidth, triangleHeight],
+            [0, parseFloat(triangleHeight)],
+            [parseFloat(triangleWidth), parseFloat(triangleHeight)],
         ]];
     }
 }
@@ -84,9 +84,9 @@ function createTriangleGeometry(triangleWidth, triangleHeight, direction) {
 function createRectangleGeometry(rectangleWidth, rectangleHeight) {
     return [[
         [0, 0],
-        [rectangleWidth, 0],
-        [rectangleWidth, rectangleHeight],
-        [0, rectangleHeight]
+        [parseFloat(rectangleWidth), 0],
+        [parseFloat(rectangleWidth), parseFloat(rectangleHeight)],
+        [0, parseFloat(rectangleHeight)]
     ]]
 }
 
@@ -94,7 +94,7 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
     const nestingRequest = {};
     nestingRequest.parts = [];
     nestingRequest.sheets = [];
-    nestingRequest.time = nestingTime;
+    nestingRequest.time = parseInt(nestingTime);
 
     const nestingResponse = {};
     nestingResponse.message = 'successfully completed';
@@ -102,8 +102,8 @@ async function generateNestingAsync(countFigures, sheetWidth, sheetHeight, nesti
 
     const sheetID = 55; // TODO: need to generate id
     nestingRequest.sheets.push({
-        'height': sheetHeight,
-        'length': sheetWidth,
+        'height': parseFloat(sheetHeight),
+        'length': parseFloat(sheetWidth),
         'id': sheetID
     });
     nestingResponse.nestings.push({
