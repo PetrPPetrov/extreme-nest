@@ -1,0 +1,250 @@
+{
+  "nestings": [
+    {
+      "sheet": 111,
+      "nested_parts": [
+        {
+          "id": 3,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            2069.18,
+            0
+          ]
+        },
+        {
+          "id": 21,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            348
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            1714
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            3000,
+            4568.26
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            196,
+            0
+          ]
+        },
+        {
+          "id": 21,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            5285.306,
+            2557.871
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            1639.011,
+            4481.411
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            6000,
+            4709.937
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            196,
+            186
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            6000,
+            2392.075
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            4382.408,
+            1175.594
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            1480.669,
+            1714
+          ]
+        },
+        {
+          "id": 23,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            5281.52,
+            1279.289
+          ]
+        },
+        {
+          "id": 23,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            5103.18,
+            0
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            3778.83,
+            629
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            6000,
+            3980
+          ]
+        },
+        {
+          "id": 3,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            4914.177,
+            4639
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            3174.177,
+            4595
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            7891.085,
+            0
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            10074.08,
+            3242.442
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            2567.18,
+            567.5821
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            4532
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            10049.22,
+            4900
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            4167.18,
+            261
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": "Successfully completed"
+}

@@ -1,0 +1,310 @@
+{
+  "nestings": [
+    {
+      "sheet": 111,
+      "nested_parts": [
+        {
+          "id": 16,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            34.67364,
+            51.80202
+          ]
+        },
+        {
+          "id": 19,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            33.27406
+          ]
+        },
+        {
+          "id": 7,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            34.32198,
+            0
+          ]
+        },
+        {
+          "id": 19,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            24.66667,
+            48.27406
+          ]
+        },
+        {
+          "id": 19,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            48.27406
+          ]
+        },
+        {
+          "id": 4,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            47.10323,
+            60
+          ]
+        },
+        {
+          "id": 22,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            12,
+            6
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            15,
+            43.27406
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            27.32198,
+            0
+          ]
+        },
+        {
+          "id": 7,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            11,
+            0
+          ]
+        },
+        {
+          "id": 28,
+          "pieceID": "piece9",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            53.27406
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            38.27406
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            25,
+            38.27406
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            55.10323,
+            60
+          ]
+        },
+        {
+          "id": 22,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            5,
+            47.1074
+          ]
+        },
+        {
+          "id": 22,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            22.35241,
+            46.15958
+          ]
+        },
+        {
+          "id": 4,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            44.60323,
+            45
+          ]
+        },
+        {
+          "id": 4,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            59.32198,
+            57.20313
+          ]
+        },
+        {
+          "id": 7,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            34.32198,
+            24
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            13,
+            38.27406
+          ]
+        },
+        {
+          "id": 28,
+          "pieceID": "piece9",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            19.91632,
+            52.15958
+          ]
+        },
+        {
+          "id": 16,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            21.50464,
+            0.3653258
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            6.354154,
+            51
+          ]
+        },
+        {
+          "id": 16,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": 28,
+          "pieceID": "piece9",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            22.2146,
+            33.27406
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            24.70323,
+            51
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            20.6,
+            33
+          ]
+        },
+        {
+          "id": 10,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            45.32198,
+            15
+          ]
+        },
+        {
+          "id": 10,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            45.32198,
+            0
+          ]
+        },
+        {
+          "id": 10,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            45.32198,
+            30
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": "Successfully completed"
+}

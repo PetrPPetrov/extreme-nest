@@ -84,8 +84,16 @@ Generic Ideas:
 * Use Microsoft Azure or something other for running nesting requests in parallel?
 * Implement neural network algorithm for nesting
 
-Nesting errors:
+Imported nestings:
 ===============
 
-* <a href="./run_area/failed/1.json">#1 Request</a> [ [count figures = 12], [sheet width = 8], [sheet height = 4], [time = 15s] ] - Not enough figures
-* <a href="./run_area/failed/2.json">#2 Request</a> [ [count figures = 4], [sheet width = 2], [sheet height = 2], [time = 30s] ] - Not enough figures
+* albano - Was not visualized
+* blaz - Little suboptimal nesting
+* dagli - Little suboptimal nesting
+* dighe1 - Large suboptimal nesting
+* dighe2 - Large suboptimal nesting
+* fu - Little suboptimal nesting
+* han - Large suboptimal nesting
+* jackobs1 - Success
+* jackobs2 - Success
+* mao - Was not visualized

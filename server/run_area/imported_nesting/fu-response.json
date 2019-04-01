@@ -1,0 +1,130 @@
+{
+  "nestings": [
+    {
+      "sheet": 111,
+      "nested_parts": [
+        {
+          "id": 2,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 8,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            29,
+            0
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            32,
+            21.06796
+          ]
+        },
+        {
+          "id": 3,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            9,
+            24
+          ]
+        },
+        {
+          "id": 6,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            9,
+            24
+          ]
+        },
+        {
+          "id": 10,
+          "pieceID": "piece9",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            10
+          ]
+        },
+        {
+          "id": 12,
+          "pieceID": "piece11",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            11,
+            10
+          ]
+        },
+        {
+          "id": 4,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            20,
+            24
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            32.54369,
+            7.067961
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            10,
+            0
+          ]
+        },
+        {
+          "id": 7,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            23.54369,
+            38
+          ]
+        },
+        {
+          "id": 11,
+          "pieceID": "piece10",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            30.5,
+            13
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": "Successfully completed"
+}

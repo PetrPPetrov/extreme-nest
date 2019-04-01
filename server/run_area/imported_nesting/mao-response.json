@@ -1,0 +1,210 @@
+{
+  "nestings": [
+    {
+      "sheet": 111,
+      "nested_parts": [
+        {
+          "id": 17,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            754.1442,
+            1935.959
+          ]
+        },
+        {
+          "id": 15,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            274.1935,
+            2022.196
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            537.791,
+            2056.831
+          ]
+        },
+        {
+          "id": 11,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            1712.244
+          ]
+        },
+        {
+          "id": 19,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            1167.167,
+            745.8901
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            80,
+            2206.642
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            930.3666,
+            758.9521
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            0,
+            1134.065
+          ]
+        },
+        {
+          "id": 3,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            1705.115,
+            2186.251
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            847.9208,
+            759
+          ]
+        },
+        {
+          "id": 11,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            393.3393,
+            2550
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            1427.778,
+            2550
+          ]
+        },
+        {
+          "id": 5,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            80,
+            1508.244
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            1482.367,
+            745.7795
+          ]
+        },
+        {
+          "id": 3,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            0,
+            1450.065
+          ]
+        },
+        {
+          "id": 15,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            577.6922,
+            1450.065
+          ]
+        },
+        {
+          "id": 19,
+          "pieceID": "piece8",
+          "flip": false,
+          "angle": 90,
+          "position": [
+            1451.804,
+            1512.984
+          ]
+        },
+        {
+          "id": 13,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            406.6188,
+            935.5463
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            1412.397,
+            1097
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 270,
+          "position": [
+            1412.397,
+            2190.164
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": "Successfully completed"
+}
