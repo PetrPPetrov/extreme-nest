@@ -81,7 +81,7 @@ function convertRequestToPowerNestAPI(sheetComponent, pieces, polygons) {
     const nestingRequest = {};
     nestingRequest.parts = [];
     nestingRequest.sheets = [];
-    nestingRequest.time = 5.0; // TODO
+    nestingRequest.time = 120; // TODO
 
     const polygon = _.find(polygons, polygon => polygon.polygonID === sheetComponent.polygonID);
     const polygonLines = polygon.lines;

@@ -57,7 +57,7 @@ function getAlignment(vertices, angle) {
     });
 
     if (angle === 180) {
-        return [-maxXAlignment, maxYAlignment]
+        return [-maxXAlignment, -maxYAlignment]
     } else {
         return [maxXAlignment, maxYAlignment]
     }

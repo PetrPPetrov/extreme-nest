@@ -2,7 +2,7 @@
 
     <div>
         <label>{{ title }}</label>
-        <textarea disabled v-model="data" v-bind:style="{ height: height + 'px' }"></textarea>
+        <textarea v-model="data" v-bind:style="{ height: height + 'px' }"></textarea>
     </div>
 
 </template>
