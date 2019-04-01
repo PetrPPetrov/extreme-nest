@@ -1,0 +1,1000 @@
+{
+  "nestings": [
+    {
+      "sheet": 111,
+      "nested_parts": [
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            7.098236,
+            12.62172
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            2,
+            0
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            12.95458,
+            20.65623
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            53.20954,
+            19.27273
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            37.13275,
+            14.07373
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            25.11863,
+            31
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            12.19824,
+            17.92172
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            37.53914,
+            3.164799
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0.2943771,
+            30.82359
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            1,
+            17.92172
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            30.53914,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            18.13275,
+            5.656229
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            48.86863,
+            38
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            14.00028,
+            33
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            36.11863,
+            30
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            39.13275,
+            10.1648
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            25.07078,
+            19.65623
+          ]
+        },
+        {
+          "id": 1,
+          "pieceID": "piece0",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            16,
+            8.92172
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            17.53914,
+            0
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            23.32966,
+            32
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            49.11863,
+            26
+          ]
+        },
+        {
+          "id": 17,
+          "pieceID": "piece2",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            25.82452,
+            15.17647
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            52.11863,
+            32
+          ]
+        },
+        {
+          "id": 9,
+          "pieceID": "piece1",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            1,
+            23.92172
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            9.132745,
+            9.92172
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            9,
+            0
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            21.00028,
+            32
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            21.00028,
+            35
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            38
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            40.11863,
+            30
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            39
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            11.72966,
+            32
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            21.00028,
+            38
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            37.00028,
+            38
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            39.20954,
+            0
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            46.20954,
+            19
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            46.20954,
+            38
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            47.20954,
+            0
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            48.66409,
+            11
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            49.86863,
+            36
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            49.70618,
+            1
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            49.11863,
+            19.27273
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            50.20954,
+            8
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            8.398236,
+            8.92172
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            50.93681,
+            24.27273
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            50.11863,
+            22.27273
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            50.10618,
+            3
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            49.53914,
+            5
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            49.86863,
+            32
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.11863,
+            30
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            61.20954,
+            28
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.11863,
+            19.27273
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.53914,
+            5
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            57.86863,
+            36
+          ]
+        },
+        {
+          "id": 71,
+          "pieceID": "piece7",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            54.20954,
+            28
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            60.86863,
+            35
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            61.34591,
+            19
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            54.20954,
+            38
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            54.20954,
+            39
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.57318,
+            13
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            55.20954,
+            14
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            62.20954,
+            1
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.86863,
+            32
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            53.86863,
+            33
+          ]
+        },
+        {
+          "id": 40,
+          "pieceID": "piece4",
+          "flip": false,
+          "angle": 180,
+          "position": [
+            61.84591,
+            18
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            57.53914,
+            5
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.20954,
+            8
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            57.11863,
+            19
+          ]
+        },
+        {
+          "id": 25,
+          "pieceID": "piece3",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            57.86863,
+            35
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            4.894377,
+            29.62359
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            8,
+            39
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            0,
+            29.82359
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            13,
+            0
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            29.00028,
+            39
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            17.07078,
+            19.65623
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            21.63275,
+            11.65623
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            22.82452,
+            19.65623
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            29.00028,
+            38
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            36.51863,
+            31
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            33.00028,
+            39
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            33.78109,
+            6.073727
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            48.83034,
+            10
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            36.31863,
+            30
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            37.53914,
+            2
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            52.83034,
+            10
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            39.20954,
+            17.14286
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            56.66409,
+            11
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            56.66409,
+            12
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            57.70618,
+            1
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            57.70618,
+            2
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.10618,
+            3
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.10618,
+            4
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.11863,
+            22
+          ]
+        },
+        {
+          "id": 41,
+          "pieceID": "piece5",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.11863,
+            23
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            41.54288,
+            1.666667
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.93681,
+            24
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            58.93681,
+            25
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            59.20954,
+            14
+          ]
+        },
+        {
+          "id": 56,
+          "pieceID": "piece6",
+          "flip": false,
+          "angle": 0,
+          "position": [
+            59.20954,
+            15
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": "Successfully completed"
+}
