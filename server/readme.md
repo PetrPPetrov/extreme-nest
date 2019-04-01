@@ -99,3 +99,4 @@ Imported nestings:
 * mao - Was not visualized
 * marques - Success
 * shirts - Server crashed
+* trousers - Large suboptimal nesting
