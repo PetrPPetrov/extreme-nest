@@ -94,7 +94,12 @@ Imported nestings:
     <img alt="blaz" src="./run_area/imported_nesting/blaz.png" width="960"/>
 </p>
 
-* dagli - Little suboptimal nesting
+* dagli - Little suboptimal nesting(sometimes server crashed)
+
+<p align="center">
+    <img alt="dagli" src="./run_area/imported_nesting/dagli.png" width="960"/>
+</p>
+
 * dighe1 - Large suboptimal nesting
 * dighe2 - Large suboptimal nesting
 * fu - Little suboptimal nesting
