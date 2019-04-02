@@ -89,6 +89,11 @@ Imported nestings:
 
 * albano - Was not visualized
 * blaz - Little suboptimal nesting
+
+<p align="center">
+    <img alt="blaz" src="./run_area/imported_nesting/blaz.png" width="960"/>
+</p>
+
 * dagli - Little suboptimal nesting
 * dighe1 - Large suboptimal nesting
 * dighe2 - Large suboptimal nesting
