@@ -13,8 +13,8 @@ const configuration = require('../resources/configuration');
 const router = require('./router');
 
 const server = express();
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({extended: true}));
+server.use(bodyParser.json({ limit: '10mb' }));
+server.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 server.use((request, response, next) => {
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Access-Control-Allow-Credentials', 'true');
