@@ -98,5 +98,6 @@ Imported nestings:
 * jackobs2 - Success
 * mao - Was not visualized
 * marques - Success
-* shirts - Server crashed
+* shirts - Success
+* swim - Was not visualized
 * trousers - Large suboptimal nesting
