@@ -63,7 +63,7 @@
                             http.joinGoldRequestToTest(this.$store.getters.importNestingRequest, newTest.id),
                             http.joinGoldResponseToTest(this.$store.getters.importNestingResponse, newTest.id)
                         ]);
-                        this.$root.$emit('add', newTest.id);
+                        this.$root.$emit('add', newTest);
                     })
                     .then(() => this.$store.dispatch('networkLog', 'Test was saved'))
                     .catch(() => this.$store.dispatch('networkLog', 'Test wasn\'t saved'))

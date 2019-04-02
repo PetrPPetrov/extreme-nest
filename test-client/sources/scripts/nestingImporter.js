@@ -28,10 +28,12 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
         const quantity = piece._attributes.quantity;
         const pieceID = piece._attributes.id;
         const pieceComponentAttrs = piece.component._attributes;
+        const pieceOrientations = piece.orientation.enumeration;
         for (let i = 0; i < quantity; i++) {
             pieces.push({
                 id: uniquePieceID++,
                 pieceID: pieceID,
+                orientations: pieceOrientations.map(orientation => ({ 'angle': parseFloat(orientation._attributes.angle) })),
                 polygonID: pieceComponentAttrs.idPolygon,
                 type: pieceComponentAttrs.type,
                 xOffset: parseFloat(pieceComponentAttrs.xOffset),
@@ -98,6 +100,7 @@ function convertRequestToPowerNestAPI(sheetComponent, pieces, polygons) {
             geometry: [geometry],
             instances: [{
                 id: piece.id,
+                orientations: piece.orientations,
                 pieceID: piece.pieceID,
                 quantity: 1
             }]
