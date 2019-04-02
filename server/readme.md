@@ -98,6 +98,7 @@ Imported nestings:
 * jackobs2 - Success
 * mao - Was not visualized
 * marques - Success
+* shapes1 - Little suboptimal nesting
 * shirts - Success
 * swim - Was not visualized
 * trousers - Large suboptimal nesting
