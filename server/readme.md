@@ -100,8 +100,18 @@ Imported nestings:
     <img alt="dagli" src="./run_area/imported_nesting/dagli.png" width="960"/>
 </p>
 
-* dighe1 - Large suboptimal nesting
-* dighe2 - Large suboptimal nesting
+* dighe1 - Little suboptimal nesting(sometimes server crashed)
+
+<p align="center">
+    <img alt="dighe1" src="./run_area/imported_nesting/dighe1.png" width="960"/>
+</p>
+
+* dighe2 - Little suboptimal nesting
+
+<p align="center">
+    <img alt="dighe2" src="./run_area/imported_nesting/dighe2.png" width="960"/>
+</p>
+
 * fu - Little suboptimal nesting
 * han - Large suboptimal nesting
 * jackobs1 - Success

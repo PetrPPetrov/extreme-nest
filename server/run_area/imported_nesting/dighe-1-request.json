@@ -20,6 +20,11 @@
       "instances": [
         {
           "id": 1,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece0",
           "quantity": 1
         }
@@ -45,6 +50,11 @@
       "instances": [
         {
           "id": 2,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -74,6 +84,11 @@
       "instances": [
         {
           "id": 3,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -111,6 +126,11 @@
       "instances": [
         {
           "id": 4,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -144,6 +164,11 @@
       "instances": [
         {
           "id": 5,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -173,6 +198,11 @@
       "instances": [
         {
           "id": 6,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece5",
           "quantity": 1
         }
@@ -210,6 +240,11 @@
       "instances": [
         {
           "id": 7,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece6",
           "quantity": 1
         }
@@ -239,6 +274,11 @@
       "instances": [
         {
           "id": 8,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -264,6 +304,11 @@
       "instances": [
         {
           "id": 9,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -289,6 +334,11 @@
       "instances": [
         {
           "id": 10,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece9",
           "quantity": 1
         }
@@ -314,6 +364,11 @@
       "instances": [
         {
           "id": 11,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece10",
           "quantity": 1
         }
@@ -347,6 +402,11 @@
       "instances": [
         {
           "id": 12,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece11",
           "quantity": 1
         }
@@ -372,6 +432,11 @@
       "instances": [
         {
           "id": 13,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece12",
           "quantity": 1
         }
@@ -401,6 +466,11 @@
       "instances": [
         {
           "id": 14,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece13",
           "quantity": 1
         }
@@ -426,6 +496,11 @@
       "instances": [
         {
           "id": 15,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece14",
           "quantity": 1
         }
@@ -451,6 +526,11 @@
       "instances": [
         {
           "id": 16,
+          "orientations": [
+            {
+              "angle": 0
+            }
+          ],
           "pieceID": "piece15",
           "quantity": 1
         }
