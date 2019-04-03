@@ -45,7 +45,7 @@
             return {
                 image: image,
                 openedSheetIndex: 0,
-                baseScale: 1,
+                baseScale: 0.1,
                 width: 0,
                 height: 0,
                 transX: 0,
@@ -110,8 +110,8 @@
                 let group = new fabric.Group(this.$store.getters.canvas.getObjects());
                 group.scaleX = this.scale / this.$store.getters.canvas.scale;
                 group.scaleY = this.scale / this.$store.getters.canvas.scale;
-                group.left = group.width / 2 + this.transX * this.scale;
-                group.top = group.height / 2 + this.transY * this.scale;
+                group.left = group.width / 15 + this.transX * this.scale;
+                group.top = group.height / 15 + this.transY * this.scale;
                 group.destroy();
 
                 this.$store.getters.canvas.scale = this.scale;
