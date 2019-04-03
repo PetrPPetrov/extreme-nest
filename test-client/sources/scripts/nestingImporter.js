@@ -33,7 +33,9 @@ const convertToJSONNestingRequest = function (xmlNestingRequest) {
             pieces.push({
                 id: uniquePieceID++,
                 pieceID: pieceID,
-                orientations: pieceOrientations.map(orientation => ({ 'angle': parseFloat(orientation._attributes.angle) })),
+                orientations: (Array.isArray(pieceOrientations)) ?
+                    (pieceOrientations.map(orientation => ({ 'angle': parseFloat(orientation._attributes.angle) }))) :
+                    ([{ 'angle': parseFloat(pieceOrientations._attributes.angle) }]),
                 polygonID: pieceComponentAttrs.idPolygon,
                 type: pieceComponentAttrs.type,
                 xOffset: parseFloat(pieceComponentAttrs.xOffset),
