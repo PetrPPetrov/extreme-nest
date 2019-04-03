@@ -106,16 +106,36 @@ Imported nestings:
     <img alt="dighe1" src="./run_area/imported_nesting/dighe1.png" width="960"/>
 </p>
 
-* dighe2 - Little suboptimal nesting
+* dighe2 - Large suboptimal nesting
 
 <p align="center">
     <img alt="dighe2" src="./run_area/imported_nesting/dighe2.png" width="960"/>
 </p>
 
 * fu - Little suboptimal nesting
+
+<p align="center">
+    <img alt="fu" src="./run_area/imported_nesting/fu.png" width="960"/>
+</p>
+
 * han - Large suboptimal nesting
-* jackobs1 - Success
-* jackobs2 - Success
+
+<p align="center">
+    <img alt="han" src="./run_area/imported_nesting/han.png" width="960"/>
+</p>
+
+* jackobs1 - Little suboptimal nesting
+
+<p align="center">
+    <img alt="jackobs1" src="./run_area/imported_nesting/jackobs1.png" width="960"/>
+</p>
+
+* jackobs2 - Little suboptimal nesting
+
+<p align="center">
+    <img alt="jackobs2" src="./run_area/imported_nesting/jackobs2.png" width="960"/>
+</p>
+
 * mao - Was not visualized
 * marques - Success
 * shapes1 - Little suboptimal nesting
