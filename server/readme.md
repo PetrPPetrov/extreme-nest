@@ -87,7 +87,8 @@ Generic Ideas:
 Imported nestings:
 ===============
 
-* albano - Was not visualized
+* albano - Was not visualized(huge size)
+
 * blaz - Little suboptimal nesting
 
 <p align="center">
@@ -136,9 +137,30 @@ Imported nestings:
     <img alt="jackobs2" src="./run_area/imported_nesting/jackobs2.png" width="960"/>
 </p>
 
-* mao - Was not visualized
-* marques - Success
-* shapes1 - Little suboptimal nesting
-* shirts - Success
-* swim - Was not visualized
-* trousers - Large suboptimal nesting
+* mao - Was not visualized(huge size)
+
+* marques - Little suboptimal nesting
+
+<p align="center">
+    <img alt="marques" src="./run_area/imported_nesting/marques.png" width="960"/>
+</p>
+
+* shapes1 - Success
+
+<p align="center">
+    <img alt="shapes1" src="./run_area/imported_nesting/shapes1.png" width="960"/>
+</p>
+
+* shirts - Little suboptimal nesting(sometimes server crashed)
+
+<p align="center">
+    <img alt="shirts" src="./run_area/imported_nesting/shirts.png" width="960"/>
+</p>
+
+* swim - Was not visualized(huge size)
+
+* trousers - Little suboptimal nesting
+
+<p align="center">
+    <img alt="trousers" src="./run_area/imported_nesting/trousers.png" width="960"/>
+</p>

@@ -136,6 +136,14 @@
       "instances": [
         {
           "id": 1,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece0",
           "quantity": 1
         }
@@ -277,6 +285,14 @@
       "instances": [
         {
           "id": 2,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece0",
           "quantity": 1
         }
@@ -418,6 +434,14 @@
       "instances": [
         {
           "id": 3,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece0",
           "quantity": 1
         }
@@ -495,6 +519,14 @@
       "instances": [
         {
           "id": 4,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -572,6 +604,14 @@
       "instances": [
         {
           "id": 5,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -649,6 +689,14 @@
       "instances": [
         {
           "id": 6,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -726,6 +774,14 @@
       "instances": [
         {
           "id": 7,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -803,6 +859,14 @@
       "instances": [
         {
           "id": 8,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -880,6 +944,14 @@
       "instances": [
         {
           "id": 9,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece1",
           "quantity": 1
         }
@@ -993,6 +1065,14 @@
       "instances": [
         {
           "id": 10,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1106,6 +1186,14 @@
       "instances": [
         {
           "id": 11,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1219,6 +1307,14 @@
       "instances": [
         {
           "id": 12,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1332,6 +1428,14 @@
       "instances": [
         {
           "id": 13,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1445,6 +1549,14 @@
       "instances": [
         {
           "id": 14,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1558,6 +1670,14 @@
       "instances": [
         {
           "id": 15,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece2",
           "quantity": 1
         }
@@ -1635,6 +1755,14 @@
       "instances": [
         {
           "id": 16,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -1712,6 +1840,14 @@
       "instances": [
         {
           "id": 17,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -1789,6 +1925,14 @@
       "instances": [
         {
           "id": 18,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -1866,6 +2010,14 @@
       "instances": [
         {
           "id": 19,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -1943,6 +2095,14 @@
       "instances": [
         {
           "id": 20,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -2020,6 +2180,14 @@
       "instances": [
         {
           "id": 21,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece3",
           "quantity": 1
         }
@@ -2109,6 +2277,14 @@
       "instances": [
         {
           "id": 22,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2198,6 +2374,14 @@
       "instances": [
         {
           "id": 23,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2287,6 +2471,14 @@
       "instances": [
         {
           "id": 24,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2376,6 +2568,14 @@
       "instances": [
         {
           "id": 25,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2465,6 +2665,14 @@
       "instances": [
         {
           "id": 26,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2554,6 +2762,14 @@
       "instances": [
         {
           "id": 27,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece4",
           "quantity": 1
         }
@@ -2659,6 +2875,14 @@
       "instances": [
         {
           "id": 28,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece5",
           "quantity": 1
         }
@@ -2764,6 +2988,14 @@
       "instances": [
         {
           "id": 29,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece5",
           "quantity": 1
         }
@@ -2869,6 +3101,14 @@
       "instances": [
         {
           "id": 30,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece5",
           "quantity": 1
         }
@@ -2990,6 +3230,14 @@
       "instances": [
         {
           "id": 31,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece6",
           "quantity": 1
         }
@@ -3111,6 +3359,14 @@
       "instances": [
         {
           "id": 32,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece6",
           "quantity": 1
         }
@@ -3232,6 +3488,14 @@
       "instances": [
         {
           "id": 33,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece6",
           "quantity": 1
         }
@@ -3305,6 +3569,14 @@
       "instances": [
         {
           "id": 34,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3378,6 +3650,14 @@
       "instances": [
         {
           "id": 35,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3451,6 +3731,14 @@
       "instances": [
         {
           "id": 36,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3524,6 +3812,14 @@
       "instances": [
         {
           "id": 37,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3597,6 +3893,14 @@
       "instances": [
         {
           "id": 38,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3670,6 +3974,14 @@
       "instances": [
         {
           "id": 39,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece7",
           "quantity": 1
         }
@@ -3723,6 +4035,14 @@
       "instances": [
         {
           "id": 40,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -3776,6 +4096,14 @@
       "instances": [
         {
           "id": 41,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -3829,6 +4157,14 @@
       "instances": [
         {
           "id": 42,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -3882,6 +4218,14 @@
       "instances": [
         {
           "id": 43,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -3935,6 +4279,14 @@
       "instances": [
         {
           "id": 44,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -3988,6 +4340,14 @@
       "instances": [
         {
           "id": 45,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece8",
           "quantity": 1
         }
@@ -4145,6 +4505,14 @@
       "instances": [
         {
           "id": 46,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece9",
           "quantity": 1
         }
@@ -4302,6 +4670,14 @@
       "instances": [
         {
           "id": 47,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece9",
           "quantity": 1
         }
@@ -4459,6 +4835,14 @@
       "instances": [
         {
           "id": 48,
+          "orientations": [
+            {
+              "angle": 0
+            },
+            {
+              "angle": 180
+            }
+          ],
           "pieceID": "piece9",
           "quantity": 1
         }
