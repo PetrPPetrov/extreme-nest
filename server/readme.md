@@ -175,6 +175,16 @@ Imported nestings:
     <img alt="poly5b" src="./run_area/imported_nesting/poly5b.png" width="960"/>
 </p>
 
+* shapes0 - Intersection of figures
+
+<p align="center">
+    <img alt="shapes0-gold-response" src="./run_area/imported_nesting/shapes0-gold-response.png" width="960"/>
+</p>
+
+<p align="center">
+    <img alt="shapes0-server-response" src="./run_area/imported_nesting/shapes0-server-response.png" width="960"/>
+</p>
+
 * shapes1 - Success
 
 <p align="center">
