@@ -145,6 +145,36 @@ Imported nestings:
     <img alt="marques" src="./run_area/imported_nesting/marques.png" width="960"/>
 </p>
 
+* poly1a - Little suboptimal nesting
+
+<p align="center">
+    <img alt="poly1a" src="./run_area/imported_nesting/poly1a.png" width="960"/>
+</p>
+
+* poly2b - Large suboptimal nesting
+
+<p align="center">
+    <img alt="poly2b" src="./run_area/imported_nesting/poly2b.png" width="960"/>
+</p>
+
+* poly3b - Large suboptimal nesting
+
+<p align="center">
+    <img alt="poly3b" src="./run_area/imported_nesting/poly3b.png" width="960"/>
+</p>
+
+* poly4b - Large suboptimal nesting
+
+<p align="center">
+    <img alt="poly4b" src="./run_area/imported_nesting/poly4b.png" width="960"/>
+</p>
+
+* poly5b - Large suboptimal nesting
+
+<p align="center">
+    <img alt="poly5b" src="./run_area/imported_nesting/poly5b.png" width="960"/>
+</p>
+
 * shapes1 - Success
 
 <p align="center">
