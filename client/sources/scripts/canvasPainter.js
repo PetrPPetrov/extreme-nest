@@ -27,16 +27,17 @@ module.exports.draw = (canvas, storage) => {
         // Adding figures
         const geometry = requestParser.getGeometryById(nestingRequest, instanceID);
         functional.doIf(geometry, () => {
-            const color = generateColorByPosition(position);
+            const color = generateColor();
             canvas.add(createLocalCoordinateSystem(position, rotationAngle, color)); // Adding local coordinate system for figure
-            geometry.geometry.forEach(vertices =>
+            geometry.geometry.forEach(vertices => {
+                const [xAlignment, yAlignment] = getAlignment(vertices, rotationAngle);
                 canvas.add(new fabric.Path(createCoordinates(vertices), {
-                    top: yPos * blockSize,
-                    left: xPos * blockSize,
+                    top: yPos * blockSize + (yAlignment * blockSize),
+                    left: xPos * blockSize + (xAlignment * blockSize),
                     angle: rotationAngle,
                     fill: color
                 }))
-            )
+            });
         });
 
         // Adding holes of figures
@@ -55,6 +56,25 @@ module.exports.draw = (canvas, storage) => {
 
     canvas.renderAll();
 };
+
+function getAlignment(vertices, angle) {
+    let maxXAlignment = 0.0;
+    let maxYAlignment = 0.0;
+    vertices.forEach(vertex => {
+        if (parseFloat(vertex[0]) < maxXAlignment) {
+            maxXAlignment = vertex[0];
+        }
+        if (parseFloat(vertex[1]) < maxYAlignment) {
+            maxYAlignment = vertex[1];
+        }
+    });
+
+    if (angle === 180) {
+        return [-maxXAlignment, -maxYAlignment]
+    } else {
+        return [maxXAlignment, maxYAlignment]
+    }
+}
 
 function drawSheetBorder(canvas, width, height) {
     const borderCoordinates = `M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`;
@@ -83,8 +103,11 @@ function createLocalCoordinateSystem(vertex, angle, color) {
     });
 }
 
-function generateColorByPosition(position) {
-    const x = ((position[0] + 17) * 23).toString(16).padStart(3, 0);
-    const y = ((position[1] + 13) * 31).toString(16).padStart(3, 0);
-    return `#${x}${y}`.slice(0, 7);
+function generateColor() {
+    const hexValues = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e"];
+    let newColor = "#";
+    for (let i = 0; i < 6; i++ ) {
+        newColor += hexValues[Math.round( Math.random() * 14 )];
+    }
+    return newColor;
 }
