@@ -129,7 +129,7 @@ inline contour_t simplifyDouglasPeucker(const contour_t& points, double sq_toler
 
     contour_t simplified;
     simplified.push_back(points.front());
-    simplifyDPStep(points, points.begin(), points.end(), sq_tolerance, simplified);
+    simplifyDPStep(points, points.begin(), std::prev(points.end()), sq_tolerance, simplified);
     simplified.push_back(points.back());
 
     return simplified;
