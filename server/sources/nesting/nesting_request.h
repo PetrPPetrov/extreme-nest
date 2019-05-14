@@ -196,7 +196,7 @@ namespace NestingRequest
             {
                 for (auto& child : part.get_child("holes"))
                 {
-                    geometry.push_back(boost::make_shared<Contour>(child.second));
+                    holes.push_back(boost::make_shared<Contour>(child.second));
                 }
             }
             instances.clear();

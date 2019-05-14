@@ -262,6 +262,8 @@ void simplify(geometry_ptr geometry)
 
 void simplify(nesting_task_ptr nesting_task)
 {
+    // Simplification routines accept square of tolerance
+    Config::Generic::Simplification::TOLERANCE *= Config::Generic::Simplification::TOLERANCE;
     for (auto part : nesting_task->parts)
     {
         simplify(part->variations[0].source_geometry);
