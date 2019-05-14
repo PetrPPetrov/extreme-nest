@@ -105,38 +105,94 @@ namespace Nfp
         result.y(std::min(result.y(), point.y()));
     }
 
+    inline void accumulateMinMax(point_t& min_point, point_t& max_point, const point_t& point)
+    {
+        accumulateMin(min_point, point);
+        accumulateMax(max_point, point);
+    }
+
     inline void accumulate(point_t& max_point, point_t& min_point, const geometry_ptr& geometry)
     {
         for (auto contour : geometry->outer_contours)
         {
             for (auto point : contour)
             {
-                accumulateMax(max_point, point);
-                accumulateMin(min_point, point);
+                accumulateMinMax(min_point, max_point, point);
             }
         }
         for (auto hole : geometry->holes)
         {
             for (auto point : hole)
             {
-                accumulateMax(max_point, point);
-                accumulateMin(min_point, point);
+                accumulateMinMax(min_point, max_point, point);
             }
         }
     }
 
+    inline void calculate_size(point_t& result_size, const geometry_ptr& geometry, double max_protection_offset)
+    {
+        point_t part_max_point(-std::numeric_limits<double>::max(), -std::numeric_limits<double>::max());
+        point_t part_min_point(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
+        accumulate(part_max_point, part_min_point, geometry);
+
+        point_t size;
+        size.x(part_max_point.x() - part_min_point.x() + 2 * max_protection_offset);
+        size.y(part_max_point.y() - part_min_point.y() + 2 * max_protection_offset);
+
+        double max_coordinate = std::max(size.x(), size.y());
+
+        result_size.x(result_size.x() + max_coordinate);
+        result_size.y(result_size.y() + max_coordinate);
+    }
+
     inline double calculateInputScale(const nesting_task_ptr& nesting_task)
     {
-        point_t max_point(0.0, 0.0);
-        point_t min_point(0.0, 0.0);
+        double max_protection_offset = 0.0;
+        for (auto part : nesting_task->parts)
+        {
+            if (!g_calculating)
+            {
+                throw InterruptionException();
+            }
+            if (part->protection_offset > max_protection_offset)
+            {
+                max_protection_offset = part->protection_offset;
+            }
+        }
+
+        point_t max_point(-std::numeric_limits<double>::max(), -std::numeric_limits<double>::max());
+        point_t min_point(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
         for (auto sheet : nesting_task->sheets)
         {
             accumulate(max_point, min_point, sheet->geometry);
         }
+
+        point_t max_size(0.0, 0.0);
+        for (auto part : nesting_task->parts)
+        {
+            calculate_size(max_size, part->variations[0].source_geometry, max_protection_offset);
+        }
+
+        point_t possible_min;
+        possible_min.x(min_point.x() - max_size.x());
+        possible_min.y(min_point.y() - max_size.y());
+
+        point_t possible_max;
+        possible_max.x(max_point.x() + max_size.x());
+        possible_max.y(max_point.y() + max_size.y());
+
+        accumulateMin(min_point, possible_min);
+        accumulateMax(max_point, possible_max);
+
         for (auto part : nesting_task->parts)
         {
             accumulate(max_point, min_point, part->variations[0].source_geometry);
         }
+
+        min_point.x(min_point.x() - max_protection_offset);
+        min_point.y(min_point.y() - max_protection_offset);
+        max_point.x(max_point.x() + max_protection_offset);
+        max_point.y(max_point.y() + max_protection_offset);
         min_point.x(std::fabs(min_point.x()));
         min_point.y(std::fabs(min_point.y()));
         const double max_x = std::max(max_point.x(), min_point.x());

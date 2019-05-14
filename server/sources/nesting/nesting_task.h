@@ -35,6 +35,7 @@ struct PartVariation
 struct Part
 {
     std::vector<PartVariation> variations; // We need a fast access by index, so, we use std::vector
+    double protection_offset = 0.0;
     int id = -1;
 };
 typedef boost::shared_ptr<Part> part_ptr;

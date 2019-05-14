@@ -140,7 +140,7 @@ class TaskGenerator
                     new_variation.flip = false;
                     new_part->variations.push_back(new_variation);
                 }
-                // TODO: protection_offset
+                new_part->protection_offset = part->protection_offset;
                 result->parts.push_back(new_part);
             }
         }
