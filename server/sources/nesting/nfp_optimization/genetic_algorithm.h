@@ -108,7 +108,7 @@ namespace Nfp
                         using namespace boost::polygon::operators;
 
                         const polygon_set_ptr& current_part_geometry = part_info->variations_info[gene.variation]->polygons;
-                        const polygon_set_t& inner_nfp = cachedInnerNfp(sheet_info->polygons, current_part_geometry);
+                        const polygon_set_t& inner_nfp = cachedInnerNfp(sheet_info->polygons, current_part_geometry, sheet_info->sheet->border_gap);
 
                         if (!inner_nfp.empty())
                         {

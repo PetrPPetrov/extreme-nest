@@ -234,6 +234,10 @@ namespace NestingRequest
             id = sheet.get<int>("id");
             quantity = sheet.get<int>("quantity", 1);
             border_gap = sheet.get<double>("border_gap", 0.0);
+            if (border_gap < 0.0)
+            {
+                border_gap = 0.0;
+            }
         }
     };
     typedef boost::shared_ptr<Sheet> sheet_ptr;

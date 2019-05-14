@@ -43,6 +43,7 @@ typedef boost::shared_ptr<Part> part_ptr;
 struct Sheet
 {
     geometry_ptr geometry;
+    double border_gap = 0.0;
     int id = -1;
 };
 typedef boost::shared_ptr<Sheet> sheet_ptr;

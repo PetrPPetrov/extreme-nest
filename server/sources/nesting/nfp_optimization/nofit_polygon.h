@@ -394,10 +394,15 @@ namespace Nfp
         }
     }
 
-    inline const polygon_set_t& cachedInnerNfp(const polygon_set_ptr& a, const polygon_set_ptr& b)
+    inline const polygon_set_t& cachedInnerNfp(const polygon_set_ptr& a, const polygon_set_ptr& b, double border_gap)
     {
+        struct inner_nfp_t
+        {
+            polygon_set_ptr result;
+            double border_gap = 0.0;
+        };
         // TODO: switch to std::unordered_map
-        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, polygon_set_ptr> inner_nfp_cache_t;
+        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, inner_nfp_t> inner_nfp_cache_t;
         static inner_nfp_cache_t inner_nfp_cache;
 
         inner_nfp_cache_t::key_type key(a.get(), b.get());
@@ -413,6 +418,10 @@ namespace Nfp
             polygon_set_t inverted_sheet;
             inverted_sheet += bounding_box;
             inverted_sheet -= *a;
+            if (border_gap > 0.0)
+            {
+                inverted_sheet.bloat(static_cast<int>(Config::Nfp::INPUT_SCALE * border_gap));
+            }
 
             polygon_set_t negative_inner_nfp;
             convolveTwoPolygonSets(negative_inner_nfp, inverted_sheet, *b);
@@ -436,9 +445,20 @@ namespace Nfp
                 }
             }
 
-            fit = inner_nfp_cache.insert(inner_nfp_cache_t::value_type(key, new_inner_nfp)).first;
+            inner_nfp_t inner_nfp_info;
+            inner_nfp_info.result = new_inner_nfp;
+            inner_nfp_info.border_gap = border_gap;
+
+            fit = inner_nfp_cache.insert(inner_nfp_cache_t::value_type(key, inner_nfp_info)).first;
         }
-        return *fit->second;
+
+        if (fit->second.border_gap != border_gap)
+        {
+            assert(false);
+            throw std::runtime_error("different border gap!");
+        }
+
+        return *fit->second.result;
     }
 
     inline const polygon_set_t& cachedOuterNfp(const polygon_set_ptr& a, const polygon_set_ptr& b, double effective_protection_offset)
