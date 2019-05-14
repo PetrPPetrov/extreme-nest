@@ -23,8 +23,8 @@ TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 * Add support for pre-nesting
 * Add suppurt for defects on sheet
 * Add support for arcs
-* Add support for protection offset
-* Add support for border gap (for sheets)
+* ~~Add support for protection offset~~
+* ~~Add support for border gap (for sheets)~~
 * ~~Implement simplification for contours and holes (for a faster calculation)~~
 
 Ideas for NFP Optimization (NoFitPolygon, Minkowski sum and other parts in C++):
