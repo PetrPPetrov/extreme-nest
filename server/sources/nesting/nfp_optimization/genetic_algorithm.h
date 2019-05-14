@@ -120,7 +120,8 @@ namespace Nfp
                                 if (prev_gene.placed && prev_gene.sheet_number == sheet_number)
                                 {
                                     const polygon_set_ptr& variation_geometry = parts_info[prev_gene.part_number]->variations_info[prev_gene.variation]->polygons;
-                                    const polygon_set_t& outer_nfp = cachedOuterNfp(variation_geometry, current_part_geometry);
+                                    const double effective_protection_offset = std::max(part_info->part->protection_offset, parts_info[prev_gene.part_number]->part->protection_offset);
+                                    const polygon_set_t& outer_nfp = cachedOuterNfp(variation_geometry, current_part_geometry, effective_protection_offset);
 
                                     std::vector<polygon_t> outer_nfp_polygons;
                                     outer_nfp.get(outer_nfp_polygons);

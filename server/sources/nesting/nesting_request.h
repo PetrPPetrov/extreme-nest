@@ -205,6 +205,10 @@ namespace NestingRequest
                 instances.push_back(boost::make_shared<Instance>(child.second));
             }
             protection_offset = part.get<double>("protection_offset", 0.0);
+            if (protection_offset < 0.0)
+            {
+                protection_offset = 0.0;
+            }
         }
     };
     typedef boost::shared_ptr<Part> part_ptr;

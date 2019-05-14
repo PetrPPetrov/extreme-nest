@@ -441,10 +441,15 @@ namespace Nfp
         return *fit->second;
     }
 
-    inline const polygon_set_t& cachedOuterNfp(const polygon_set_ptr& a, const polygon_set_ptr& b)
+    inline const polygon_set_t& cachedOuterNfp(const polygon_set_ptr& a, const polygon_set_ptr& b, double effective_protection_offset)
     {
+        struct outer_nfp_t
+        {
+            polygon_set_ptr result;
+            double effective_protection_offset = 0.0;
+        };
         // TODO: switch to std::unordered_map
-        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, polygon_set_ptr> outer_nfp_cache_t;
+        typedef std::map<std::pair<polygon_set_t*, polygon_set_t*>, outer_nfp_t> outer_nfp_cache_t;
         static outer_nfp_cache_t outer_nfp_cache;
 
         outer_nfp_cache_t::key_type key(a.get(), b.get());
@@ -452,10 +457,30 @@ namespace Nfp
         if (fit == outer_nfp_cache.end())
         {
             polygon_set_ptr outer_nfp = boost::make_shared<polygon_set_t>();
-            convolveTwoPolygonSets(*outer_nfp, *a, *b);
 
-            fit = outer_nfp_cache.insert(outer_nfp_cache_t::value_type(key, outer_nfp)).first;
+            if (effective_protection_offset > 0.0)
+            {
+                polygon_set_t a_for_bloating = *a;
+                a_for_bloating.bloat(static_cast<int>(Config::Nfp::INPUT_SCALE * effective_protection_offset));
+                convolveTwoPolygonSets(*outer_nfp, a_for_bloating, *b);
+            }
+            else
+            {
+                convolveTwoPolygonSets(*outer_nfp, *a, *b);
+            }
+
+            outer_nfp_t outer_nfp_info;
+            outer_nfp_info.result = outer_nfp;
+            outer_nfp_info.effective_protection_offset = effective_protection_offset;
+
+            fit = outer_nfp_cache.insert(outer_nfp_cache_t::value_type(key, outer_nfp_info)).first;
         }
-        return *fit->second;
+        if (fit->second.effective_protection_offset != effective_protection_offset)
+        {
+            assert(false);
+            throw std::runtime_error("different effective protection offset!");
+        }
+
+        return *fit->second.result;
     }
 }
