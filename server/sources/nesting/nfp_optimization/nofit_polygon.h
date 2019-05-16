@@ -213,7 +213,7 @@ namespace Nfp
         {
             max_coordinate = 1.0;
         }
-        // 0.1 is for safety only. If we use 1.0 then max_coordinate
+        // /16.0 is for safety only. If we do not use /16.0 then max_coordinate
         // after scaling will become max_integer which is very near to integer overflow.
         // During computations our numbers could be slightly bigger than max_coordinate,
         // causing integer overflow. So, /16.0 is for safety only,
