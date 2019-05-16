@@ -160,17 +160,31 @@ namespace Nfp
             }
         }
 
-        point_t max_point(-std::numeric_limits<double>::max(), -std::numeric_limits<double>::max());
-        point_t min_point(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
-        for (auto sheet : nesting_task->sheets)
-        {
-            accumulate(max_point, min_point, sheet->geometry);
-        }
-
         point_t max_size(0.0, 0.0);
         for (auto part : nesting_task->parts)
         {
             calculate_size(max_size, part->variations[0].source_geometry, max_protection_offset);
+        }
+
+        point_t max_point(-std::numeric_limits<double>::max(), -std::numeric_limits<double>::max());
+        point_t min_point(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
+        for (auto sheet : nesting_task->sheets)
+        {
+            if (sheet->infinite)
+            {
+                // For infinite sheets emulation we use finite sheet lengths, calculated as
+                // 2 * (maximum length of all parts + border_gap)
+                // where maximum length of all parts includes maximum of protection_offset between each part
+                const double almost_infinite_length = 2 * (max_size.x() + sheet->border_gap);
+                sheet->geometry = boost::make_shared<Geometry>();
+                contour_t outer_contour;
+                outer_contour.push_back(point_t(0.0, 0.0));
+                outer_contour.push_back(point_t(0.0, sheet->height));
+                outer_contour.push_back(point_t(almost_infinite_length, sheet->height));
+                outer_contour.push_back(point_t(almost_infinite_length, 0.0));
+                sheet->geometry->outer_contours.push_back(outer_contour);
+            }
+            accumulate(max_point, min_point, sheet->geometry);
         }
 
         point_t possible_min;

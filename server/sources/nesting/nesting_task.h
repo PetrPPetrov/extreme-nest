@@ -44,6 +44,8 @@ struct Sheet
 {
     geometry_ptr geometry;
     double border_gap = 0.0;
+    bool infinite = false;
+    double height = 0.0;
     int id = -1;
 };
 typedef boost::shared_ptr<Sheet> sheet_ptr;
