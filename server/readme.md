@@ -18,7 +18,7 @@ For debugging purposes you can use 'npm run debug' command.
 TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 ================================================================================
 * ~~CalculateFitness~~
-* Add support of infinite sheet length
+* ~~Add support of infinite sheet length~~
 * Add support of non-rectangular sheets
 * Add support for pre-nesting
 * Add suppurt for defects on sheet
