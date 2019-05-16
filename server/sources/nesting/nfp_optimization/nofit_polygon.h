@@ -139,7 +139,7 @@ namespace Nfp
         size.x(part_max_point.x() - part_min_point.x() + 2 * max_protection_offset);
         size.y(part_max_point.y() - part_min_point.y() + 2 * max_protection_offset);
 
-        double max_coordinate = std::max(size.x(), size.y());
+        double max_coordinate = sqrt(size.x() * size.x() + size.y() * size.y());
 
         result_size.x(result_size.x() + max_coordinate);
         result_size.y(result_size.y() + max_coordinate);
@@ -189,10 +189,6 @@ namespace Nfp
             accumulate(max_point, min_point, part->variations[0].source_geometry);
         }
 
-        min_point.x(min_point.x() - max_protection_offset);
-        min_point.y(min_point.y() - max_protection_offset);
-        max_point.x(max_point.x() + max_protection_offset);
-        max_point.y(max_point.y() + max_protection_offset);
         min_point.x(std::fabs(min_point.x()));
         min_point.y(std::fabs(min_point.y()));
         const double max_x = std::max(max_point.x(), min_point.x());
