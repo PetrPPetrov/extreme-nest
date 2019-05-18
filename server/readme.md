@@ -19,9 +19,9 @@ TODO for NFP Optimization (NoFitPolygon, Minkowski summ and other parts in C++):
 ================================================================================
 * ~~CalculateFitness~~
 * ~~Add support of infinite sheet length~~
-* Add support of non-rectangular sheets
+* ~~Add support of non-rectangular sheets~~
 * Add support for pre-nesting
-* Add suppurt for defects on sheet
+* ~~Add suppurt for defects on sheet~~
 * Add support for arcs
 * ~~Add support for protection offset~~
 * ~~Add support for border gap (for sheets)~~
