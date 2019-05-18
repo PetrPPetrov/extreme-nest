@@ -158,29 +158,39 @@ class TaskGenerator
         {
             sheet_ptr new_sheet = boost::make_shared<Sheet>();
             new_sheet->id = sheet->id;
-            // TODO: add "contour" support
-            // TODO: add "defects" support
-            double height = sheet->height;
-            if (height < 0.0)
+            if (sheet->contour)
             {
-                height = 10.0;
+                new_sheet->geometry = boost::make_shared<Geometry>();
+                new_sheet->geometry->outer_contours.push_back(extractContour(sheet->contour));
+                for (auto contour : sheet->defects)
+                {
+                    new_sheet->geometry->holes.push_back(extractContour(contour));
+                }
             }
-            double length = sheet->length;
-            if (length < 0.0)
+            else
             {
-                length = 10.0;
-            }
-            new_sheet->geometry = boost::make_shared<Geometry>();
-            contour_t outer_contour;
-            outer_contour.push_back(point_t(0.0, 0.0));
-            outer_contour.push_back(point_t(0.0, height));
-            outer_contour.push_back(point_t(length, height));
-            outer_contour.push_back(point_t(length, 0.0));
-            new_sheet->geometry->outer_contours.push_back(outer_contour);
-            if (sheet->length < 0.0)
-            {
-                new_sheet->infinite = true;
-                new_sheet->height = height;
+                double height = sheet->height;
+                if (height < 0.0)
+                {
+                    height = 10.0;
+                }
+                double length = sheet->length;
+                if (length < 0.0)
+                {
+                    length = 10.0;
+                }
+                new_sheet->geometry = boost::make_shared<Geometry>();
+                contour_t outer_contour;
+                outer_contour.push_back(point_t(0.0, 0.0));
+                outer_contour.push_back(point_t(0.0, height));
+                outer_contour.push_back(point_t(length, height));
+                outer_contour.push_back(point_t(length, 0.0));
+                new_sheet->geometry->outer_contours.push_back(outer_contour);
+                if (sheet->length < 0.0)
+                {
+                    new_sheet->infinite = true;
+                    new_sheet->height = height;
+                }
             }
             new_sheet->border_gap = sheet->border_gap;
             result->sheets.push_back(new_sheet);

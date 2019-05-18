@@ -217,11 +217,11 @@ namespace NestingRequest
     {
         double length = 10.0;
         double height = 10.0;
-        // TODO: add "contour" support
+        contour_ptr contour;
         int id = -1;
         int quantity = 1;
         double border_gap = 0.0;
-        // TODO: add "defects" support
+        std::list<contour_ptr> defects;
 
         Sheet(const boost::property_tree::ptree& sheet)
         {
@@ -229,14 +229,26 @@ namespace NestingRequest
         }
         void load(const boost::property_tree::ptree& sheet)
         {
-            length = sheet.get<double>("length");
-            height = sheet.get<double>("height");
+            length = sheet.get<double>("length", 1.0);
+            height = sheet.get<double>("height", 1.0);
+            if (sheet.get_child_optional("contour").has_value())
+            {
+                contour = boost::make_shared<Contour>(sheet.get_child("contour"));
+            }
             id = sheet.get<int>("id");
             quantity = sheet.get<int>("quantity", 1);
             border_gap = sheet.get<double>("border_gap", 0.0);
             if (border_gap < 0.0)
             {
                 border_gap = 0.0;
+            }
+            defects.clear();
+            if (sheet.get_child_optional("defects").has_value())
+            {
+                for (auto& child : sheet.get_child("defects"))
+                {
+                    defects.push_back(boost::make_shared<Contour>(child.second));
+                }
             }
         }
     };
