@@ -29,7 +29,7 @@
 
     const fabric = require('fabric').fabric;
     const canvasPainter = require('../scripts/canvasPainter');
-    const nestingRequestParser = require('../scripts/nestingRequestParser');
+    const nestingRequestParser = require('../../../common/nestingRequestParser');
 
     export default {
         name: 'exportBlockTemplate',

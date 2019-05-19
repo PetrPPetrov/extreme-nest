@@ -6,8 +6,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import * as nestingRequestParser from "./nestingRequestParser";
-import * as nestingResponseParser from "./nestingResponseParser";
+import * as nestingRequestParser from "../../../common/nestingRequestParser";
+import * as nestingResponseParser from "../../../common/nestingResponseParser";
 
 Vue.use(Vuex);
 

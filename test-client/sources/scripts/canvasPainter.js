@@ -6,8 +6,8 @@
 'use strict';
 
 const _ = require('underscore');
-const requestParser = require('./nestingRequestParser');
-const responseParser = require('./nestingResponseParser');
+const requestParser = require('../../../common/nestingRequestParser');
+const responseParser = require('../../../common/nestingResponseParser');
 
 let blockSize = 0;
 

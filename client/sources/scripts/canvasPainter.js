@@ -4,8 +4,8 @@
 // This software is intellectual property of GkmSoft.
 
 const functional = require('./functionalUtils');
-const requestParser = require('./nestingRequestParser');
-const responseParser = require('./nestingResponseParser');
+const requestParser = require('../../../common/nestingRequestParser');
+const responseParser = require('../../../common/nestingResponseParser');
 
 const blockSize = 20;
 

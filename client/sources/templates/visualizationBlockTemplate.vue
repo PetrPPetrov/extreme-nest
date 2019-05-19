@@ -37,7 +37,7 @@
     import image from '../resources/images/visualization-icon.png'
 
     const canvasPainter = require('../scripts/canvasPainter');
-    const nestingRequestParser = require('../scripts/nestingRequestParser');
+    const nestingRequestParser = require('../../../common/nestingRequestParser');
 
     export default {
         name: 'visualizationBlockTemplate',
