@@ -14,7 +14,11 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
     blockSize = canvasBlockSize;
     const openedSheetID = requestParser.getAllSheetsId(nestingRequest)[0];
     const sheet = requestParser.getSheetById(nestingRequest, openedSheetID);
-    canvas.add(createSheetBorder(sheet.length * blockSize, sheet.height * blockSize));
+    if (sheet.contour) {
+        canvas.add(createSheetContour(sheet.contour));
+    } else {
+        canvas.add(createSheetBorder(sheet.length * blockSize, sheet.height * blockSize));
+    }
     if (sheet.defects) {
         sheet.defects.forEach(defect => canvas.add(createDefect(defect)));
     }
@@ -67,6 +71,16 @@ function getAlignment(vertices, angle) {
 
 function createSheetBorder(width, height) {
     return new fabric.Path(`M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`, {
+        fill: 'white',
+        stroke: 'black'
+    });
+}
+
+function createSheetContour(contour) {
+    let coordinates = `M ${contour[0][0] * blockSize} ${contour[0][1] * blockSize}`;
+    coordinates += contour.map(vertex => ` L ${vertex[0] * blockSize} ${vertex[1] * blockSize}`);
+    coordinates += ` L ${contour[0][0] * blockSize} ${contour[0][1] * blockSize}`;
+    return new fabric.Path(coordinates, {
         fill: 'white',
         stroke: 'black'
     });
