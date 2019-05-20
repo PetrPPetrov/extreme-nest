@@ -14,9 +14,12 @@ const drawCanvas = (canvas, nestingRequest, nestingResponse, canvasBlockSize) =>
     blockSize = canvasBlockSize;
     const openedSheetID = requestParser.getAllSheetsId(nestingRequest)[0];
     const sheet = requestParser.getSheetById(nestingRequest, openedSheetID);
-    canvas.add(createSheetBorder(canvas, sheet.length * blockSize, sheet.height * blockSize));
-    const nesting = responseParser.getNestingBySheetId(nestingResponse, openedSheetID);
+    canvas.add(createSheetBorder(sheet.length * blockSize, sheet.height * blockSize));
+    if (sheet.defects) {
+        sheet.defects.forEach(defect => canvas.add(createDefect(defect)));
+    }
 
+    const nesting = responseParser.getNestingBySheetId(nestingResponse, openedSheetID);
     nesting.nested_parts.forEach(part => {
         const instanceID = part.id;
         const rotationAngle = part.angle;
@@ -62,10 +65,21 @@ function getAlignment(vertices, angle) {
     }
 }
 
-function createSheetBorder(canvas, width, height) {
+function createSheetBorder(width, height) {
     return new fabric.Path(`M 0 0 L 0 ${height} L ${width} ${height} L ${width} 0 L 0 0`, {
         fill: 'white',
         stroke: 'black'
+    });
+}
+
+function createDefect(defect) {
+    return new fabric.Path(`M ${defect[0][0]*blockSize} ${defect[0][1]*blockSize} 
+        L ${defect[1][0]*blockSize} ${defect[1][1]*blockSize}
+        L ${defect[2][0]*blockSize} ${defect[2][1]*blockSize} 
+        L ${defect[3][0]*blockSize} ${defect[3][1]*blockSize} 
+        L ${defect[0][0]*blockSize} ${defect[0][1]*blockSize}`, {
+            fill: 'white',
+            stroke: 'black'
     });
 }
 
