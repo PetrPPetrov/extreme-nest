@@ -23,7 +23,6 @@
 
     import axios from 'axios'
 
-    import * as functional from "../scripts/functionalUtils";
     import configuration from '../resources/data/configuration'
 
     export default {
@@ -95,11 +94,19 @@
     }
 
     function getDefaultServerName(availableServers) {
-        return availableServers.find(server => functional.doIf(server.default, () => server.name)).name;
+        return availableServers.find(server => {
+            if (server.default) {
+                return server.name;
+            }
+        }).name;
     }
     
     function getServerAddress(availableServers, selectedServer) {
-        return availableServers.find(server => functional.doIf(server.name === selectedServer, () => server.address)).address;
+        return availableServers.find(server => {
+            if (server.name) {
+                return server.address;
+            }
+        }).address;
     }
 
     function sendNestingRequest(address, nestingRequest) {

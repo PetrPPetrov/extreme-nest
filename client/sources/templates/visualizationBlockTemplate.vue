@@ -35,8 +35,8 @@
 <script>
 
     import image from '../resources/images/visualization-icon.png'
+    import drawCanvas from '../../../common/canvasPainter'
 
-    const canvasPainter = require('../scripts/canvasPainter');
     const nestingRequestParser = require('../../../common/nestingRequestParser');
 
     export default {
@@ -124,7 +124,9 @@
                 if (sheetsId[this.openedSheetIndex - 1] !== undefined) {
                     const sheetId = sheetsId[--this.openedSheetIndex];
                     this.$store.dispatch('openedSheetNumber', sheetId);
-                    canvasPainter.draw(this.$store.getters.canvas, this.$store);
+                    const nestingRequest = this.$store.getters.nestingRequest;
+                    const nestingResponse = this.$store.getters.nestingResponse;
+                    drawCanvas(this.$store.getters.canvas, nestingRequest, nestingResponse, 20);
                 }
             },
 
@@ -134,7 +136,9 @@
                 if (sheetsId[this.openedSheetIndex + 1] !== undefined) {
                     const sheetId = sheetsId[++this.openedSheetIndex];
                     this.$store.dispatch('openedSheetNumber', sheetId);
-                    canvasPainter.draw(this.$store.getters.canvas, this.$store);
+                    const nestingRequest = this.$store.getters.nestingRequest;
+                    const nestingResponse = this.$store.getters.nestingResponse;
+                    drawCanvas(this.$store.getters.canvas, nestingRequest, nestingResponse, 20);
                 }
             },
 

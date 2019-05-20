@@ -25,10 +25,9 @@
 <script>
 
     import axios from 'axios'
-    import { saveAs } from 'file-saver';
+    import drawCanvas from '../../../common/canvasPainter'
 
     const fabric = require('fabric').fabric;
-    const canvasPainter = require('../scripts/canvasPainter');
     const nestingRequestParser = require('../../../common/nestingRequestParser');
 
     export default {
@@ -87,9 +86,10 @@
                 }));
 
                 const nestingRequest = this.$store.getters.nestingRequest;
+                const nestingResponse = this.$store.getters.nestingResponse;
                 const sheetID = nestingRequestParser.getAllSheetsId(nestingRequest)[0];
                 this.$store.dispatch('openedSheetNumber', sheetID);
-                canvasPainter.draw(this.$store.getters.canvas, this.$store)
+                drawCanvas(this.$store.getters.canvas, nestingRequest, nestingResponse, 20);
             }
         }
     }

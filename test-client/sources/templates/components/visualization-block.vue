@@ -13,7 +13,7 @@
 <script>
 
     const fabric = require('fabric').fabric;
-    import drawCanvas from '../../scripts/canvasPainter'
+    import drawCanvas from '../../../../common/canvasPainter'
 
     export default {
         props: ['title', 'event', 'log-message'],
