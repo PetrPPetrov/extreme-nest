@@ -254,12 +254,56 @@ namespace NestingRequest
     };
     typedef boost::shared_ptr<Sheet> sheet_ptr;
 
+    struct NestedPart
+    {
+        int id;
+        double angle;
+        bool flip;
+        Point position;
+
+        NestedPart(const boost::property_tree::ptree& nested_part) : position(nested_part.get_child("position"))
+        {
+            load(nested_part);
+        }
+    private:
+        void load(const boost::property_tree::ptree& nested_part)
+        {
+            id = nested_part.get<int>("id");
+            angle = nested_part.get<double>("angle");
+            flip = nested_part.get<bool>("flip", false);
+        }
+    };
+    typedef boost::shared_ptr<NestedPart> nested_part_ptr;
+
+    struct PreNesting
+    {
+        int sheet_id;
+        int quantity = 1;
+        std::list<nested_part_ptr> nested_parts;
+
+        PreNesting(const boost::property_tree::ptree& prenesting)
+        {
+            load(prenesting);
+        }
+        void load(const boost::property_tree::ptree& prenesting)
+        {
+            sheet_id = prenesting.get<int>("sheet");
+            quantity = prenesting.get<int>("quanity", 1);
+            nested_parts.clear();
+            for (auto& child : prenesting.get_child("nested_parts"))
+            {
+                nested_parts.push_back(boost::make_shared<NestedPart>(child.second));
+            }
+        }
+    };
+    typedef boost::shared_ptr<PreNesting> prenesting_ptr;
+
     struct Order
     {
         std::list<part_ptr> parts;
         std::list<sheet_ptr> sheets;
         double time = 10.0;
-        // TODO: add "pre_nesting" support
+        std::list<prenesting_ptr> prenestings;
 
         Order(const std::string& file_name)
         {
@@ -286,6 +330,14 @@ namespace NestingRequest
             for (auto& child : order.get_child("sheets"))
             {
                 sheets.push_back(boost::make_shared<Sheet>(child.second));
+            }
+            prenestings.clear();
+            if (order.get_child_optional("pre_nestings").has_value())
+            {
+                for (auto& child : order.get_child("pre_nestings"))
+                {
+                    prenestings.push_back(boost::make_shared<PreNesting>(child.second));
+                }
             }
             time = order.get<double>("time");
         }
