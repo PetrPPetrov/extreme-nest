@@ -80,4 +80,4 @@ void simplify(nesting_task_ptr nesting_task);
 struct InterruptionException
 {
 };
-static std::atomic<bool> g_calculating = true;
+static std::atomic<bool> g_calculating(true);
